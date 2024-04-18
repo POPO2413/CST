@@ -1,0 +1,26 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                     
+</head>
+<body>
+    <div align="center">
+        <div align="center" class="border">
+            <div class="header">
+                <h1 class="word">Index</h1>
+            </div>
+            <br><br><br><br><br>
+            <h1 class="bottom">
+                Hi {{ session.username }}!!<br><br> Welcome to the index page...                 
+            </h1>
+            <br><br><br>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+            <br><br><br>
+            <form action="{{ url_for('query_data') }}" method="POST">
+                <button type="submit" class="btn">Query Data</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
