@@ -27,12 +27,13 @@ def login():
 		password = request.form['password']
 		role = request.form['role']
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		cursor.execute('SELECT * FROM accounts WHERE username = % s AND password = % s AND role = % s', (username, password,role ))
+		cursor.execute('SELECT * FROM Data WHERE Name = % s AND password = % s AND Role = % s', (username, password,role))
 		account = cursor.fetchone()
 		if account:
 			session['loggedin'] = True
-			session['id'] = account['id']
-			session['username'] = account['username']
+			session['password'] = account['Password']
+			session['username'] = account['Name']
+			session['role'] = account['Role']
 			msg = 'Logged in successfully !'
 			return render_template('index.html', msg = msg)
 		else:
