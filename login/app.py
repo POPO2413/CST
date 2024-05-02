@@ -34,18 +34,36 @@ def login():
 			session['password'] = account['Password']
 			session['username'] = account['Name']
 			session['role'] = account['Role']
-			# msg = 'Logged in successfully !'
+			msg = 'Logged in successfully !'
 			# return render_template('index.html', msg = msg)
    
 			if session.role == 'admin':
-       			return render_template(url_for('admin_index'))
-            elif role == 'student':
-                return redirect(url_for('student_index'))
-            elif role == 'teacher':
+				return render_template(url_for('admin_index'))
+        	elif session.role == 'student':
+				return redirect(url_for('student_index'))
+            elif session.role == 'teacher':
                 return redirect(url_for('teacher_index'))
 		else:
 			msg = 'Incorrect username / password !'
 	return render_template('login.html', msg = msg)
+
+@app.route('/admin_index')
+def admin_index():
+    if 'loggedin' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+    return render_template('admin_index.html')
+
+@app.route('/student_index')
+def student_index():
+    if 'loggedin' not in session or session['role'] != 'student':
+        return redirect(url_for('login'))
+    return render_template('student_index.html')
+
+@app.route('/teacher_index')
+def teacher_index():
+    if 'loggedin' not in session or session['role'] != 'teacher':
+        return redirect(url_for('login'))
+    return render_template('teacher_index.html')
 
 @app.route('/logout')
 def logout():
