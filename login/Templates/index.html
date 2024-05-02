@@ -8,17 +8,21 @@
     <div align="center">
         <div align="center" class="border">
             <div class="header">
-                <h1 class="word">Index</h1>
+                <h1 class="word">Welcome, Admin</h1>
             </div>
             <br><br><br><br><br>
             <h1 class="bottom">
-                Hi {{ session.username }}!!<br><br> Welcome to the index page...                 
+                Hi {{ session.username }}!<br><br>                  
             </h1>
             <br><br><br>
-            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-            <br><br><br>
-            <form action="{{ url_for('query_data') }}" method="POST">
-                <button type="submit" class="btn">Query Data</button>
+            <form action="{{ url_for('manage_roles') }}" method="POST">
+                <button type="submit" class="btn">MANAGE ROLES</button>
+                <br><br><br>
+                <button formaction="{{ url_for('view_user_activity') }}" type="submit" class="btn">VIEW USER ACTIVITY</button>
+                <br><br><br>
+                <button formaction="{{ url_for('view_files') }}" type="submit" class="btn">VIEW FILES</button>
+                <br><br><br>
+                <a href="{{ url_for('logout') }}" class="btn">Logout</a>
             </form>
         </div>
     </div>

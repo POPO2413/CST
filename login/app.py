@@ -27,7 +27,7 @@ def login():
 		password = request.form['password']
 		role = request.form['role']
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		cursor.execute('SELECT * FROM Data WHERE Name = % s AND password = % s AND Role = % s', (username, password,role))
+		cursor.execute('SELECT * FROM Data WHERE Name = %s AND password = %s AND Role = %s', (username, password,role))
 		account = cursor.fetchone()
 		if account:
 			session['loggedin'] = True
@@ -89,7 +89,57 @@ if __name__ == '__main__':
     app.run(debug=True, port=5001)
 
 
+@app.route('/search_files', methods=['GET'])
+def search_files():
+    query = request.args.get('filename', '')
+    search_directory = './files'  # Adjust the path to where your files are stored
+    matching_files = []
 
+    # Search for matching files in the directory
+    for root, dirs, files in os.walk(search_directory):
+        for filename in files:
+            if query.lower() in filename.lower():
+                matching_files.append(os.path.join(root, filename))
+
+    if matching_files:
+        results = '<br>'.join(matching_files)
+    else:
+        results = "No files found."
+
+    return f"Results for '{query}':<br>{results}"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+ 
+
+
+from flask import Flask, render_template, request, redirect, url_for, session
+import psycopg2  # or any other database connection library
+
+app = Flask(__name__)
+
+@app.route('/manage_roles', methods=['GET', 'POST'])
+def manage_roles():
+    if 'username' in session:
+        # Assuming you have database setup to connect and fetch data
+        connection = psycopg2.connect(user="your_user",
+                                      password="your_password",
+                                      host="127.0.0.1",
+                                      port="5432",
+                                      database="your_database")
+        cursor = connection.cursor()
+
+        # Fetch users and their roles
+        cursor.execute("SELECT username, role FROM users")  # Adjust SQL based on your schema
+        user_roles = cursor.fetchall()
+        cursor.close()
+        connection.close()
+
+        return render_template('manage_roles.html', user_roles=user_roles)
+    else:
+        return redirect(url_for('login'))
+
+# Ensure you have methods to handle login and index routes as well
 
 
 
