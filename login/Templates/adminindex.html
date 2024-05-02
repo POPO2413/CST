@@ -15,8 +15,8 @@
                 Hi {{ session.username }}!<br><br>                  
             </h1>
             <br><br><br>
-            <form action="{{ url_for('manageroles') }}" method="POST">
-                <button type="submit" class="btn">MANAGE ROLES</button>
+            <form>
+                <button type="submit" formaction="{{ url_for('manageroles') }}" class="btn">Manage Roles</button>
                 <br><br><br>
                 <button formaction="{{ url_for('view_user_activity') }}" type="submit" class="btn">VIEW USER ACTIVITY</button>
                 <br><br><br>

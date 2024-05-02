@@ -145,24 +145,25 @@ import psycopg2  # or any other database connection library
 
 @app.route('/manageroles', methods=['GET', 'POST'])
 def manageroles():
-    if 'username' in session:
-        # Assuming you have database setup to connect and fetch data
-        connection = psycopg2.connect(user="your_user",
-                                      password="your_password",
-                                      host="127.0.0.1",
-                                      port="5432",
-                                      database="your_database")
-        cursor = connection.cursor()
+    # if 'username' in session:
+    #     # Assuming you have database setup to connect and fetch data
+    #     connection = psycopg2.connect(user="your_user",
+    #                                   password="your_password",
+    #                                   host="127.0.0.1",
+    #                                   port="5000",
+    #                                   database="your_database")
+    #     cursor = connection.cursor()
 
-        # Fetch users and their roles
-        cursor.execute("SELECT username, role FROM users")  # Adjust SQL based on your schema
-        user_roles = cursor.fetchall()
-        cursor.close()
-        connection.close()
+    #     # Fetch users and their roles
+    #     cursor.execute("SELECT username, role FROM users")  # Adjust SQL based on your schema
+    #     user_roles = cursor.fetchall()
+    #     cursor.close()
+    #     connection.close()
 
-        return render_template('manageroles.html', user_roles=user_roles)
-    else:
-        return redirect(url_for('login'))
+    #     return render_template('manageroles.html', user_roles=user_roles)
+    # else:
+    #     return redirect(url_for('login'))
+	return render_template('manageroles.html')
 	
 if __name__ == '__main__':
     app.run(debug=True)
