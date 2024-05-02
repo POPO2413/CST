@@ -39,10 +39,10 @@ def login():
    
 			if session.role == 'admin':
 				return render_template(url_for('admin_index'))
-        	elif session.role == 'student':
+			elif session.role == 'student':
 				return redirect(url_for('student_index'))
-            elif session.role == 'teacher':
-                return redirect(url_for('teacher_index'))
+			elif session.role == 'teacher':
+				return redirect(url_for('teacher_index'))
 		else:
 			msg = 'Incorrect username / password !'
 	return render_template('login.html', msg = msg)
