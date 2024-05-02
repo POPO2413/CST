@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+import os
 
 
 app = Flask(__name__)
@@ -37,21 +38,23 @@ def login():
 			msg = 'Logged in successfully !'
 			# return render_template('index.html', msg = msg)
    
-			if session.role == 'admin':
-				return render_template(url_for('admin_index'))
-			elif session.role == 'student':
+			if session['role'] == 'Admin':
+				return render_template(url_for('adminindex'))
+			elif session['role'] == 'Student':
 				return redirect(url_for('student_index'))
-			elif session.role == 'teacher':
+			elif session['role'] == 'Teacher':
 				return redirect(url_for('teacher_index'))
 		else:
 			msg = 'Incorrect username / password !'
 	return render_template('login.html', msg = msg)
 
-@app.route('/admin_index')
-def admin_index():
-    if 'loggedin' not in session or session['role'] != 'admin':
-        return redirect(url_for('login'))
-    return render_template('admin_index.html')
+@app.route('/adminindex')
+def adminindex():
+    # if session['role'] != 'Admin':
+    #     print("back to login")
+    #     return redirect(url_for('login'))
+    # print("to admin page")
+    return render_template('adminindex.html')
 
 @app.route('/student_index')
 def student_index():
@@ -110,9 +113,6 @@ def search_data():
     search_results = cursor.fetchall()
     return render_template('query_data.html', search_results=search_results)
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)
-
 
 @app.route('/search_files', methods=['GET'])
 def search_files():
@@ -141,7 +141,6 @@ if __name__ == '__main__':
 from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2  # or any other database connection library
 
-app = Flask(__name__)
 
 @app.route('/manage_roles', methods=['GET', 'POST'])
 def manage_roles():
@@ -163,6 +162,9 @@ def manage_roles():
         return render_template('manage_roles.html', user_roles=user_roles)
     else:
         return redirect(url_for('login'))
+	
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
 
 # Ensure you have methods to handle login and index routes as well
 
