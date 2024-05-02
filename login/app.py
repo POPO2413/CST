@@ -34,8 +34,15 @@ def login():
 			session['password'] = account['Password']
 			session['username'] = account['Name']
 			session['role'] = account['Role']
-			msg = 'Logged in successfully !'
-			return render_template('index.html', msg = msg)
+			# msg = 'Logged in successfully !'
+			# return render_template('index.html', msg = msg)
+   
+			if session.role == 'admin':
+       			return render_template(url_for('admin_index'))
+            elif role == 'student':
+                return redirect(url_for('student_index'))
+            elif role == 'teacher':
+                return redirect(url_for('teacher_index'))
 		else:
 			msg = 'Incorrect username / password !'
 	return render_template('login.html', msg = msg)
