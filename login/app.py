@@ -37,12 +37,13 @@ def login():
 			session['role'] = account['Role']
 			msg = 'Logged in successfully !'
 			# return render_template('index.html', msg = msg)
+			print(role)
    
-			if session['role'] == 'Admin':
-				return render_template(url_for('adminindex'))
-			elif session['role'] == 'Student':
+			if role == 'admin':
+				return redirect(url_for('adminindex'))
+			elif role == 'student':
 				return redirect(url_for('student_index'))
-			elif session['role'] == 'Teacher':
+			elif role == 'teacher':
 				return redirect(url_for('teacher_index'))
 		else:
 			msg = 'Incorrect username / password !'
@@ -142,8 +143,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2  # or any other database connection library
 
 
-@app.route('/manage_roles', methods=['GET', 'POST'])
-def manage_roles():
+@app.route('/manageroles', methods=['GET', 'POST'])
+def manageroles():
     if 'username' in session:
         # Assuming you have database setup to connect and fetch data
         connection = psycopg2.connect(user="your_user",
@@ -159,12 +160,12 @@ def manage_roles():
         cursor.close()
         connection.close()
 
-        return render_template('manage_roles.html', user_roles=user_roles)
+        return render_template('manageroles.html', user_roles=user_roles)
     else:
         return redirect(url_for('login'))
 	
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True)
 
 # Ensure you have methods to handle login and index routes as well
 
