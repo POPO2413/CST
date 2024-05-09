@@ -15,7 +15,7 @@ app.secret_key = 'jason.123'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'jason.123'
-app.config['MYSQL_DB'] = 'geeklogin'
+app.config['MYSQL_DB'] = 'Compsci_Data'
 
 mysql = MySQL(app)
 
@@ -84,7 +84,7 @@ def register():
 		password = request.form['password']
 		email = request.form['email']
 		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-		cursor.execute('SELECT * FROM accounts WHERE username = % s', (username, ))
+		cursor.execute('SELECT * FROM csdata WHERE username = % s', (username, ))
 		account = cursor.fetchone()
 		if account:
 			msg = 'Account already exists !'
@@ -95,7 +95,7 @@ def register():
 		elif not username or not password or not email:
 			msg = 'Please fill out the form !'
 		else:
-			cursor.execute('INSERT INTO accounts VALUES (NULL, % s, % s, % s)', (username, password, email, ))
+			cursor.execute('INSERT INTO csdata VALUES (NULL, % s, % s, % s)', (username, password, email, ))
 			mysql.connection.commit()
 			msg = 'You have successfully registered !'
 	elif request.method == 'POST':
