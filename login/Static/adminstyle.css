@@ -1,0 +1,125 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 5px 0;
+}
+
+.sidebar ul ul {
+    padding-left: 20px;
+}
+
+.sidebar ul ul li {
+    background-color: #34495e;
+    margin-top: 5px;
+}
+
+.sidebar ul li a:hover, .sidebar ul ul li a:hover {
+    background-color: #1abc9c;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ecf0f1;
+    margin-left: 250px;
+}
+
+.content h1 {
+    margin-top: 0;
+    font-weight: 500;
+    font-size: 28px;
+    color: #2c3e50;
+}
+
+.roles-table {
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.roles-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.roles-table table th, .roles-table table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-weight: 300;
+}
+
+.roles-table table th {
+    background-color: #34495e;
+    color: white;
+    font-weight: 500;
+}
+
+.roles-table table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.roles-table button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: 400;
+}
+
+.roles-table button:hover {
+    background-color: #2980b9;
+}
+
+.roles-table .add-role {
+    background-color: #e67e22;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 3px;
+}
+
+.roles-table .add-role:hover {
+    background-color: #d35400;
+}

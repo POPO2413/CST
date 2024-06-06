@@ -1,29 +1,67 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                     
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div align="center">
-        <div align="center" class="border">
-            <div class="header">
-                <h1 class="word">Welcome, Admin</h1>
-            </div>
-            <br><br><br><br><br>
-            <h1 class="bottom">
-                Hi {{ session.username }}!<br><br>                  
-            </h1>
-            <br><br><br>
-            <form>
-                <button type="submit" formaction="{{ url_for('manageroles') }}" class="btn">Manage Roles</button>
-                <br><br><br>
-                <button formaction="{{ url_for('view_user_activity') }}" type="submit" class="btn">VIEW USER ACTIVITY</button>
-                <br><br><br>
-                <button formaction="{{ url_for('view_files') }}" type="submit" class="btn">VIEW FILES</button>
-                <br><br><br>
-                <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-            </form>
+    <div class="sidebar">
+        <h2>strapi</h2>
+        <ul>
+            <li><a href="#application">Application</a></li>
+            <li><a href="#global-settings">Global Settings</a></li>
+            <li><a href="#administration-panel">Administration Panel</a></li>
+            <ul>
+                <li><a href="{{ url_for('manageroles') }}">Roles</a></li>
+                <li><a href="#users">Users</a></li>
+            </ul>
+            <li><a href="#users-permissions-plugin">Users & Permissions Plugin</a></li>
+            <ul>
+                <li><a href="#roles">Roles</a></li>
+                <li><a href="#providers">Providers</a></li>
+                <li><a href="#email-templates">Email Templates</a></li>
+                <li><a href="#advanced-settings">Advanced Settings</a></li>
+            </ul>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Roles</h1>
+        <div class="roles-table">
+            <table>
+                <tr>
+                    <th>Role</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td>Admin</td>
+                    <td>Admins have full control over the system, including user management and system settings.</td>
+                    <td>
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Teacher</td>
+                    <td>Teachers can manage courses, grade students, and view student progress.</td>
+                    <td>
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Student</td>
+                    <td>Students can view their courses, submit assignments, and check their grades.</td>
+                    <td>
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </td>
+                </tr>
+            </table>
+            <button class="add-role">+ Add New Role</button>
         </div>
     </div>
 </body>
