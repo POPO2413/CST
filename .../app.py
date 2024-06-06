@@ -37,7 +37,7 @@ def login():
             if role == 'admin':
                 return redirect(url_for('adminindex'))
             elif role == 'student':
-                return redirect(url_for('student_index'))
+                return redirect(url_for('studentindex'))
             elif role == 'teacher':
                 return redirect(url_for('teacher_index'))
         else:
@@ -132,4 +132,35 @@ if __name__ == '__main__':
     with app.test_request_context():
         print(app.url_map)
     app.run(debug=True)
-s
+
+    
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/users')
+def users():
+    return render_template('users.html')
+
+@app.route('/activities')
+def activities():
+    return render_template('activities.html')
+
+@app.route('/manage_users')
+def manage_users():
+    return render_template('manage_users.html')
+
+@app.route('/manage_files')
+def manage_files():
+    return render_template('manage_files.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
