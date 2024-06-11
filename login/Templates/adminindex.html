@@ -1,0 +1,30 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">                     
+</head>
+<body>
+    <div align="center">
+        <div align="center" class="border">
+            <div class="header">
+                <h1 class="word">Welcome, Admin</h1>
+            </div>
+            <br><br><br><br><br>
+            <h1 class="bottom">
+                Hi {{ session.username }}!<br><br>                  
+            </h1>
+            <br><br><br>
+            <form>
+                <button type="submit" formaction="{{ url_for('manageroles') }}" class="btn">Manage Roles</button>
+                <br><br><br>
+                <button formaction="{{ url_for('view_user_activity') }}" type="submit" class="btn">VIEW USER ACTIVITY</button>
+                <br><br><br>
+                <button formaction="{{ url_for('view_files') }}" type="submit" class="btn">VIEW FILES</button>
+                <br><br><br>
+                <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
