@@ -66,6 +66,8 @@
   font-weight: 600;
   color: #f2f2f2;
   border-bottom: 1px solid #222;
+  z-index: 9999; /* Ensure the title is below the menu button */
+  position: relative; /* Add position relative */
 }
 #sidebar .list-items{
   position: relative;
