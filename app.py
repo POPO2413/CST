@@ -40,6 +40,12 @@ def login():
                 return redirect(url_for('studentindex'))
             elif role == 'teacher':
                 return redirect(url_for('teacherindex'))
+            
+            ########### Debugging ###########
+            else:
+                msg = 'Incorrect Username / Password!'
+                print(f"Failed login attempt for {username} with role {role}")
+            
         else:
             msg = 'Incorrect Username / Password !'
     return render_template('login.html', msg=msg)
