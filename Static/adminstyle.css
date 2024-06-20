@@ -25,8 +25,11 @@ body {
   height: 100vh;
   position: fixed;
   top: 0;
-  left: 0;
+  left: -250px;
   overflow: hidden;
+}
+#sidebar.active {
+  left: 0;
 }
 #sidebar .title {
   font-size: 22px;
@@ -79,14 +82,35 @@ body {
   display: inline;
 }
 .content {
-  margin-left: 250px;
+  margin-left: 30px;
   padding: 20px;
   transition: margin-left 0.5s;
-  width: calc(100% - 250px);
+  width: calc(100% - 30px);
+}
+#sidebar.active ~ .content {
+  margin-left: 280px; /* 250px sidebar width + 30px margin */
+  width: calc(100% - 280px);
 }
 h1 {
   font-size: 24px;
   margin-bottom: 20px;
+}
+.search-bar {
+  margin-bottom: 20px;
+}
+.search-bar input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 200px;
+}
+.search-bar button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 .user-table-container {
   background-color: white;

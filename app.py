@@ -138,6 +138,18 @@ if __name__ == '__main__':
         print(app.url_map)
     app.run(debug=True)
 
+
+@app.route('/user_activity', methods=['GET'])
+def view_user_activity():
+    query = request.args.get('query')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if query:
+        cursor.execute("SELECT * FROM data WHERE Username LIKE %s", ('%' + query + '%',))
+    else:
+        cursor.execute("SELECT * FROM data")
+    users = cursor.fetchall()
+    return render_template('user_activity.html', users=users, query=query)
+
     
 from flask import Flask, render_template
 
