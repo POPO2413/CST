@@ -188,3 +188,4 @@ def api_users():
     cursor.execute('SELECT Username, Email FROM users')
     users = cursor.fetchall()
     return {"users": users}
+
