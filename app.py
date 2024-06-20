@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
 
 @app.route('/user_activity', methods=['GET'])
-def view_user_activity():
+def user_activity():
     query = request.args.get('query')
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if query:
