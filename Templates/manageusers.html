@@ -4,31 +4,82 @@
     <meta charset="UTF-8">
     <title>Manage Users</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div align="center">
-        <h1>Manage Users</h1>
+    <nav id="sidebar">
+        <div class="title">Admin Dashboard</div>
+        <ul class="list-items">
+            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
+            <li><a href="#"><i class="fas fa-user-cog"></i> Manage Users</a></li>
+            <li><a href="#"><i class="fas fa-file-alt"></i> Manage Files</a></li>
+            <li class="logout"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>            
+    </nav>
+    </div>
+    <div class="container">
+        <h1>User Management Page</h1>
+        <div class="controls">
+            <label for="role-select">Change role to:</label>
+            <select id="role-select" name="role">
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+            <button onclick="changeUserRole()">Change</button>
+            <input type="text" id="search" placeholder="Search users">
+        </div>
         <table>
-            <tr>
-                <th>User</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-            {% for user, role in user_roles %}
-            <tr>
-                <td>{{ user }}</td>
-                <td>{{ role }}</td>
-                <td>
-                    <!-- Example of action to change role, implement accordingly -->
-                    <form action="{{ url_for('change_role', username=user) }}" method="POST">
-                        <input type="text" name="new_role" placeholder="Enter new role">
-                        <button type="submit">Update Role</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Role</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example rows. This should be dynamically generated -->
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox" value="1"></td>
+                    <td>Student</td>
+                    <td>Kyle</td>
+                    <td>kyle@gmail.com</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox" value="2"></td>
+                    <td>Teacher</td>
+                    <td>Jiayi</td>
+                    <td>Jiayi@gmail.com</td>
+                </tr>
+            </tbody>
         </table>
     </div>
+    <script>
+        function changeUserRole() {
+            const selectedUsers = [];
+            document.querySelectorAll('.user-checkbox:checked').forEach(checkbox => {
+                selectedUsers.push(checkbox.value);
+            });
+            const selectedRole = document.getElementById('role-select').value;
+            // Send AJAX request to the server to change roles
+            fetch('/change_role', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ users: selectedUsers, role: selectedRole }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('User roles updated successfully');
+                // Optionally reload the page or update the table
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>
- 
