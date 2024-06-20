@@ -7,29 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav id="sidebar">
-        <div class="title">Admin Dashboard</div>
-        <ul class="list-items">
-            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
-            <li><a href="#"><i class="fas fa-user-cog"></i> Manage Users</a></li>
-            <li><a href="#"><i class="fas fa-file-alt"></i> Manage Files</a></li>
-            <li class="logout"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>            
-    </nav>
-    </div>
-    <div class="container">
-        <h1>User Management Page</h1>
-        <div class="controls">
-            <label for="role-select">Change role to:</label>
-            <select id="role-select" name="role">
-                <option value="admin">Admin</option>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
-            </select>
-            <button onclick="changeUserRole()">Change</button>
-            <input type="text" id="search" placeholder="Search users">
-        </div>
+    <div align="center">
+        <h1>Manage Users</h1>
         <table>
             <thead>
                 <tr>
