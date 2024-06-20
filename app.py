@@ -144,9 +144,9 @@ def user_activity():
     query = request.args.get('query')
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if query:
-        cursor.execute("SELECT * FROM data WHERE Username LIKE %s", ('%' + query + '%',))
+        cursor.execute("SELECT * FROM Data WHERE Username LIKE %s", ('%' + query + '%',))
     else:
-        cursor.execute("SELECT * FROM data")
+        cursor.execute("SELECT * FROM Data")
     users = cursor.fetchall()
     return render_template('user_activity.html', users=users, query=query)
 
