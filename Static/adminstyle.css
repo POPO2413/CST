@@ -1,132 +1,124 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-* {
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: #f4f4f4;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
 }
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+
 .wrapper {
   display: flex;
 }
-#sidebar {
-  width: 250px;
+
+nav {
   background: #333;
   color: #fff;
-  transition: all 0.3s;
   height: 100vh;
+  width: 250px;
   position: fixed;
   top: 0;
-  left: -250px;
+  left: 0;
+  transition: all 0.3s;
   overflow: hidden;
 }
-#sidebar.active {
-  left: 0;
-}
-#sidebar .title {
-  font-size: 22px;
-  font-weight: bold;
+
+nav .title {
+  font-size: 24px;
   text-align: center;
-  padding: 15px 0;
+  padding: 20px;
   background: #444;
 }
-#sidebar ul {
+
+nav ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
-#sidebar ul li {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #444;
+
+nav ul li {
+  padding: 15px;
+  text-align: center;
 }
-#sidebar ul li a {
+
+nav ul li a {
   color: #fff;
   text-decoration: none;
   display: block;
+  transition: background 0.3s;
 }
-#sidebar ul li a:hover {
+
+nav ul li a:hover {
   background: #555;
 }
-#sidebar ul li.logout {
+
+nav ul li.logout {
   position: absolute;
   bottom: 20px;
   width: 100%;
 }
-.menu-btn {
-  font-size: 30px;
-  cursor: pointer;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  z-index: 1100;
-}
-.menu-btn .fas {
-  display: none;
-}
-.menu-btn.active .fas.fa-bars {
-  display: none;
-}
-.menu-btn.active .fas.fa-times {
-  display: inline;
-}
-.menu-btn .fas.fa-bars {
-  display: inline;
-}
+
 .content {
-  margin-left: 30px;
+  margin-left: 250px;
   padding: 20px;
-  transition: margin-left 0.5s;
-  width: calc(100% - 30px);
+  width: calc(100% - 250px);
+  transition: all 0.3s;
 }
-#sidebar.active ~ .content {
-  margin-left: 280px; /* 250px sidebar width + 30px margin */
-  width: calc(100% - 280px);
+
+.content h1 {
+  font-size: 32px;
 }
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-.search-bar {
-  margin-bottom: 20px;
-}
-.search-bar input[type="text"] {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 200px;
-}
-.search-bar button {
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+
 .user-table-container {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
+
 .user-table {
   width: 100%;
   border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.user-table thead {
-  background-color: #f1f1f1;
-}
+
 .user-table th, .user-table td {
   padding: 12px;
-  border: 1px solid #ddd;
   text-align: left;
+  border-bottom: 1px solid #ddd;
 }
-.user-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+
+.user-table th {
+  background: #f4f4f4;
+}
+
+.menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.menu-btn.active .fa-bars {
+  display: none;
+}
+
+.menu-btn.active .fa-times {
+  display: block;
+}
+
+.menu-btn .fa-times {
+  display: none;
+}
+
+nav.active {
+  width: 0;
+}
+
+nav.active .title, nav.active ul li {
+  display: none;
+}
+
+.content.active {
+  margin-left: 0;
+  width: 100%;
 }
