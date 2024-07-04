@@ -4,54 +4,46 @@
     <meta charset="UTF-8">
     <title>Student Index</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='studentstyle.css') }}">
-    <style>
-        .search-container {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-        }
-
-        input[type="search"], button[type="submit"] {
-            padding: 8px;
-            margin: 5px;
-        }
-
-        .folder {
-            margin: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            display: inline-block;
-        }
-
-        .folder:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
 </head>
 <body>
-    <div align="center">
-        <div align="center" class="border">
-            <div class="header">
-                <h1>Welcome, {{ session.username }}!</h1>
-                <div class="search-container">
-                    <form action="{{ url_for('search_files') }}" method="get">
-                        <input type="search" name="query" placeholder="Search files...">
-                        <button type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-            <br><br><br>
-            <div>
-                <a href="{{ url_for('folder1') }}" class="folder">Math</a>
-                <a href="{{ url_for('folder2') }}" class="folder">Science</a>
-                <a href="{{ url_for('folder3') }}" class="folder">Economics</a>
-                <a href="{{ url_for('folder4') }}" class="folder">Literature</a>
-            </div>
-            <br><br>
-            <form>
-                <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-            </form>
+    <div class="header">
+        <h1>Welcome, {{ session.username }}!</h1>
+    </div>
+    <div class="search-container">
+        <form action="{{ url_for('search_files') }}" method="get">
+            <input type="search" name="query" placeholder="Search files...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div class="grid-container">
+        <div class="grid-item">
+            <a href="{{ url_for('math') }}">
+                <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
+                <h3>Math</h3>
+            </a>
         </div>
+        <div class="grid-item">
+            <a href="{{ url_for('science') }}">
+                <img src="{{ url_for('static', filename='images/science.jpg') }}" alt="Science">
+                <h3>Science</h3>
+            </a>
+        </div>
+        <div class="grid-item">
+            <a href="{{ url_for('econs') }}">
+                <img src="{{ url_for('static', filename='images/economics.jpg') }}" alt="Economics">
+                <h3>Economics</h3>
+            </a>
+        </div>
+        <div class="grid-item">
+            <a href="{{ url_for('lit') }}">
+                <img src="{{ url_for('static', filename='images/literature.jpg') }}" alt="Literature">
+                <h3>Literature</h3>
+            </a>
+        </div>
+        
+    </div>
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 </body>
 </html>
