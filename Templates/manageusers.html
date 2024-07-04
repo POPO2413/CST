@@ -3,12 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Manage Users</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='managestyle.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div align="center">
-        <h1>Manage Users</h1>
+    <div class="sidebar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">View user activity</a></li>
+            <li><a href="#">Manage users</a></li>
+            <li><a href="#">Manage files</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h1>User Management Page</h1>
+        <form action="{{ url_for('manage_users') }}" method="GET">
+            <input type="text" name="query" placeholder="Search users">
+            <button type="submit">Search</button>
+        </form>
+        <div class="controls">
+            <label for="role-select">Change role to:</label>
+            <select id="role-select" name="role">
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+            <button onclick="changeUserRole()">Change</button>
+            <input type="text" id="search" placeholder="Search users">
+        </div>
         <table>
             <thead>
                 <tr>
@@ -23,42 +46,17 @@
                 <tr>
                     <td><input type="checkbox" class="user-checkbox" value="1"></td>
                     <td>Student</td>
-                    <td>Kyle</td>
-                    <td>kyle@gmail.com</td>
+                    <td>john_doe</td>
+                    <td>john@example.com</td>
                 </tr>
                 <tr>
                     <td><input type="checkbox" class="user-checkbox" value="2"></td>
                     <td>Teacher</td>
-                    <td>Jiayi</td>
-                    <td>Jiayi@gmail.com</td>
+                    <td>jane_doe</td>
+                    <td>jane@example.com</td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <script>
-        function changeUserRole() {
-            const selectedUsers = [];
-            document.querySelectorAll('.user-checkbox:checked').forEach(checkbox => {
-                selectedUsers.push(checkbox.value);
-            });
-            const selectedRole = document.getElementById('role-select').value;
-            // Send AJAX request to the server to change roles
-            fetch('/change_role', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ users: selectedUsers, role: selectedRole }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('User roles updated successfully');
-                // Optionally reload the page or update the table
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
 </body>
 </html>

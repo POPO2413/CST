@@ -98,17 +98,6 @@ def register():
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
 
-@app.route('/query_data', methods=['GET'])
-def query_data():
-    return render_template('query_data.html')
-
-@app.route('/search_data', methods=['GET'])
-def search_data():
-    query = request.args.get('query')
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM data WHERE Username LIKE %s", ('%' + query + '%',))
-    search_results = cursor.fetchall()
-    return render_template('query_data.html', search_results=search_results)
 
 @app.route('/search_files', methods=['GET'])
 def search_files():
@@ -129,9 +118,9 @@ def search_files():
 
     return f"Results for '{query}':<br>{results}"
 
-@app.route('/manageroles', endpoint='manageroles')
+@app.route('/manageusers', endpoint='manageusers')
 def manageroles():
-    return render_template('manageroles.html')
+    return render_template('manageusers.html')
 
 if __name__ == '__main__':
     with app.test_request_context():
@@ -155,30 +144,6 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-@app.route('/users')
-def users():
-    return render_template('users.html')
-
-@app.route('/activities')
-def activities():
-    return render_template('activities.html')
-
-@app.route('/manage_users')
-def manage_users():
-    return render_template('manage_users.html')
-
-@app.route('/manage_files')
-def manage_files():
-    return render_template('manage_files.html')
-
-@app.route('/settings')
-def settings():
-    return render_template('settings.html')
-
 if __name__ == '__main__':
     app.run(debug=True)
 
@@ -189,3 +154,10 @@ def api_users():
     users = cursor.fetchall()
     return {"users": users}
 
+@app.route('/change_role/<username>', methods=['POST'])
+def change_role(username):
+    new_role = request.form['new_role']
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
+    mysql.connection.commit()
+    return redirect(url_for('manage_users'))
