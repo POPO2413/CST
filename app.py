@@ -56,13 +56,12 @@ def adminindex():
 
 @app.route('/studentindex')
 def studentindex():
-    if 'loggedin' not in session or session['role'] != 'student':
-        return redirect(url_for('login'))
+
     return render_template('studentindex.html')
 
 @app.route('/teacherindex')
 def teacherindex():
-    if 'loggedin' not in session or session['role'] != 'teacher':
+    if 'loggedin' not in session or session['role'] != 'Teacher':
         return redirect(url_for('login'))
     return render_template('teacherindex.html')
 
