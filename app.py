@@ -133,14 +133,6 @@ def user_activity():
     users = cursor.fetchall()
     return render_template('user_activity.html', users=users, query=query)
 
-    
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/api/users', methods=['GET'])
 def api_users():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -161,4 +153,6 @@ if __name__ == '__main__':
         print(app.url_map)
     app.run(debug=True)
 
-    
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
