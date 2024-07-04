@@ -122,12 +122,6 @@ def search_files():
 def manageroles():
     return render_template('manageusers.html')
 
-if __name__ == '__main__':
-    with app.test_request_context():
-        print(app.url_map)
-    app.run(debug=True)
-
-
 @app.route('/user_activity', methods=['GET'])
 def user_activity():
     query = request.args.get('query')
@@ -161,3 +155,10 @@ def change_role(username):
     cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
     mysql.connection.commit()
     return redirect(url_for('manage_users'))
+
+if __name__ == '__main__':
+    with app.test_request_context():
+        print(app.url_map)
+    app.run(debug=True)
+
+    
