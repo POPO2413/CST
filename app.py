@@ -147,15 +147,28 @@ def change_role(username):
     mysql.connection.commit()
     return redirect(url_for('manage_users'))
 
+
+# Routes for each subject
 @app.route('/math')
 def math():
     return render_template('math.html')
+
+@app.route('/science')
+def science():
+    return render_template('science.html')
+
+@app.route('/econs')
+def econs():
+    return render_template('econs.html')
+
+@app.route('/lit')
+def lit():
+    return render_template('lit.html')
 
 if __name__ == '__main__':
     with app.test_request_context():
         print(app.url_map)
     app.run(debug=True)
-
 
 
 # if __name__ == '__main__':
