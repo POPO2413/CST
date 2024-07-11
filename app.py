@@ -166,7 +166,11 @@ def lit():
 
 @app.route('/managefiles')
 def managefiles():
-    return render_template('managefiles.html')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # change the SQL query accordingly
+    cursor.execute('SELECT filename, folder FROM files') 
+    files = cursor.fetchall()
+    return render_template('managefiles.html', files=files)
 
 
 @app.route('/manageusers')
