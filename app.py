@@ -52,7 +52,57 @@ def login():
 
 @app.route('/adminindex')
 def adminindex():
-    return render_template('adminindex.html')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT username, email, role FROM users')
+    users = cursor.fetchall()
+    return render_template('adminindex.html', users=users)
+
+@app.route('/user_activity')
+def user_activity():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT username, modified, last_seen FROM user_activity')
+    activities = cursor.fetchall()
+    return render_template('user_activity.html', activities=activities)
+
+@app.route('/manageusers')
+def manageusers():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT username, email, role FROM users')
+    users = cursor.fetchall()
+    return render_template('manageusers.html', users=users)
+
+@app.route('/managefiles')
+def managefiles():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT filename, folder FROM files')
+    files = cursor.fetchall()
+    return render_template('managefiles.html', files=files)
+
+
+# @app.route('/user_activity', methods=['GET'])
+# def user_activity():
+#     query = request.args.get('query')
+#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     if query:
+#         cursor.execute("SELECT * FROM Data WHERE Username LIKE %s", ('%' + query + '%',))
+#     else:
+#         cursor.execute("SELECT * FROM Data")
+#     users = cursor.fetchall()
+#     return render_template('user_activity.html', users=users, query=query)
+
+# @app.route('/managefiles')
+# def managefiles():
+#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     # change the SQL query accordingly
+#     cursor.execute('SELECT filename, folder FROM files') 
+#     files = cursor.fetchall()
+#     return render_template('managefiles.html', files=files)
+
+
+# @app.route('/manageusers')
+# def manageusers():
+#     return render_template('manageusers.html')
+
 
 @app.route('/studentindex')
 def studentindex():
@@ -118,18 +168,6 @@ def search_files():
     return f"Results for '{query}':<br>{results}"
 
 
-
-@app.route('/user_activity', methods=['GET'])
-def user_activity():
-    query = request.args.get('query')
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if query:
-        cursor.execute("SELECT * FROM Data WHERE Username LIKE %s", ('%' + query + '%',))
-    else:
-        cursor.execute("SELECT * FROM Data")
-    users = cursor.fetchall()
-    return render_template('user_activity.html', users=users, query=query)
-
 @app.route('/api/users', methods=['GET'])
 def api_users():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -162,20 +200,6 @@ def econs():
 @app.route('/lit')
 def lit():
     return render_template('lit.html')
-
-
-@app.route('/managefiles')
-def managefiles():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # change the SQL query accordingly
-    cursor.execute('SELECT filename, folder FROM files') 
-    files = cursor.fetchall()
-    return render_template('managefiles.html', files=files)
-
-
-@app.route('/manageusers')
-def manageusers():
-    return render_template('manageusers.html')
 
 
 if __name__ == '__main__':

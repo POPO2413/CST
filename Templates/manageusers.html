@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>Manage Files</title>
+    <title>Manage Users</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='adminstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
@@ -25,99 +25,35 @@
         </nav>
         <div class="content">
             <h1>Users</h1>
-            <div id="user-list">
-                <!-- User list content -->
-                <div class="user-table-container">
-                    <div class="table-actions">
-                        <div>
-                            <label for="role">Change role to...</label>
-                            <select id="role" name="role">
-                                <option value="admin">Admin</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="student">Student</option>
-                            </select>
-                            <button class="btn">Change</button>
-                        </div>
-                        <div>
-                            <input type="search" id="search" name="search" placeholder="Search users">
-                            <button class="btn">Search</button>
-                        </div>
-                    </div>
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th class="checkbox-column"><input type="checkbox" onclick="toggleAll(this)"></th>
-                                <th>Role</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Repeat this block for each user -->
-                            <tr>
-                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
-                                <td>Admin</td>
-                                <td>Jason</td>
-                                <td>jason@gmail.com</td>
-                            </tr>
-                            <tr>
-                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
-                                <td>Teacher</td>
-                                <td>Jiayi</td>
-                                <td>jiayi@gmail.com</td>
-                            </tr>
-                            <tr>
-                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
-                                <td>Student</td>
-                                <td>Kyle</td>
-                                <td>kyle@gmail.com</td>
-                            </tr>
-                            <!-- End of user block -->
-                        </tbody>
-                    </table>
-                </div>
-            <h1>Files</h1>
             <div class="file-table-container">
                 <div class="table-actions">
-                    <input type="search" id="search-file" name="search" placeholder="Search file">
+                    <label for="role">Change role to...</label>
+                    <select id="role" name="role">
+                        <option value="admin">Admin</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                    </select>
+                    <button class="btn">Change</button>
+                    <input type="search" id="search-user" name="search" placeholder="Search users">
                 </div>
                 <table class="file-table">
                     <thead>
                         <tr>
-                            <th>File</th>
-                            <th>Folder</th>
-                            <th class="actions-column"></th>
+                            <th class="checkbox-column"><input type="checkbox" onclick="toggleAll(this)"></th>
+                            <th>Role</th>
+                            <th>Username</th>
+                            <th>Email</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Repeat this block for each file -->
+                        {% for user in users %}
                         <tr>
-                            <td>File1.txt</td>
-                            <td>Folder1</td>
-                            <td class="actions-column">
-                                <div class="dropdown">
-                                    <span class="ellipsis">•••</span>
-                                    <div class="dropdown-content">
-                                        <a href="#" onclick="renameFile('File1.txt')">Rename</a>
-                                        <a href="#" onclick="deleteFile('File1.txt')">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
+                            <td class="checkbox-column"><input type="checkbox" name="user"></td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
                         </tr>
-                        <tr>
-                            <td>File2.doc</td>
-                            <td>Folder2</td>
-                            <td class="actions-column">
-                                <div class="dropdown">
-                                    <span class="ellipsis">•••</span>
-                                    <div class="dropdown-content">
-                                        <a href="#" onclick="renameFile('File2.doc')">Rename</a>
-                                        <a href="#" onclick="deleteFile('File2.doc')">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- End of file block -->
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -126,48 +62,15 @@
     <script>
         function toggleAll(source) {
             checkboxes = document.getElementsByName('user');
-            for(var i in checkboxes)
+            for (var i in checkboxes)
                 checkboxes[i].checked = source.checked;
         }
-        function changeRole() {
-    const selectedRole = document.getElementById('role-select').value;
-    const selectedUsers = document.querySelectorAll('.user-checkbox:checked');
-    selectedUsers.forEach(checkbox => {
-        const userId = checkbox.getAttribute('data-user-id');
-        const user = users.find(user => user.id == userId);
-        if (user) {
-            user.role = selectedRole;
-        }
-    });
-    renderUsers(users);
-    
-        }
-        function searchUsers() {
-    const searchTerm = document.getElementById('search-users').value.toLowerCase();
-    const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchTerm) ||
-        user.email.toLowerCase().includes(searchTerm)
-    );
-    renderUsers(filteredUsers);
-        }
 
-    
-    
         document.querySelector('.menu-btn').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('#sidebar').classList.toggle('active');
             document.querySelector('.content').classList.toggle('active');
         });
-
-        function renameFile(fileName) {
-            // Implement rename file logic here
-            console.log('Renaming file:', fileName);
-        }
-
-        function deleteFile(fileName) {
-            // Implement delete file logic here
-            console.log('Deleting file:', fileName);
-        }
     </script>
 </body>
 </html>

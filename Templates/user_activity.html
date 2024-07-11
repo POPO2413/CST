@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>User Activity Page</title>
+    <title>User Activity</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='adminstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
@@ -18,21 +18,18 @@
             <ul class="list-items">
                 <li><a href="{{ url_for('adminindex') }}"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
-                <li><a href="#"><i class="fas fa-user-cog"></i> Manage Users</a></li>
-                <li><a href="#"><i class="fas fa-file-alt"></i> Manage Files</a></li>
+                <li><a href="{{ url_for('manageusers') }}"><i class="fas fa-user-cog"></i> Manage Users</a></li>
+                <li><a href="{{ url_for('managefiles') }}"><i class="fas fa-file-alt"></i> Manage Files</a></li>
                 <li class="logout"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </nav>
         <div class="content">
             <h1>User Activity</h1>
-            <div class="search-bar">
-                <form action="{{ url_for('user_activity') }}" method="get">
-                    <input type="text" name="query" placeholder="Search users" value="{{ query }}">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-            <div class="user-table-container">
-                <table class="user-table">
+            <div class="file-table-container">
+                <div class="table-actions">
+                    <input type="search" id="search-user" name="search" placeholder="Search users">
+                </div>
+                <table class="file-table">
                     <thead>
                         <tr>
                             <th>Username</th>
@@ -41,11 +38,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
+                        {% for activity in activities %}
                         <tr>
-                            <td>{{ user.Username }}</td>
-                            <td>{{ user.Modified }}</td>
-                            <td>{{ user.LastSeen }}</td>
+                            <td>{{ activity.username }}</td>
+                            <td>{{ activity.modified }}</td>
+                            <td>{{ activity.last_seen }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
