@@ -6,157 +6,32 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='adminstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-        }
-        .wrapper {
+        .container {
             display: flex;
-            transition: all 0.3s;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
         }
-        #sidebar {
-            width: 250px;
-            background: #333;
-            color: #fff;
-            transition: all 0.3s;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: -250px;
-            overflow: hidden;
-        }
-        #sidebar.active {
-            left: 0;
-        }
-        #sidebar .title {
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px 0;
-            background: #444;
-        }
-        #sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        #sidebar ul li {
+        .subject-guide {
+            background: #fff;
             padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-        }
-        #sidebar ul li a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-        }
-        #sidebar ul li a:hover {
-            background: #555;
-        }
-        .menu-btn {
-            font-size: 30px;
-            cursor: pointer;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: #333;
-            z-index: 1000;
-        }
-        .menu-btn .fas {
-            display: none;
-        }
-        .menu-btn.active .fas.fa-bars {
-            display: none;
-        }
-        .menu-btn.active .fas.fa-times {
-            display: inline;
-        }
-        .menu-btn .fas.fa-bars {
-            display: inline;
-        }
-        .content {
-            margin-left: 30px;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-        .wrapper #btn:checked ~ .menu-btn .fas.fa-bars {
-            display: inline;
-        }
-        .wrapper #btn:checked ~ .menu-btn .fas.fa-times {
-            display: none;
-        }
-        .wrapper #btn:checked ~ #sidebar {
-            left: 0;
-        }
-        .wrapper #btn:checked ~ .content {
-            margin-left: 250px;
-        }
-        .file-table-container {
-            background-color: white;
-            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
         }
-        .table-actions {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-bottom: 20px;
+        .subject-guide img {
+            max-width: 100%;
+            border-radius: 8px;
         }
-        .table-actions input[type="search"], .table-actions button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-right: 10px;
+        .subject-guide h3 {
+            margin: 10px 0 0 0;
+            font-size: 16px;
         }
-        .table-actions button {
-            cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .actions-column {
-            width: 40px;
-            text-align: center;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f1f1f1;
-            min-width: 120px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .ellipsis {
-            cursor: pointer;
+        .subject-guide:hover {
+            background: #f1f1f1;
         }
     </style>
 </head>
@@ -170,62 +45,32 @@
         <nav id="sidebar">
             <div class="title">Admin Dashboard</div>
             <ul class="list-items">
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> View User Activities</a></li>
-                <li><a href="#"><i class="fas fa-user-cog"></i> Manage Users</a></li>
-                <li><a href="#"><i class="fas fa-file-alt"></i> Manage Files</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="{{ url_for('adminindex') }}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
+                <li><a href="{{ url_for('manageusers') }}"><i class="fas fa-user-cog"></i> Manage Users</a></li>
+                <li><a href="{{ url_for('managefiles') }}"><i class="fas fa-file-alt"></i> Manage Files</a></li>
+                <li class="logout"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </nav>
         <div class="content">
-            <h1>Files</h1>
-            <div id="file-list">
-                <div class="file-table-container">
-                    <div class="table-actions">
-                        <input type="search" id="search-file" name="search" placeholder="Search file">
-                        <button class="btn">Search</button>
-                    </div>
-                    <table class="file-table">
-                        <thead>
-                            <tr>
-                                <th>File</th>
-                                <th>Folder</th>
-                                <th class="actions-column"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Repeat this block for each file -->
-                            <tr>
-                                <td>File1.txt</td>
-                                <td>Folder1</td>
-                                <td class="actions-column">
-                                    <div class="dropdown">
-                                        <span class="ellipsis">•••</span>
-                                        <div class="dropdown-content">
-                                            <a href="#" onclick="renameFile('File1.txt')">Rename</a>
-                                            <a href="#" onclick="deleteFile('File1.txt')">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>File2.doc</td>
-                                <td>Folder2</td>
-                                <td class="actions-column">
-                                    <div class="dropdown">
-                                        <span class="ellipsis">•••</span>
-                                        <div class="dropdown-content">
-                                            <a href="#" onclick="renameFile('File2.doc')">Rename</a>
-                                            <a href="#" onclick="deleteFile('File2.doc')">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- End of file block -->
-                        </tbody>
-                    </table>
-                </div>
+            <h1>Subject Guides</h1>
+            <div class="container">
+                <a href="{{ url_for('math') }}" class="subject-guide">
+                    <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
+                    <h3>Math</h3>
+                </a>
+                <a href="{{ url_for('science') }}" class="subject-guide">
+                    <img src="{{ url_for('static', filename='images/science.jpg') }}" alt="Science">
+                    <h3>Science</h3>
+                </a>
+                <a href="{{ url_for('econs') }}" class="subject-guide">
+                    <img src="{{ url_for('static', filename='images/economics.jpg') }}" alt="Economics">
+                    <h3>Economics</h3>
+                </a>
+                <a href="{{ url_for('lit') }}" class="subject-guide">
+                    <img src="{{ url_for('static', filename='images/literature.jpg') }}" alt="Literature">
+                    <h3>Literature</h3>
+                </a>
             </div>
         </div>
     </div>
