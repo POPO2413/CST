@@ -189,8 +189,20 @@
                             <tr>
                                 <td class="checkbox-column"><input type="checkbox" name="user"></td>
                                 <td>Admin</td>
-                                <td>user1</td>
-                                <td>user1@example.com</td>
+                                <td>Jason</td>
+                                <td>jason@gmail.com</td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
+                                <td>Teacher</td>
+                                <td>Jiayi</td>
+                                <td>jiayi@gmail.com</td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
+                                <td>Student</td>
+                                <td>Kyle</td>
+                                <td>kyle@gmail.com</td>
                             </tr>
                             <!-- End of user block -->
                         </tbody>
@@ -206,12 +218,29 @@
                 checkboxes[i].checked = source.checked;
         }
         function changeRole() {
-            // Implement role change logic here
+    const selectedRole = document.getElementById('role-select').value;
+    const selectedUsers = document.querySelectorAll('.user-checkbox:checked');
+    selectedUsers.forEach(checkbox => {
+        const userId = checkbox.getAttribute('data-user-id');
+        const user = users.find(user => user.id == userId);
+        if (user) {
+            user.role = selectedRole;
+        }
+    });
+    renderUsers(users);
+    
         }
         function searchUsers() {
-            // Implement search logic here
+    const searchTerm = document.getElementById('search-users').value.toLowerCase();
+    const filteredUsers = users.filter(user =>
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm)
+    );
+    renderUsers(filteredUsers);
         }
 
+    
+    
         document.querySelector('.menu-btn').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('#sidebar').classList.toggle('active');
