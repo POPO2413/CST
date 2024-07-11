@@ -2,11 +2,10 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>Manage Users</title>
+    <title>Manage Files</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='adminstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
     <style>
-        /* Add your CSS styling here */
         body {
             font-family: Arial, sans-serif;
             background: #f4f4f4;
@@ -91,7 +90,7 @@
         .wrapper #btn:checked ~ .content {
             margin-left: 250px;
         }
-        .user-table-container {
+        .file-table-container {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
@@ -99,11 +98,11 @@
         }
         .table-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 20px;
         }
-        .table-actions select, .table-actions button, .table-actions input[type="search"] {
+        .table-actions input[type="search"], .table-actions button {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -132,8 +131,32 @@
         tr:hover {
             background-color: #f1f1f1;
         }
-        .checkbox-column {
+        .actions-column {
             width: 40px;
+            text-align: center;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .ellipsis {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -148,51 +171,58 @@
             <div class="title">Admin Dashboard</div>
             <ul class="list-items">
                 <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="#"><i class="fas fa-tasks"></i> View User Activities</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> View User Activities</a></li>
                 <li><a href="#"><i class="fas fa-user-cog"></i> Manage Users</a></li>
                 <li><a href="#"><i class="fas fa-file-alt"></i> Manage Files</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </nav>
         <div class="content">
-            <h1>Users</h1>
-            <div id="user-list">
-                <!-- User list content -->
-                <div class="user-table-container">
+            <h1>Files</h1>
+            <div id="file-list">
+                <div class="file-table-container">
                     <div class="table-actions">
-                        <div>
-                            <label for="role">Change role to...</label>
-                            <select id="role" name="role">
-                                <option value="admin">Admin</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="student">Student</option>
-                            </select>
-                            <button class="btn">Change</button>
-                        </div>
-                        <div>
-                            <input type="search" id="search" name="search" placeholder="Search users">
-                            <button class="btn">Search</button>
-                        </div>
+                        <input type="search" id="search-file" name="search" placeholder="Search file">
+                        <button class="btn">Search</button>
                     </div>
-                    <table class="user-table">
+                    <table class="file-table">
                         <thead>
                             <tr>
-                                <th class="checkbox-column"><input type="checkbox" onclick="toggleAll(this)"></th>
-                                <th>Role</th>
-                                <th>Username</th>
-                                <th>Email</th>
+                                <th>File</th>
+                                <th>Folder</th>
+                                <th class="actions-column"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Repeat this block for each user -->
+                            <!-- Repeat this block for each file -->
                             <tr>
-                                <td class="checkbox-column"><input type="checkbox" name="user"></td>
-                                <td>Admin</td>
-                                <td>user1</td>
-                                <td>user1@example.com</td>
+                                <td>File1.txt</td>
+                                <td>Folder1</td>
+                                <td class="actions-column">
+                                    <div class="dropdown">
+                                        <span class="ellipsis">•••</span>
+                                        <div class="dropdown-content">
+                                            <a href="#" onclick="renameFile('File1.txt')">Rename</a>
+                                            <a href="#" onclick="deleteFile('File1.txt')">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
-                            <!-- End of user block -->
+                            <tr>
+                                <td>File2.doc</td>
+                                <td>Folder2</td>
+                                <td class="actions-column">
+                                    <div class="dropdown">
+                                        <span class="ellipsis">•••</span>
+                                        <div class="dropdown-content">
+                                            <a href="#" onclick="renameFile('File2.doc')">Rename</a>
+                                            <a href="#" onclick="deleteFile('File2.doc')">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- End of file block -->
                         </tbody>
                     </table>
                 </div>
@@ -200,23 +230,21 @@
         </div>
     </div>
     <script>
-        function toggleAll(source) {
-            checkboxes = document.getElementsByName('user');
-            for(var i in checkboxes)
-                checkboxes[i].checked = source.checked;
-        }
-        function changeRole() {
-            // Implement role change logic here
-        }
-        function searchUsers() {
-            // Implement search logic here
-        }
-
         document.querySelector('.menu-btn').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('#sidebar').classList.toggle('active');
             document.querySelector('.content').classList.toggle('active');
         });
+
+        function renameFile(fileName) {
+            // Implement rename file logic here
+            console.log('Renaming file:', fileName);
+        }
+
+        function deleteFile(fileName) {
+            // Implement delete file logic here
+            console.log('Deleting file:', fileName);
+        }
     </script>
 </body>
 </html>

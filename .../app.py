@@ -123,7 +123,7 @@ def search_files():
 
     return f"Results for '{query}':<br>{results}"
 
-@app.route('/manageroles', endpoint='manageroles')
+@app.route('/manage_roles', endpoint='manage_roles')
 def manageroles():
     return render_template('manageroles.html')
 
@@ -149,13 +149,13 @@ def users():
 def activities():
     return render_template('activities.html')
 
-@app.route('/manage_users')
-def manage_users():
-    return render_template('manage_users.html')
+@app.route('/Manage_users')
+def Manage_users():
+    return render_template('manageusers.html')
 
-@app.route('/manage_files')
-def manage_files():
-    return render_template('manage_files.html')
+@app.route('/Manage_files')
+def Manage_files():
+    return render_template('managefiles.html')
 
 @app.route('/settings')
 def settings():

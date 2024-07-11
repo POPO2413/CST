@@ -117,9 +117,7 @@ def search_files():
 
     return f"Results for '{query}':<br>{results}"
 
-@app.route('/manageusers', endpoint='manageusers')
-def manageroles():
-    return render_template('manageusers.html')
+
 
 @app.route('/user_activity', methods=['GET'])
 def user_activity():
@@ -145,7 +143,7 @@ def change_role(username):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
     mysql.connection.commit()
-    return redirect(url_for('manage_users'))
+    return redirect(url_for('manageusers'))
 
 
 # Routes for each subject
@@ -164,6 +162,17 @@ def econs():
 @app.route('/lit')
 def lit():
     return render_template('lit.html')
+
+
+@app.route('/managefiles')
+def managefiles():
+    return render_template('managefiles.html')
+
+
+@app.route('/manageusers')
+def manageusers():
+    return render_template('manageusers.html')
+
 
 if __name__ == '__main__':
     with app.test_request_context():
