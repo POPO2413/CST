@@ -67,23 +67,23 @@ nav ul li.logout {
   font-size: 32px;
 }
 
-.user-table-container {
+.file-table-container {
   margin-top: 20px;
 }
 
-.user-table {
+.file-table {
   width: 100%;
   border-collapse: collapse;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.user-table th, .user-table td {
+.file-table th, .file-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-.user-table th {
+.file-table th {
   background: #f4f4f4;
 }
 
