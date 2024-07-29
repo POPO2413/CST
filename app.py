@@ -53,28 +53,28 @@ def login():
 @app.route('/adminindex')
 def adminindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT username, email, role FROM users')
+    cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
     return render_template('adminindex.html', users=users)
 
 @app.route('/user_activity')
 def user_activity():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT username, modified, last_seen FROM user_activity')
+    cursor.execute('SELECT Username, modified, last_seen FROM data')
     activities = cursor.fetchall()
     return render_template('user_activity.html', activities=activities)
 
 @app.route('/manageusers')
 def manageusers():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT username, email, role FROM users')
+    cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
     return render_template('manageusers.html', users=users)
 
 @app.route('/managefiles')
 def managefiles():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT filename, folder FROM files')
+    cursor.execute('SELECT file_name, folder FROM files')
     files = cursor.fetchall()
     return render_template('managefiles.html', files=files)
 
