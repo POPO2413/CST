@@ -172,9 +172,68 @@ def studentindex():
 
 @app.route('/teacherindex')
 def teacherindex():
-    if 'loggedin' not in session or session['role'] != 'Teacher':
-        return redirect(url_for('login'))
-    return render_template('teacherindex.html')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT file_name, folder FROM files')
+    files = cursor.fetchall()
+    return render_template('teacherindex.html', files=files)
+
+@app.route('/search_files', methods=['GET'])
+def search_files():
+    file_name = request.args.get('file_name', '')
+    folder = request.args.get('folder', '')
+    
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query = "SELECT file_name, folder FROM files WHERE 1=1"
+    params = []
+    
+    if file_name:
+        query += " AND file_name LIKE %s"
+        params.append(f"%{file_name}%")
+        
+    if folder:
+        query += " AND folder LIKE %s"
+        params.append(f"%{folder}%")
+        
+    cursor.execute(query, params)
+    files = cursor.fetchall()
+    return render_template('teacherindex.html', files=files)
+
+# @app.route('/search_files', methods=['GET'])
+# def search_files():
+#     query = request.args.get('filename', '')
+#     search_directory = './files'  # Adjust the path to where your files are stored
+#     matching_files = []
+
+#     # Search for matching files in the directory
+#     for root, dirs, files in os.walk(search_directory):
+#         for filename in files:
+#             if query.lower() in filename.lower():
+#                 matching_files.append(os.path.join(root, filename))
+
+#     if matching_files:
+#         results = '<br>'.join(matching_files)
+#     else:
+#         results = "No files found."
+
+#     return f"Results for '{query}':<br>{results}"
+
+@app.route('/upload_file', methods=['POST'])
+def upload_file():
+    file = request.files['file']
+    file_name = request.form['file_name']
+    folder = request.form['folder']
+    
+    if file and file.filename.endswith('.pdf'):
+        file_path = os.path.join('uploads', folder, file_name + '.pdf')
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        file.save(file_path)
+        
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('INSERT INTO files (file_name, folder) VALUES (%s, %s)', (file_name, folder))
+        mysql.connection.commit()
+        
+        return redirect(url_for('teacherindex'))
+    return "File upload failed", 400
 
 @app.route('/logout')
 def logout():
@@ -207,26 +266,6 @@ def register():
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
-
-
-@app.route('/search_files', methods=['GET'])
-def search_files():
-    query = request.args.get('filename', '')
-    search_directory = './files'  # Adjust the path to where your files are stored
-    matching_files = []
-
-    # Search for matching files in the directory
-    for root, dirs, files in os.walk(search_directory):
-        for filename in files:
-            if query.lower() in filename.lower():
-                matching_files.append(os.path.join(root, filename))
-
-    if matching_files:
-        results = '<br>'.join(matching_files)
-    else:
-        results = "No files found."
-
-    return f"Results for '{query}':<br>{results}"
 
 
 @app.route('/api/users', methods=['GET'])
