@@ -88,7 +88,7 @@ def change_role():
     try:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         for username in user_ids:
-            cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role, username))
+            cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role.capitalize(), username))
         mysql.connection.commit()
         return jsonify({'message': 'Role updated successfully'}), 200
     except Exception as e:
