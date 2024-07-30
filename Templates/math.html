@@ -10,34 +10,44 @@
         <h1>IB Math Topics</h1>
         <div class="gallery">
             <div class="pdf-item">
-                <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic1.jpg') }}" alt="Topic 1">
-                    <p>Topic 1: Number & Algebra</p>
-                </a>
             </div>
-            <div class="pdf-item">
-                <a href="{{ url_for('static', filename='pdfs/topic2.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic2.jpg') }}" alt="Topic 2">
-                    <p>Topic 2: Functions</p>
-                </a>
+            <div class="search-container">
+                <form action="{{ url_for('search_files') }}" method="get">
+                    <input type="search" name="query" placeholder="Search files...">
+                    <button type="submit">Search</button>
+                </form>
             </div>
-            <div class="pdf-item">
-                <a href="{{ url_for('static', filename='pdfs/topic3.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic3.jpg') }}" alt="Topic 3">
-                    <p>Topic 3: Geometry & Trigonometry</p>
-                </a>
-            </div>
-            <div class="pdf-item">
-                <a href="{{ url_for('static', filename='pdfs/topic4.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic4.jpg') }}" alt="Topic 4">
-                    <p>Topic 4: Statistics & Probability</p>
-                </a>
-            </div>
-            <div class="pdf-item">
-                <a href="{{ url_for('static', filename='pdfs/topic5.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic5.png') }}" alt="Topic 5">
-                    <p>Topic 5: Calculus</p>
-                </a>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic1.jpg') }}" alt="Topic 1: Number & Algebra">
+                        <h3>Topic 1: Number & Algebra</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/topic2.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic2.jpg') }}" alt="Topic 2: Functions">
+                        <h3>Topic 2: Functions</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/topic3.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic3.jpg') }}" alt="Topic 3: Geometry & Trigonometry">
+                        <h3>Topic 3: Geometry & Trigonometry</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/topic4.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic4.jpg') }}" alt="Topic 4: Statistics & Probability">
+                        <h3>Topic 4: Statistics & Probability</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/topic5.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic5.jpg') }}" alt="Topic 5: Calculus">
+                        <h3>Topic 5: Calculus</h3>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
