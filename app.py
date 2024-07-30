@@ -110,6 +110,35 @@ def managefiles():
     files = cursor.fetchall()
     return render_template('managefiles.html', files=files)
 
+@app.route('/rename_file', methods=['POST'])
+def rename_file():
+    data = request.get_json()
+    old_file_name = data.get('old_file_name')
+    new_file_name = data.get('new_file_name')
+
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, old_file_name))
+        mysql.connection.commit()
+        return jsonify({'message': 'File renamed successfully'}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'message': 'Failed to rename file', 'error': str(e)}), 500
+
+@app.route('/delete_file', methods=['POST'])
+def delete_file():
+    data = request.get_json()
+    file_name = data.get('file_name')
+
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
+        mysql.connection.commit()
+        return jsonify({'message': 'File deleted successfully'}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
+
 
 # @app.route('/user_activity', methods=['GET'])
 # def user_activity():
