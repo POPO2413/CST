@@ -33,10 +33,13 @@
                         <option value="teacher">Teacher</option>
                         <option value="student">Student</option>
                     </select>
-                    <button class="btn">Change</button>
-                    <input type="search" id="search-user" name="search" placeholder="Search users">
+                    <button class="btn" onclick="changeRole()">Change</button>
+                    <form id="search-form" onsubmit="searchUsers(event)">
+                        <input type="search" id="search-user" name="search" placeholder="Search users by username">
+                        <button type="submit">Search</button>
+                    </form>
                 </div>
-                <table class="file-table">
+                <table class="file-table" id="user-table">
                     <thead>
                         <tr>
                             <th class="checkbox-column"><input type="checkbox" onclick="toggleAll(this)"></th>
@@ -45,10 +48,10 @@
                             <th>Email</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="user-tbody">
                         {% for user in users %}
                         <tr>
-                            <td class="checkbox-column"><input type="checkbox" name="user"></td>
+                            <td class="checkbox-column"><input type="checkbox" name="user" value="{{ user.Username }}"></td>
                             <td>{{ user.Role }}</td>
                             <td>{{ user.Username }}</td>
                             <td>{{ user.email }}</td>
@@ -62,8 +65,9 @@
     <script>
         function toggleAll(source) {
             checkboxes = document.getElementsByName('user');
-            for (var i in checkboxes)
+            for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].checked = source.checked;
+            }
         }
 
         document.querySelector('.menu-btn').addEventListener('click', function() {
@@ -71,6 +75,56 @@
             document.querySelector('#sidebar').classList.toggle('active');
             document.querySelector('.content').classList.toggle('active');
         });
+
+        function changeRole() {
+            const selectedRole = document.getElementById('role').value;
+            const selectedUsers = [];
+            const checkboxes = document.getElementsByName('user');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    selectedUsers.push(checkboxes[i].value);
+                }
+            }
+
+            fetch('/change_role', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    role: selectedRole,
+                    users: selectedUsers
+                })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to change role');
+                }
+            });
+        }
+
+        function searchUsers(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-user').value;
+
+            fetch(`/manageusers?search=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('user-tbody');
+                    tbody.innerHTML = '';
+                    data.users.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="checkbox-column"><input type="checkbox" name="user" value="${user.Username}"></td>
+                            <td>${user.Role}</td>
+                            <td>${user.Username}</td>
+                            <td>${user.Email}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -66,10 +66,42 @@ def user_activity():
 
 @app.route('/manageusers')
 def manageusers():
+    query = request.args.get('search', '')
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT Username, email, Role FROM data')
+    if query:
+        cursor.execute('SELECT Username, email, Role FROM data WHERE Username LIKE %s', 
+                       ('%' + query + '%',))
+    else:
+        cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
+    
+    if request.is_json:
+        return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
+
+@app.route('/change_role', methods=['POST'])
+def change_role():
+    data = request.get_json()
+    new_role = data.get('role')
+    user_ids = data.get('users')
+
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        for username in user_ids:
+            cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role, username))
+        mysql.connection.commit()
+        return jsonify({'message': 'Role updated successfully'}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'message': 'Failed to update role', 'error': str(e)}), 500
+
+# @app.route('/change_role/<username>', methods=['POST'])
+# def change_role(username):
+#     new_role = request.form['new_role']
+#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
+#     mysql.connection.commit()
+#     return redirect(url_for('manageusers'))
 
 @app.route('/managefiles')
 def managefiles():
@@ -77,6 +109,35 @@ def managefiles():
     cursor.execute('SELECT file_name, folder FROM files')
     files = cursor.fetchall()
     return render_template('managefiles.html', files=files)
+
+@app.route('/rename_file', methods=['POST'])
+def rename_file():
+    data = request.get_json()
+    old_file_name = data.get('old_file_name')
+    new_file_name = data.get('new_file_name')
+
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, old_file_name))
+        mysql.connection.commit()
+        return jsonify({'message': 'File renamed successfully'}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'message': 'Failed to rename file', 'error': str(e)}), 500
+
+@app.route('/delete_file', methods=['POST'])
+def delete_file():
+    data = request.get_json()
+    file_name = data.get('file_name')
+
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
+        mysql.connection.commit()
+        return jsonify({'message': 'File deleted successfully'}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
 
 
 # @app.route('/user_activity', methods=['GET'])
@@ -175,15 +236,6 @@ def api_users():
     users = cursor.fetchall()
     return {"users": users}
 
-@app.route('/change_role/<username>', methods=['POST'])
-def change_role(username):
-    new_role = request.form['new_role']
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
-    mysql.connection.commit()
-    return redirect(url_for('manageusers'))
-
-
 # Routes for each subject
 @app.route('/math')
 def math():
@@ -200,6 +252,7 @@ def econs():
 @app.route('/lit')
 def lit():
     return render_template('lit.html')
+
 
 
 if __name__ == '__main__':

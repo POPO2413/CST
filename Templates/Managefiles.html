@@ -5,6 +5,7 @@
     <title>Manage Files</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='adminstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
 </head>
 <body>
     <div class="wrapper">
@@ -27,9 +28,9 @@
             <h1>Manage Files</h1>
             <div class="file-table-container">
                 <div class="table-actions">
-                    <input type="search" id="search-file" name="search" placeholder="Search file">
+                    <input type="search" id="search-file" name="search" placeholder="Search file" class="textbox" onkeyup="searchFiles()">
                 </div>
-                <table class="file-table">
+                <table class="file-table" id="file-table">
                     <thead>
                         <tr>
                             <th>File</th>
@@ -37,19 +38,19 @@
                             <th class="actions-column">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="file-tbody">
                         {% for file in files %}
                         <tr>
                             <td>{{ file.file_name }}</td>
                             <td>{{ file.folder }}</td>
                             <td class="actions-column">
                                 <div class="dropdown">
-                                    <button class="dropbtn">-----</button>
+                                    <button class="textbox">Actions</button>
                                     <div class="dropdown-content">
-                                      <a href="#">Rename</a>
-                                      <a href="#">Delete</a>
+                                      <a href="#" onclick="renameFile('{{ file.file_name }}')">Rename</a>
+                                      <a href="#" onclick="deleteFile('{{ file.file_name }}')">Delete</a>
                                     </div>
-                                  </div>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -65,14 +66,57 @@
             document.querySelector('.content').classList.toggle('active');
         });
 
+        function searchFiles() {
+            const input = document.getElementById('search-file').value.toLowerCase();
+            const table = document.getElementById('file-table');
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {
+                const fileNameCell = rows[i].getElementsByTagName('td')[0];
+                const fileName = fileNameCell.innerText.toLowerCase().replace('.pdf', '');
+                rows[i].style.display = fileName.includes(input) ? '' : 'none';
+            }
+        }
+
         function renameFile(fileName) {
-            // Implement rename file logic here
-            console.log('Renaming file:', fileName);
+            const newFileName = prompt("Enter new name for the file:", fileName);
+            if (newFileName && newFileName !== fileName) {
+                fetch('/rename_file', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        old_file_name: fileName,
+                        new_file_name: newFileName
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to rename file');
+                    }
+                });
+            }
         }
 
         function deleteFile(fileName) {
-            // Implement delete file logic here
-            console.log('Deleting file:', fileName);
+            if (confirm("Are you sure you want to delete this file?")) {
+                fetch('/delete_file', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        file_name: fileName
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete file');
+                    }
+                });
+            }
         }
     </script>
 </body>
