@@ -2,29 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IB Math AA HL Topics</title>
+    <title>IB Math Topics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
 </head>
 <body>
     <div class="wrapper">
-        <h1>IB Math AA HL Topics</h1>
+        <h1>IB Math Topics</h1>
         <div class="gallery">
             <div class="pdf-item">
                 <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic1.png') }}" alt="Topic 1">
-                    <p>Topic 1: Algebra</p>
+                    <img src="{{ url_for('static', filename='thumbnails/topic1.jpg') }}" alt="Topic 1">
+                    <p>Topic 1: Number & Algebra</p>
                 </a>
             </div>
             <div class="pdf-item">
                 <a href="{{ url_for('static', filename='pdfs/topic2.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic2.png') }}" alt="Topic 2">
+                    <img src="{{ url_for('static', filename='thumbnails/topic2.jpg') }}" alt="Topic 2">
                     <p>Topic 2: Functions</p>
                 </a>
             </div>
             <div class="pdf-item">
                 <a href="{{ url_for('static', filename='pdfs/topic3.pdf') }}" download>
-                    <img src="{{ url_for('static', filename='thumbnails/topic3.png') }}" alt="Topic 3">
-                    <p>Topic 3: Trigonometry</p>
+                    <img src="{{ url_for('static', filename='thumbnails/topic3.jpg') }}" alt="Topic 3">
+                    <p>Topic 3: Geometry & Trigonometry</p>
+                </a>
+            </div>
+            <div class="pdf-item">
+                <a href="{{ url_for('static', filename='pdfs/topic4.pdf') }}" download>
+                    <img src="{{ url_for('static', filename='thumbnails/topic4.jpg') }}" alt="Topic 4">
+                    <p>Topic 4: Statistics & Probability</p>
+                </a>
+            </div>
+            <div class="pdf-item">
+                <a href="{{ url_for('static', filename='pdfs/topic5.pdf') }}" download>
+                    <img src="{{ url_for('static', filename='thumbnails/topic5.png') }}" alt="Topic 5">
+                    <p>Topic 5: Calculus</p>
                 </a>
             </div>
         </div>
