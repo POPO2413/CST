@@ -2,78 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Math Topics - IB Math AA HL</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <title>IB Math AA HL Topics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
 </head>
 <body>
-        <div class="content">
-            <h1>Math Topics - IB Math </h1>
-            <div class="description">
-                Welcome to the IB Math resources page. Here you'll find all the topics covered in the curriculum, organized into folders. Click on any topic to explore the resources available.
+    <div class="wrapper">
+        <h1>IB Math AA HL Topics</h1>
+        <div class="gallery">
+            <div class="pdf-item">
+                <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
+                    <img src="{{ url_for('static', filename='thumbnails/topic1.png') }}" alt="Topic 1">
+                    <p>Topic 1: Algebra</p>
+                </a>
             </div>
-            <div class="folder-container">
-                <div class="folder">
-                    <i class="fas fa-folder"></i>
-                    <a href="{{ url_for('topic', topic='algebra') }}">Algebra</a>
-                    <i class="fas fa-ellipsis-v" onclick="toggleDropdown('dropdown-algebra')"></i>
-                    <div id="dropdown-algebra" class="dropdown">
-                        <a href="#" onclick="viewFiles('algebra')">View Files</a>
-                        <a href="#" onclick="uploadFile('algebra')">Upload File</a>
-                    </div>
-                </div>
-                <div class="folder">
-                    <i class="fas fa-folder"></i>
-                    <a href="{{ url_for('topic', topic='calculus') }}">Calculus</a>
-                    <i class="fas fa-ellipsis-v" onclick="toggleDropdown('dropdown-calculus')"></i>
-                    <div id="dropdown-calculus" class="dropdown">
-                        <a href="#" onclick="viewFiles('calculus')">View Files</a>
-                        <a href="#" onclick="uploadFile('calculus')">Upload File</a>
-                    </div>
-                </div>
-                <div class="folder">
-                    <i class="fas fa-folder"></i>
-                    <a href="{{ url_for('topic', topic='functions') }}">Functions</a>
-                    <i class="fas fa-ellipsis-v" onclick="toggleDropdown('dropdown-functions')"></i>
-                    <div id="dropdown-functions" class="dropdown">
-                        <a href="#" onclick="viewFiles('functions')">View Files</a>
-                        <a href="#" onclick="uploadFile('functions')">Upload File</a>
-                    </div>
-                </div>
-                <div class="folder">
-                    <i class="fas fa-folder"></i>
-                    <a href="{{ url_for('topic', topic='statistics') }}">Statistics</a>
-                    <i class="fas fa-ellipsis-v" onclick="toggleDropdown('dropdown-statistics')"></i>
-                    <div id="dropdown-statistics" class="dropdown">
-                        <a href="#" onclick="viewFiles('statistics')">View Files</a>
-                        <a href="#" onclick="uploadFile('statistics')">Upload File</a>
-                    </div>
-                </div>
-                <!-- Add more folders as needed -->
+            <div class="pdf-item">
+                <a href="{{ url_for('static', filename='pdfs/topic2.pdf') }}" download>
+                    <img src="{{ url_for('static', filename='thumbnails/topic2.png') }}" alt="Topic 2">
+                    <p>Topic 2: Functions</p>
+                </a>
+            </div>
+            <div class="pdf-item">
+                <a href="{{ url_for('static', filename='pdfs/topic3.pdf') }}" download>
+                    <img src="{{ url_for('static', filename='thumbnails/topic3.png') }}" alt="Topic 3">
+                    <p>Topic 3: Trigonometry</p>
+                </a>
             </div>
         </div>
     </div>
-    <script>
-        document.querySelector('.menu-btn').addEventListener('click', function() {
-            this.classList.toggle('active');
-            document.querySelector('#sidebar').classList.toggle('active');
-            document.querySelector('.content').classList.toggle('active');
-        });
-
-        function viewFiles(topic) {
-            // Implement view files logic
-            console.log('Viewing files for:', topic);
-        }
-
-        function uploadFile(topic) {
-            // Implement upload file logic
-            console.log('Uploading file to:', topic);
-        }
-
-        function toggleDropdown(id) {
-            const dropdown = document.getElementById(id);
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        }
-    </script>
 </body>
 </html>

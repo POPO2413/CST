@@ -40,16 +40,16 @@
                     <tbody>
                         {% for file in files %}
                         <tr>
-                            <td>{{ file.filename }}</td>
+                            <td>{{ file.file_name }}</td>
                             <td>{{ file.folder }}</td>
                             <td class="actions-column">
                                 <div class="dropdown">
-                                    <span class="ellipsis">•••</span>
+                                    <button class="dropbtn">-----</button>
                                     <div class="dropdown-content">
-                                        <a href="#" onclick="renameFile('{{ file.filename }}')">Rename</a>
-                                        <a href="#" onclick="deleteFile('{{ file.filename }}')">Delete</a>
+                                      <a href="#">Rename</a>
+                                      <a href="#">Delete</a>
                                     </div>
-                                </div>
+                                  </div>
                             </td>
                         </tr>
                         {% endfor %}

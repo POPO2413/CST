@@ -1,8 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <title>IB Science Topics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
+<body>
+    <h1>IB Science Topics</h1>
+    <div class="topics-container">
+        <div class="topic">
+            <a href="{{ url_for('Biology') }}">
+                <img src="{{ url_for('static', filename='images/biology.png') }}" alt="Biology">
+                <p>Biology</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('Physics') }}">
+                <img src="{{ url_for('static', filename='images/physics.png') }}" alt="Physics">
+                <p>Physics</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('Chemistry') }}">
+                <img src="{{ url_for('static', filename='images/chemistry.png') }}" alt="Chemistry">
+                <p>Chemistry</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

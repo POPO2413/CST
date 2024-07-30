@@ -1,8 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <title>IB Literature Topics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
+<body>
+    <h1>IB Literature Topics</h1>
+    <div class="topics-container">
+        <div class="topic">
+            <a href="{{ url_for('part1') }}">
+                <img src="{{ url_for('static', filename='images/part1.png') }}" alt="Part 1">
+                <p>Part 1: Readers, Writers and Text</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('part2') }}">
+                <img src="{{ url_for('static', filename='images/part2.png') }}" alt="Part 2">
+                <p>Part 2: Time and Space</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('part3') }}">
+                <img src="{{ url_for('static', filename='images/part3.png') }}" alt="Part 3">
+                <p>Part 3: Literary genres</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

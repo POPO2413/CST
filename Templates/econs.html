@@ -1,8 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <title>IB Economics Topics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
+<body>
+    <h1>IB Economics Topics</h1>
+    <div class="topics-container">
+        <div class="topic">
+            <a href="{{ url_for('unit1') }}">
+                <img src="{{ url_for('static', filename='images/unit1.png') }}" alt="Unit 1">
+                <p>Unit 1: Introduction to Economics</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('unit2') }}">
+                <img src="{{ url_for('static', filename='images/unit2.png') }}" alt="Unit 2">
+                <p>Unit 2: Microeconomics</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('unit3') }}">
+                <img src="{{ url_for('static', filename='images/unit3.png') }}" alt="Unit 3">
+                <p>Unit 3: Macroeconomics</p>
+            </a>
+        </div>
+        <div class="topic">
+            <a href="{{ url_for('unit4') }}">
+                <img src="{{ url_for('static', filename='images/unit4.png') }}" alt="Unit 4">
+                <p>Unit 4: Global Economics</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
