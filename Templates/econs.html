@@ -2,35 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IB Economics Topics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
+    <title>IB Economics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
 </head>
 <body>
-    <h1>IB Economics Topics</h1>
-    <div class="topics-container">
-        <div class="topic">
-            <a href="{{ url_for('unit1') }}">
-                <img src="{{ url_for('static', filename='images/unit1.png') }}" alt="Unit 1">
-                <p>Unit 1: Introduction to Economics</p>
-            </a>
+    <div class="wrapper">
+        <h1>IB Economics</h1>
+        <div class="search-container">
+            <form action="{{ url_for('search_files') }}" method="get">
+                <input type="search" name="query" placeholder="Search files...">
+                <button type="submit">Search</button>
+            </form>
         </div>
-        <div class="topic">
-            <a href="{{ url_for('unit2') }}">
-                <img src="{{ url_for('static', filename='images/unit2.png') }}" alt="Unit 2">
-                <p>Unit 2: Microeconomics</p>
-            </a>
-        </div>
-        <div class="topic">
-            <a href="{{ url_for('unit3') }}">
-                <img src="{{ url_for('static', filename='images/unit3.png') }}" alt="Unit 3">
-                <p>Unit 3: Macroeconomics</p>
-            </a>
-        </div>
-        <div class="topic">
-            <a href="{{ url_for('unit4') }}">
-                <img src="{{ url_for('static', filename='images/unit4.png') }}" alt="Unit 4">
-                <p>Unit 4: Global Economics</p>
-            </a>
+        <div class="gallery">
+            <div class="grid-container">
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Intro.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic1.jpg') }}" alt="Unit 1: Introduction to Economics">
+                        <h3>Unit 1: Introduction to Economics</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Microeconomics.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic2.jpg') }}" alt="Unit 2: Microeconomics">
+                        <h3>Unit 2: Microeconomics</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Macroeconomics.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic3.jpg') }}" alt="Unit 3: Macroeconomics">
+                        <h3>Unit 3: Macroeconomics</h3>
+                    </a>
+                </div>    
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Globaleconomics.pdf') }}" download>
+                         <img src="{{ url_for('static', filename='images/Topic5.jpg') }}" alt="Unit 4: Global Economics">
+                        <h3>Unit 4: Global Economics</h3>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>

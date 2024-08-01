@@ -2,29 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IB Literature Topics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
+    <title>IB Language & Literature</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
 </head>
 <body>
-    <h1>IB Literature Topics</h1>
-    <div class="topics-container">
-        <div class="topic">
-            <a href="{{ url_for('part1') }}">
-                <img src="{{ url_for('static', filename='images/part1.png') }}" alt="Part 1">
-                <p>Part 1: Readers, Writers and Text</p>
-            </a>
+    <div class="wrapper">
+        <h1>IB Language & Literature</h1>
+        <div class="search-container">
+            <form action="{{ url_for('search_files') }}" method="get">
+                <input type="search" name="query" placeholder="Search files...">
+                <button type="submit">Search</button>
+            </form>
         </div>
-        <div class="topic">
-            <a href="{{ url_for('part2') }}">
-                <img src="{{ url_for('static', filename='images/part2.png') }}" alt="Part 2">
-                <p>Part 2: Time and Space</p>
-            </a>
-        </div>
-        <div class="topic">
-            <a href="{{ url_for('part3') }}">
-                <img src="{{ url_for('static', filename='images/part3.png') }}" alt="Part 3">
-                <p>Part 3: Literary genres</p>
-            </a>
+        <div class="gallery">
+            <div class="grid-container">
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Lit1.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Lit1.jpg') }}" alt="Part 1: Readers, Writers and Text">
+                        <h3>Part 1: Readers, Writers and Text</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Lit2.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Lit2.jpg') }}" alt="Part 2: Time and Space">
+                        <h3>Part 2: Time and Space</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Lit3.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Lit3.jpg') }}" alt="Part 3: Literary genres">
+                        <h3>Part 3: Literary genres</h3>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>

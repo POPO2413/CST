@@ -2,29 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IB Science Topics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
+    <title>IB Science</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
 </head>
 <body>
-    <h1>IB Science Topics</h1>
-    <div class="topics-container">
-        <div class="topic">
-            <a href="{{ url_for('Biology') }}">
-                <img src="{{ url_for('static', filename='images/biology.png') }}" alt="Biology">
-                <p>Biology</p>
-            </a>
+    <div class="wrapper">
+        <h1>IB Science</h1>
+        <div class="search-container">
+            <form action="{{ url_for('search_files') }}" method="get">
+                <input type="search" name="query" placeholder="Search files...">
+                <button type="submit">Search</button>
+            </form>
         </div>
-        <div class="topic">
-            <a href="{{ url_for('Physics') }}">
-                <img src="{{ url_for('static', filename='images/physics.png') }}" alt="Physics">
-                <p>Physics</p>
-            </a>
-        </div>
-        <div class="topic">
-            <a href="{{ url_for('Chemistry') }}">
-                <img src="{{ url_for('static', filename='images/chemistry.png') }}" alt="Chemistry">
-                <p>Chemistry</p>
-            </a>
+        <div class="gallery">
+            <div class="grid-container">
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Chemistry.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic1.jpg') }}" alt="Chemistry">
+                        <h3>Chemistry</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Physics.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic2.jpg') }}" alt="Biology">
+                        <h3>Biology</h3>
+                    </a>
+                </div>
+                <div class="grid-item">
+                    <a href="{{ url_for('static', filename='pdfs/Biology.pdf') }}" download>
+                        <img src="{{ url_for('static', filename='images/Topic3.jpg') }}" alt="Physics">
+                        <h3>Physics</h3>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
