@@ -59,8 +59,13 @@ def adminindex():
 
 @app.route('/user_activity')
 def user_activity():
+    query = request.args.get('search', '')
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT Username, modified, last_seen FROM data')
+    if query:
+        cursor.execute('SELECT Username, modified, last_seen FROM data WHERE Username LIKE %s', 
+                       ('%' + query + '%',))
+    else:
+        cursor.execute('SELECT Username, modified, last_seen FROM data')
     activities = cursor.fetchall()
     return render_template('user_activity.html', activities=activities)
 
@@ -78,6 +83,7 @@ def manageusers():
     if request.is_json:
         return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
+
 
 @app.route('/change_role', methods=['POST'])
 def change_role():

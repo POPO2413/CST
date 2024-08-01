@@ -1,3 +1,4 @@
+<!-- user_activity.html -->
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -27,7 +28,10 @@
             <h1>User Activity</h1>
             <div class="file-table-container">
                 <div class="table-actions">
-                    <input type="search" id="search-user" name="search" placeholder="Search users">
+                    <form id="search-form" method="GET" action="{{ url_for('user_activity') }}">
+                        <input type="search" id="search-user" name="search" placeholder="Search users">
+                        <button type="submit">Search</button>
+                    </form>
                 </div>
                 <table class="file-table">
                     <thead>
