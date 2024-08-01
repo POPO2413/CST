@@ -82,6 +82,7 @@ def register():
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
 
+# =============================ADMIN INDEX=============================
 @app.route('/adminindex')
 def adminindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -168,7 +169,10 @@ def delete_file():
     except Exception as e:
         mysql.connection.rollback()
         return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
-
+    
+# =============================END OF ADMIN INDEX=============================
+    
+# =============================TEACHER INDEX=============================
 @app.route('/teacherindex')
 def teacherindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -214,6 +218,8 @@ def upload_file():
         
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
+# =============================END OF TEACHER INDEX=============================
+
 
 @app.route('/studentindex')
 def studentindex():
