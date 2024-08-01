@@ -8,15 +8,13 @@
 <body>
     <div class="wrapper">
         <h1>IB Math Topics</h1>
+        <div class="search-container">
+            <form action="{{ url_for('search_files') }}" method="get">
+                <input type="search" name="query" placeholder="Search files...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
         <div class="gallery">
-            <div class="pdf-item">
-            </div>
-            <div class="search-container">
-                <form action="{{ url_for('search_files') }}" method="get">
-                    <input type="search" name="query" placeholder="Search files...">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
             <div class="grid-container">
                 <div class="grid-item">
                     <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
