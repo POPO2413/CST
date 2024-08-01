@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='teacherstyle.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -18,18 +19,7 @@
             </form>
         </div>
         <div class="upload-container">
-            <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept="application/pdf" required>
-                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
-                <select name="folder" required class="textbox">
-                    <option value="" disabled selected>Select folder</option>
-                    <option value="Math">Math</option>
-                    <option value="Science">Science</option>
-                    <option value="Economics">Economics</option>
-                    <option value="Literature">Literature</option>
-                </select>
-                <button type="submit" class="btn">Upload File</button>
-            </form>
+            <button id="open-upload-popup" class="btn">Upload File</button>
         </div>
         <div class="file-table-container">
             <table class="file-table" id="file-table">
@@ -59,5 +49,59 @@
             <a href="{{ url_for('logout') }}" class="btn">Logout</a>
         </form>
     </div>
+
+    <!-- Popup Form -->
+    <div class="popup" id="upload-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-upload-popup">&times;</span>
+            <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="application/pdf" required>
+                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
+                <select name="folder" required class="textbox">
+                    <option value="" disabled selected>Select folder</option>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Literature">Literature</option>
+                </select>
+                <button type="submit" class="btn">Upload File</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('open-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'none';
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('{{ url_for('upload_file') }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tbody = document.getElementById('file-tbody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `<td>${data.file.file_name}</td><td>${data.file.folder}</td>`;
+                    tbody.appendChild(newRow);
+                    document.getElementById('upload-popup').style.display = 'none';
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('File upload failed');
+            });
+        });
+    </script>
 </body>
 </html>

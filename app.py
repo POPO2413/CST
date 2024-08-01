@@ -57,14 +57,12 @@ def adminindex():
     users = cursor.fetchall()
     return render_template('adminindex.html', users=users)
 
-
-# Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
-
 @app.route('/user_activity')
 def user_activity():
     query = request.args.get('search', '').lower()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT Username, modified, last_seen FROM data')
+    # Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
     activities = cursor.fetchall()
     
     if query:
@@ -77,6 +75,7 @@ def manageusers():
     query = request.args.get('search', '').lower()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT Username, email, Role FROM data')
+    # Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
     users = cursor.fetchall()
     
     if query:
@@ -101,14 +100,6 @@ def change_role():
     except Exception as e:
         mysql.connection.rollback()
         return jsonify({'message': 'Failed to update role', 'error': str(e)}), 500
-
-# @app.route('/change_role/<username>', methods=['POST'])
-# def change_role(username):
-#     new_role = request.form['new_role']
-#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#     cursor.execute("UPDATE Data SET Role = %s WHERE Username = %s", (new_role, username))
-#     mysql.connection.commit()
-#     return redirect(url_for('manageusers'))
 
 @app.route('/managefiles')
 def managefiles():
@@ -146,37 +137,6 @@ def delete_file():
         mysql.connection.rollback()
         return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
 
-
-# @app.route('/user_activity', methods=['GET'])
-# def user_activity():
-#     query = request.args.get('query')
-#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#     if query:
-#         cursor.execute("SELECT * FROM Data WHERE Username LIKE %s", ('%' + query + '%',))
-#     else:
-#         cursor.execute("SELECT * FROM Data")
-#     users = cursor.fetchall()
-#     return render_template('user_activity.html', users=users, query=query)
-
-# @app.route('/managefiles')
-# def managefiles():
-#     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-#     # change the SQL query accordingly
-#     cursor.execute('SELECT filename, folder FROM files') 
-#     files = cursor.fetchall()
-#     return render_template('managefiles.html', files=files)
-
-
-# @app.route('/manageusers')
-# def manageusers():
-#     return render_template('manageusers.html')
-
-
-@app.route('/studentindex')
-def studentindex():
-
-    return render_template('studentindex.html')
-
 @app.route('/teacherindex')
 def teacherindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -205,25 +165,6 @@ def search_files():
     files = cursor.fetchall()
     return render_template('teacherindex.html', files=files)
 
-# @app.route('/search_files', methods=['GET'])
-# def search_files():
-#     query = request.args.get('filename', '')
-#     search_directory = './files'  # Adjust the path to where your files are stored
-#     matching_files = []
-
-#     # Search for matching files in the directory
-#     for root, dirs, files in os.walk(search_directory):
-#         for filename in files:
-#             if query.lower() in filename.lower():
-#                 matching_files.append(os.path.join(root, filename))
-
-#     if matching_files:
-#         results = '<br>'.join(matching_files)
-#     else:
-#         results = "No files found."
-
-#     return f"Results for '{query}':<br>{results}"
-
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
     file = request.files['file']
@@ -239,8 +180,8 @@ def upload_file():
         cursor.execute('INSERT INTO files (file_name, folder) VALUES (%s, %s)', (file_name, folder))
         mysql.connection.commit()
         
-        return redirect(url_for('teacherindex'))
-    return "File upload failed", 400
+        return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
+    return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
 @app.route('/logout')
 def logout():
@@ -274,7 +215,6 @@ def register():
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
 
-
 @app.route('/api/users', methods=['GET'])
 def api_users():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -299,13 +239,7 @@ def econs():
 def lit():
     return render_template('lit.html')
 
-
-
 if __name__ == '__main__':
     with app.test_request_context():
         print(app.url_map)
     app.run(debug=True)
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
