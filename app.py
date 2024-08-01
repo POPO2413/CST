@@ -50,6 +50,38 @@ def login():
             msg = 'Incorrect Username / Password !'
     return render_template('login.html', msg=msg)
 
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('Username', None)
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'Username' in request.form and 'Password' in request.form and 'Email' in request.form:
+        username = request.form['Username']
+        password = request.form['Password']
+        email = request.form['Email']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM data WHERE Username = %s', (username,))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists!'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address!'
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            msg = 'Username must contain only characters and numbers!'
+        elif not username or not password or not email:
+            msg = 'Please fill out the form!'
+        else:
+            cursor.execute('INSERT INTO data VALUES (NULL, %s, %s, %s)', (username, password, email,))
+            mysql.connection.commit()
+            msg = 'You have successfully registered!'
+    elif request.method == 'POST':
+        msg = 'Please fill out the form!'
+    return render_template('register.html', msg=msg)
+
 @app.route('/adminindex')
 def adminindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -183,37 +215,9 @@ def upload_file():
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
-@app.route('/logout')
-def logout():
-    session.pop('loggedin', None)
-    session.pop('Username', None)
-    return redirect(url_for('login'))
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    msg = ''
-    if request.method == 'POST' and 'Username' in request.form and 'Password' in request.form and 'Email' in request.form:
-        username = request.form['Username']
-        password = request.form['Password']
-        email = request.form['Email']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM data WHERE Username = %s', (username,))
-        account = cursor.fetchone()
-        if account:
-            msg = 'Account already exists!'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers!'
-        elif not username or not password or not email:
-            msg = 'Please fill out the form!'
-        else:
-            cursor.execute('INSERT INTO data VALUES (NULL, %s, %s, %s)', (username, password, email,))
-            mysql.connection.commit()
-            msg = 'You have successfully registered!'
-    elif request.method == 'POST':
-        msg = 'Please fill out the form!'
-    return render_template('register.html', msg=msg)
+@app.route('/studentindex')
+def studentindex():
+    return render_template('studentindex.html')
 
 @app.route('/api/users', methods=['GET'])
 def api_users():
