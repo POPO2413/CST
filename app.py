@@ -57,33 +57,34 @@ def adminindex():
     users = cursor.fetchall()
     return render_template('adminindex.html', users=users)
 
+
+# Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
+
 @app.route('/user_activity')
 def user_activity():
-    query = request.args.get('search', '')
+    query = request.args.get('search', '').lower()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if query:
-        cursor.execute('SELECT Username, modified, last_seen FROM data WHERE Username LIKE %s', 
-                       ('%' + query + '%',))
-    else:
-        cursor.execute('SELECT Username, modified, last_seen FROM data')
+    cursor.execute('SELECT Username, modified, last_seen FROM data')
     activities = cursor.fetchall()
+    
+    if query:
+        activities = [activity for activity in activities if query in activity['Username'].lower()]
+    
     return render_template('user_activity.html', activities=activities)
 
 @app.route('/manageusers')
 def manageusers():
-    query = request.args.get('search', '')
+    query = request.args.get('search', '').lower()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if query:
-        cursor.execute('SELECT Username, email, Role FROM data WHERE Username LIKE %s', 
-                       ('%' + query + '%',))
-    else:
-        cursor.execute('SELECT Username, email, Role FROM data')
+    cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
+    
+    if query:
+        users = [user for user in users if query in user['Username'].lower()]
     
     if request.is_json:
         return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
-
 
 @app.route('/change_role', methods=['POST'])
 def change_role():
