@@ -172,7 +172,7 @@ def delete_file():
     
 # =============================END OF ADMIN INDEX=============================
     
-# =============================TEACHER INDEX=============================
+# =============================TEACHER INDEX (search_file is for both teacher&student)=============================
 @app.route('/teacherindex')
 def teacherindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -199,7 +199,12 @@ def search_files():
         
     cursor.execute(query, params)
     files = cursor.fetchall()
-    return render_template('teacherindex.html', files=files)
+    
+    if 'teacher' in session['role']:
+        return render_template('teacherindex.html', files=files)
+    else:
+        return render_template('studentindex.html', files=files)
+
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():

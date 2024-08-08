@@ -10,9 +10,10 @@
         <h1>Welcome, {{ session.username }}!</h1>
     </div>
     <div class="search-container">
-        <form action="{{ url_for('search_files') }}" method="get">
-            <input type="search" name="query" placeholder="Search files...">
-            <button type="submit">Search</button>
+        <form id="search-form" action="{{ url_for('search_files') }}" method="get">
+            <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
+            <input type="search" id="search-folder" name="folder" placeholder="Search folder" class="textbox">
+            <button type="submit" class="btn">Search</button>
         </form>
     </div>
     <div class="grid-container">
@@ -40,7 +41,24 @@
                 <h3>Literature</h3>
             </a>
         </div>
-        
+    </div>
+    <div class="file-table-container">
+        <table class="file-table" id="file-table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Folder</th>
+                </tr>
+            </thead>
+            <tbody id="file-tbody">
+                {% for file in files %}
+                <tr>
+                    <td>{{ file.file_name }}</td>
+                    <td>{{ file.folder }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     <div class="logout-container">
         <a href="{{ url_for('logout') }}">Logout</a>
