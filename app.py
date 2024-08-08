@@ -172,7 +172,7 @@ def delete_file():
     
 # =============================END OF ADMIN INDEX=============================
     
-# =============================TEACHER INDEX=============================
+# =============================TEACHER INDEX (search_file is for both teacher&student)=============================
 @app.route('/teacherindex')
 def teacherindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
