@@ -11,9 +11,7 @@ app.secret_key = 'jason.123'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'jason.123'
-app.config['MYSQL_DB'] = 'Compsci_Data'
-
-mysql = MySQL(app)
+app.config['MYSQL_DB'] = 'data'
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
