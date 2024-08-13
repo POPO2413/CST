@@ -1,20 +1,27 @@
 import pymysql
-pymysql.install_as_MySQLdb()
-
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
 import re
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
 app.secret_key = 'jason.123'
 
+# MySQL configurations
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'jason.123'
-app.config['MYSQL_DB'] = 'data'
+app.config['MYSQL_DB'] = 'CS'
+
+def get_db_connection():
+    return pymysql.connect(
+        host=app.config['MYSQL_HOST'],
+        user=app.config['MYSQL_USER'],
+        password=app.config['MYSQL_PASSWORD'],
+        db=app.config['MYSQL_DB'],
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -24,37 +31,41 @@ def login():
         username = request.form['username']
         password = request.form['password']
         role = request.form['role']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        connection = get_db_connection()
+        cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s AND Password = %s AND Role = %s', (username, password, role))
         account = cursor.fetchone()
+        
         if account:
             session['loggedin'] = True
             session['password'] = account['Password']
             session['username'] = account['Username']
             session['role'] = account['Role']
-            msg = 'Logged in successfully !'
-            print(role)
-   
+            msg = 'Logged in successfully!'
+            
+            # Update the last_seen field with the current timestamp
+            cursor.execute('UPDATE data SET last_seen = %s WHERE Username = %s', (datetime.now(), username))
+            connection.commit()
+
             if role == 'admin':
                 return redirect(url_for('adminindex'))
             elif role == 'student':
                 return redirect(url_for('studentindex'))
             elif role == 'teacher':
                 return redirect(url_for('teacherindex'))
-            
-            ########### Debugging ###########
-            else:
-                msg = 'Incorrect Username / Password!'
-                print(f"Failed login attempt for {username} with role {role}")
-            
         else:
-            msg = 'Incorrect Username / Password !'
+            msg = 'Incorrect Username / Password!'
+    
+        cursor.close()
+        connection.close()
+    
     return render_template('login.html', msg=msg)
 
 @app.route('/logout')
 def logout():
     session.pop('loggedin', None)
-    session.pop('Username', None)
+    session.pop('username', None)
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -64,9 +75,12 @@ def register():
         username = request.form['Username']
         password = request.form['Password']
         email = request.form['Email']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        connection = get_db_connection()
+        cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s', (username,))
         account = cursor.fetchone()
+        
         if account:
             msg = 'Account already exists!'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
@@ -76,44 +90,56 @@ def register():
         elif not username or not password or not email:
             msg = 'Please fill out the form!'
         else:
-            cursor.execute('INSERT INTO data VALUES (NULL, %s, %s, %s)', (username, password, email,))
-            mysql.connection.commit()
+            cursor.execute('INSERT INTO data (Username, Password, Email) VALUES (%s, %s, %s)', (username, password, email))
+            connection.commit()
             msg = 'You have successfully registered!'
+        
+        cursor.close()
+        connection.close()
+    
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
+    
     return render_template('register.html', msg=msg)
 
-# =============================ADMIN INDEX=============================
 @app.route('/adminindex')
 def adminindex():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
+    cursor.close()
+    connection.close()
     return render_template('adminindex.html', users=users)
 
 @app.route('/user_activity')
 def user_activity():
     query = request.args.get('search', '').lower()
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute('SELECT Username, modified, last_seen FROM data')
-    # Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
     activities = cursor.fetchall()
     
     if query:
         activities = [activity for activity in activities if query in activity['Username'].lower()]
     
+    cursor.close()
+    connection.close()
     return render_template('user_activity.html', activities=activities)
 
 @app.route('/manageusers')
 def manageusers():
     query = request.args.get('search', '').lower()
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute('SELECT Username, email, Role FROM data')
-    # Fetch all users from the MySQL db and apply a linear search for user_activity and managerusers
     users = cursor.fetchall()
     
     if query:
         users = [user for user in users if query in user['Username'].lower()]
+    
+    cursor.close()
+    connection.close()
     
     if request.is_json:
         return jsonify({'users': users})
@@ -126,20 +152,28 @@ def change_role():
     user_ids = data.get('users')
 
     try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        connection = get_db_connection()
+        cursor = connection.cursor()
         for username in user_ids:
             cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role.capitalize(), username))
-        mysql.connection.commit()
+        connection.commit()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'Role updated successfully'}), 200
     except Exception as e:
-        mysql.connection.rollback()
+        connection.rollback()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'Failed to update role', 'error': str(e)}), 500
 
 @app.route('/managefiles')
 def managefiles():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute('SELECT file_name, folder FROM files')
     files = cursor.fetchall()
+    cursor.close()
+    connection.close()
     return render_template('managefiles.html', files=files)
 
 @app.route('/rename_file', methods=['POST'])
@@ -149,12 +183,17 @@ def rename_file():
     new_file_name = data.get('new_file_name')
 
     try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        connection = get_db_connection()
+        cursor = connection.cursor()
         cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, old_file_name))
-        mysql.connection.commit()
+        connection.commit()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'File renamed successfully'}), 200
     except Exception as e:
-        mysql.connection.rollback()
+        connection.rollback()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'Failed to rename file', 'error': str(e)}), 500
 
 @app.route('/delete_file', methods=['POST'])
@@ -163,22 +202,27 @@ def delete_file():
     file_name = data.get('file_name')
 
     try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        connection = get_db_connection()
+        cursor = connection.cursor()
         cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
-        mysql.connection.commit()
+        connection.commit()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'File deleted successfully'}), 200
     except Exception as e:
-        mysql.connection.rollback()
+        connection.rollback()
+        cursor.close()
+        connection.close()
         return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
-    
-# =============================END OF ADMIN INDEX=============================
-    
-# =============================TEACHER INDEX (search_file is for both teacher&student)=============================
+
 @app.route('/teacherindex')
 def teacherindex():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute('SELECT file_name, folder FROM files')
     files = cursor.fetchall()
+    cursor.close()
+    connection.close()
     return render_template('teacherindex.html', files=files)
 
 @app.route('/search_files', methods=['GET'])
@@ -186,7 +230,8 @@ def search_files():
     file_name = request.args.get('file_name', '')
     folder = request.args.get('folder', '')
     
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    connection = get_db_connection()
+    cursor = connection.cursor()
     query = "SELECT file_name, folder FROM files WHERE 1=1"
     params = []
     
@@ -200,12 +245,13 @@ def search_files():
         
     cursor.execute(query, params)
     files = cursor.fetchall()
+    cursor.close()
+    connection.close()
     
     if 'teacher' in session['role']:
         return render_template('teacherindex.html', files=files)
     else:
         return render_template('studentindex.html', files=files)
-
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
@@ -218,14 +264,15 @@ def upload_file():
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         file.save(file_path)
         
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        connection = get_db_connection()
+        cursor = connection.cursor()
         cursor.execute('INSERT INTO files (file_name, folder) VALUES (%s, %s)', (file_name, folder))
-        mysql.connection.commit()
+        connection.commit()
+        cursor.close()
+        connection.close()
         
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
-# =============================END OF TEACHER INDEX=============================
-
 
 @app.route('/studentindex')
 def studentindex():
@@ -233,9 +280,12 @@ def studentindex():
 
 @app.route('/api/users', methods=['GET'])
 def api_users():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT Username, Email FROM users')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT Username, Email FROM data')
     users = cursor.fetchall()
+    cursor.close()
+    connection.close()
     return {"users": users}
 
 # Routes for each subject
