@@ -16,24 +16,14 @@
         </div>
         <div class="gallery">
             <div class="grid-container">
+                {% for file in files %}
                 <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Chemistry.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Chemistry.jpg') }}" alt="Chemistry">
-                        <h3>Chemistry</h3>
+                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                        <img src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        <h3>{{ file.file_name.split('.')[0] }}</h3>
                     </a>
                 </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Biology.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Biology.jpg') }}" alt="Biology">
-                        <h3>Biology</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Physics.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Physics.jpg') }}" alt="Physics">
-                        <h3>Physics</h3>
-                    </a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

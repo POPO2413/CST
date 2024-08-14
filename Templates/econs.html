@@ -16,30 +16,14 @@
         </div>
         <div class="gallery">
             <div class="grid-container">
+                {% for file in files %}
                 <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Intro.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Econ1.jpg') }}" alt="Unit 1: Introduction to Economics">
-                        <h3>Unit 1: Introduction to Economics</h3>
+                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                        <img src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        <h3>{{ file.file_name.split('.')[0] }}</h3>
                     </a>
                 </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Microeconomics.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Econ2.jpg') }}" alt="Unit 2: Microeconomics">
-                        <h3>Unit 2: Microeconomics</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Macroeconomics.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Econ3.jpg') }}" alt="Unit 3: Macroeconomics">
-                        <h3>Unit 3: Macroeconomics</h3>
-                    </a>
-                </div>    
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Globaleconomics.pdf') }}" download>
-                         <img src="{{ url_for('static', filename='images/Econ4.jpg') }}" alt="Unit 4: Global Economics">
-                        <h3>Unit 4: Global Economics</h3>
-                    </a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

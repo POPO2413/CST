@@ -5,6 +5,12 @@
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='teacherstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <style>
+        .file-table-container {
+            max-height: 400px; /* Adjust this value as needed */
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -50,7 +56,7 @@
         </form>
     </div>
 
-    <!-- Popup Form -->
+    
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -70,6 +76,8 @@
     </div>
 
     <script>
+        const uploadUrl = "{{ url_for('upload_file') }}";
+
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
@@ -81,7 +89,7 @@
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            fetch('{{ url_for('upload_file') }}', {
+            fetch(uploadUrl, {
                 method: 'POST',
                 body: formData
             })

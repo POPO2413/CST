@@ -16,36 +16,14 @@
         </div>
         <div class="gallery">
             <div class="grid-container">
+                {% for file in files %}
                 <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/topic1.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Topic1.jpg') }}" alt="Topic 1: Number & Algebra">
-                        <h3>Topic 1: Number & Algebra</h3>
+                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                        <img src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        <h3>{{ file.file_name.split('.')[0] }}</h3>
                     </a>
                 </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Topic2.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Topic2.jpg') }}" alt="Topic 2: Functions">
-                        <h3>Topic 2: Functions</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Topic3.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Topic3.jpg') }}" alt="Topic 3: Geometry & Trigonometry">
-                        <h3>Topic 3: Geometry & Trigonometry</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Topic4.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Topic4.jpg') }}" alt="Topic 4: Statistics & Probability">
-                        <h3>Topic 4: Statistics & Probability</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Topic5.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Topic5.jpg') }}" alt="Topic 5: Calculus">
-                        <h3>Topic 5: Calculus</h3>
-                    </a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

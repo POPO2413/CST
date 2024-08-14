@@ -291,19 +291,43 @@ def api_users():
 # Routes for each subject
 @app.route('/math')
 def math():
-    return render_template('math.html')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT file_name FROM files WHERE folder='Math'")
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('math.html', files=files)
 
 @app.route('/science')
 def science():
-    return render_template('science.html')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT file_name FROM files WHERE folder='Science'")
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('science.html', files=files)
 
 @app.route('/econs')
 def econs():
-    return render_template('econs.html')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT file_name FROM files WHERE folder='Economics'")
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('econs.html', files=files)
 
 @app.route('/lit')
 def lit():
-    return render_template('lit.html')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT file_name FROM files WHERE folder='Literature'")
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('lit.html', files=files)
 
 if __name__ == '__main__':
     with app.test_request_context():

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IB Language & Literature</title>
+    <title>IB Literature</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
 </head>
 <body>
     <div class="wrapper">
-        <h1>IB Language & Literature</h1>
+        <h1>IB Literature</h1>
         <div class="search-container">
             <form action="{{ url_for('search_files') }}" method="get">
                 <input type="search" name="query" placeholder="Search files...">
@@ -16,24 +16,14 @@
         </div>
         <div class="gallery">
             <div class="grid-container">
+                {% for file in files %}
                 <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Lit1.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Lit1.jpg') }}" alt="Part 1: Readers, Writers and Text">
-                        <h3>Part 1: Readers, Writers and Text</h3>
+                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                        <img src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        <h3>{{ file.file_name.split('.')[0] }}</h3>
                     </a>
                 </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Lit2.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Lit2.jpg') }}" alt="Part 2: Time and Space">
-                        <h3>Part 2: Time and Space</h3>
-                    </a>
-                </div>
-                <div class="grid-item">
-                    <a href="{{ url_for('static', filename='pdfs/Lit3.pdf') }}" download>
-                        <img src="{{ url_for('static', filename='images/Lit3.jpg') }}" alt="Part 3: Literary genres">
-                        <h3>Part 3: Literary genres</h3>
-                    </a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
