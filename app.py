@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, jsonify
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -178,7 +178,21 @@ def teacherindex():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT file_name, folder FROM files')
     files = cursor.fetchall()
-    return render_template('teacherindex.html', files=files)
+
+    # for the pdf file downloads
+    available_files = os.listdir(os.path.join('static', 'pdf_files'))
+    
+    return render_template('teacherindex.html', files=files, available_files=available_files)
+
+@app.route('/download_file', methods=['GET'])
+def download_file():
+    file_name = request.args.get('file_name')
+    directory = os.path.join('static', 'pdf_files')
+    
+    if file_name:
+        return send_from_directory(directory, file_name, as_attachment=True)
+    else:
+        return redirect(url_for('teacherindex'))
 
 @app.route('/search_files', methods=['GET'])
 def search_files():

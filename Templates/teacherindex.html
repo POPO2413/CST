@@ -20,6 +20,7 @@
         </div>
         <div class="upload-container">
             <button id="open-upload-popup" class="btn">Upload File</button>
+            <button id="open-download-popup" class="btn">Download File</button>
         </div>
         <div class="file-table-container">
             <table class="file-table" id="file-table">
@@ -50,7 +51,7 @@
         </form>
     </div>
 
-    <!-- Popup Form -->
+    <!-- upload pop-up window -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -69,6 +70,22 @@
         </div>
     </div>
 
+    <!-- download pop-up window -->
+    <div class="popup" id="download-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-download-popup">&times;</span>
+            <form id="download-form" action="{{ url_for('download_file') }}" method="get">
+                <select name="file_name" required class="textbox">
+                    <option value="" disabled selected>Select file to download</option>
+                    {% for file in available_files %}
+                    <option value="{{ file }}">{{ file }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn">Download File</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
@@ -78,29 +95,12 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch('{{ url_for('upload_file') }}', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const tbody = document.getElementById('file-tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `<td>${data.file.file_name}</td><td>${data.file.folder}</td>`;
-                    tbody.appendChild(newRow);
-                    document.getElementById('upload-popup').style.display = 'none';
-                } else {
-                    alert(data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('File upload failed');
-            });
+        document.getElementById('open-download-popup').addEventListener('click', function() {
+            document.getElementById('download-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-download-popup').addEventListener('click', function() {
+            document.getElementById('download-popup').style.display = 'none';
         });
     </script>
 </body>

@@ -118,3 +118,16 @@ body {
     font-size: 20px;
     cursor: pointer;
 }
+
+.download-container {
+    margin-top: 20px;
+}
+
+.download-container select {
+    padding: 8px;
+    margin: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
