@@ -26,6 +26,7 @@
         </div>
         <div class="upload-container">
             <button id="open-upload-popup" class="btn">Upload File</button>
+            <button id="open-download-popup" class="btn">Download File</button>
         </div>
         <div class="file-table-container">
             <table class="file-table" id="file-table">
@@ -71,6 +72,22 @@
                     <option value="Literature">Literature</option>
                 </select>
                 <button type="submit" class="btn">Upload File</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- download pop-up window -->
+    <div class="popup" id="download-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-download-popup">&times;</span>
+            <form id="download-form" action="{{ url_for('download_file') }}" method="get">
+                <select name="file_name" required class="textbox">
+                    <option value="" disabled selected>Select file to download</option>
+                    {% for file in available_files %}
+                    <option value="{{ file }}">{{ file }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn">Download File</button>
             </form>
         </div>
     </div>
