@@ -42,7 +42,7 @@
                         <td>{{ file.file_name.split('.')[0].replace('_', ' ') }}</td>
                         <td>{{ file.folder }}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/' + file.folder + '/' + file.file_name) }}" download>
+                            <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>
@@ -104,7 +104,7 @@
                         <td>${data.file.file_name.replace('_', ' ')}</td>
                         <td>${data.file.folder}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/' + data.file.folder + '/' + data.file.file_name) }}" download>
+                            <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name) }}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>`;
