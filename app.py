@@ -111,7 +111,12 @@ def teacherindex():
     files = cursor.fetchall()
     cursor.close()
     connection.close()
-    return render_template('teacherindex.html', files=files)
+
+    # Assuming data should be the same as files or any other data
+    data = files  # or any other relevant data
+
+    return render_template('teacherindex.html', files=files, data=data)
+
 
 @app.route('/teacher_search_files', methods=['GET'])
 def teacher_search_files():
