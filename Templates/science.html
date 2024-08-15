@@ -7,7 +7,10 @@
 </head>
 <body>
     <div class="wrapper">
-        <h1>IB Science</h1>
+        <div class="header">
+            <h1>IB Science</h1>
+            <p>In the IB Science page, you will be able to view all the topic files provided by the teacher.</p>
+        </div>
         <div class="search-container">
             <form action="{{ url_for('search_files') }}" method="get">
                 <input type="search" name="query" placeholder="Search files...">
@@ -18,9 +21,9 @@
             <div class="grid-container">
                 {% for file in files %}
                 <div class="grid-item">
+                    <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
                     <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
-                        <img src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
-                        <h3>{{ file.file_name.split('.')[0] }}</h3>
+                        <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
                     </a>
                 </div>
                 {% endfor %}

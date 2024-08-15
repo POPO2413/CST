@@ -71,16 +71,17 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     msg = ''
-    if request.method == 'POST' and 'Username' in request.form and 'Password' in request.form and 'Email' in request.form:
-        username = request.form['Username']
-        password = request.form['Password']
-        email = request.form['Email']
-        
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        role = request.form['role']
+
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s', (username,))
         account = cursor.fetchone()
-        
+
         if account:
             msg = 'Account already exists!'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
@@ -90,17 +91,18 @@ def register():
         elif not username or not password or not email:
             msg = 'Please fill out the form!'
         else:
-            cursor.execute('INSERT INTO data (Username, Password, Email) VALUES (%s, %s, %s)', (username, password, email))
+            cursor.execute('INSERT INTO data (Username, Password, Email, Role) VALUES (%s, %s, %s, %s)', (username, password, email, role))
             connection.commit()
             msg = 'You have successfully registered!'
         
         cursor.close()
         connection.close()
-    
+
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
     
     return render_template('register.html', msg=msg)
+
 
 @app.route('/adminindex')
 def adminindex():
@@ -214,6 +216,45 @@ def delete_file():
         cursor.close()
         connection.close()
         return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
+    
+@app.route('/rename_user', methods=['POST'])
+def rename_user():
+    data = request.get_json()
+    old_username = data.get('old_username')
+    new_username = data.get('new_username')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("UPDATE data SET Username = %s WHERE Username = %s", (new_username, old_username))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'User renamed successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to rename user', 'error': str(e)}), 500
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    data = request.get_json()
+    username = data.get('username')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM data WHERE Username = %s", (username,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
 @app.route('/teacherindex')
 def teacherindex():
@@ -288,7 +329,7 @@ def api_users():
     connection.close()
     return {"users": users}
 
-# Routes for each subject
+
 @app.route('/math')
 def math():
     connection = get_db_connection()
