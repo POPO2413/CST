@@ -233,11 +233,7 @@ def science():
     return render_template('science.html', files=files)
 
 @app.route('/economics')
-<<<<<<< Updated upstream
-def econs():
-=======
 def economics():
->>>>>>> Stashed changes
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT file_name FROM files WHERE folder='Economics'")
@@ -247,11 +243,7 @@ def economics():
     return render_template('economics.html', files=files)
 
 @app.route('/literature')
-<<<<<<< Updated upstream
-def lit():
-=======
 def literature():
->>>>>>> Stashed changes
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT file_name FROM files WHERE folder='Literature'")
@@ -259,8 +251,6 @@ def literature():
     cursor.close()
     connection.close()
     return render_template('literature.html', files=files)
-<<<<<<< Updated upstream
-=======
 
 @app.route('/adminindex')
 def adminindex():
@@ -403,7 +393,6 @@ def delete_user():
         cursor.close()
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
->>>>>>> Stashed changes
 
 if __name__ == '__main__':
     with app.test_request_context():
