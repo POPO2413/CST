@@ -5,12 +5,6 @@
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='teacherstyle.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
-    <style>
-        .file-table-container {
-            max-height: 400px; /* Adjust this value as needed */
-            overflow-y: auto;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -34,6 +28,7 @@
                     <tr>
                         <th>File</th>
                         <th>Folder</th>
+                        <th>Download</th> <!-- New column for download links -->
                     </tr>
                 </thead>
                 <tbody id="file-tbody">
@@ -41,6 +36,11 @@
                     <tr>
                         <td>{{ file.file_name }}</td>
                         <td>{{ file.folder }}</td>
+                        <td>
+                            <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        </td> <!-- Download link added here -->
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -57,7 +57,7 @@
         </form>
     </div>
 
-    
+    <!-- Pop-up code remains unchanged -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -101,7 +101,11 @@
                 if (data.success) {
                     const tbody = document.getElementById('file-tbody');
                     const newRow = document.createElement('tr');
-                    newRow.innerHTML = `<td>${data.file.file_name}</td><td>${data.file.folder}</td>`;
+                    newRow.innerHTML = `<td>${data.file.file_name}</td><td>${data.file.folder}</td><td>
+                        <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name) }}" download>
+                            <i class="fa fa-download"></i> Download
+                        </a>
+                    </td>`;
                     tbody.appendChild(newRow);
                     document.getElementById('upload-popup').style.display = 'none';
                 } else {
