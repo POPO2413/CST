@@ -42,25 +42,7 @@
             </a>
         </div>
     </div>
-    <div class="file-table-container">
-        <table class="file-table" id="file-table">
-            <thead>
-                <tr>
-                    <th>File</th>
-                    <th>Folder</th>
-                </tr>
-            </thead>
-            <tbody id="file-tbody">
-                {% for file in files %}
-                <tr>
-                    <td>{{ file.file_name }}</td>
-                    <td>{{ file.folder }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="logout-container">
+    <div class="logout-container lower-logout">
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 </body>
