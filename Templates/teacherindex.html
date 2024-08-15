@@ -84,12 +84,39 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        document.getElementById('open-download-popup').addEventListener('click', function() {
-            document.getElementById('download-popup').style.display = 'flex';
-        });
-
-        document.getElementById('close-download-popup').addEventListener('click', function() {
-            document.getElementById('download-popup').style.display = 'none';
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('upload_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tbody = document.getElementById('file-tbody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <img width="100px" height="60px" src="{{ url_for('static', filename='images/' + data.file.file_name + '.jpg') }}" alt="${data.file.file_name}">
+                        </td>
+                        <td>${data.file.file_name.replace('_', ' ')}</td>
+                        <td>${data.file.folder}</td>
+                        <td>
+                            <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name + '.pdf') }}" download>
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        </td>`;
+                    tbody.appendChild(newRow);
+                    document.getElementById('upload-popup').style.display = 'none';
+                } else {
+                    alert('File upload failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);  // Log the error if necessary
+                alert('File upload failed');
+            });
         });
     </script>
 </body>
