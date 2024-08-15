@@ -197,7 +197,7 @@ def science():
     connection.close()
     return render_template('science.html', files=files)
 
-@app.route('/econs')
+@app.route('/economics')
 def econs():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -205,9 +205,9 @@ def econs():
     files = cursor.fetchall()
     cursor.close()
     connection.close()
-    return render_template('econs.html', files=files)
+    return render_template('economics.html', files=files)
 
-@app.route('/lit')
+@app.route('/literature')
 def lit():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -215,7 +215,7 @@ def lit():
     files = cursor.fetchall()
     cursor.close()
     connection.close()
-    return render_template('lit.html', files=files)
+    return render_template('literature.html', files=files)
 
 if __name__ == '__main__':
     with app.test_request_context():
