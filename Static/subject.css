@@ -1,90 +1,92 @@
-/* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    color: #333;
 }
 
-.container {
-    width: 90%;
-    margin: auto;
-    overflow: hidden;
-}
-
-/* Header Styles */
 .header {
-    background: #6c63ff;
-    color: #ffffff;
-    padding-top: 30px;
-    min-height: 100px;
-    border-bottom: #333333 3px solid;
+    background-color: #004080;
+    color: white;
+    padding: 40px 20px;
     text-align: center;
 }
 
 .header h1 {
-    font-size: 2.5em;
     margin: 0;
-    padding-bottom: 10px;
+    font-size: 36px;
+    font-weight: 500;
 }
 
 .header p {
-    font-size: 1.2em;
-    margin: 0;
-    padding-bottom: 20px;
+    margin: 10px 0 0;
+    font-size: 18px;
+    font-weight: 300;
 }
 
-/* Search Styles */
 .search-container {
-    text-align: center;
+    display: flex;
+    justify-content: center;
     margin: 20px 0;
 }
 
 .search-container input[type="search"] {
     padding: 10px;
-    width: 60%;
-    margin-right: 10px;
+    width: 300px;
     font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    outline: none;
 }
 
-.search-container button {
+.search-container button[type="submit"] {
     padding: 10px 20px;
-    background: #333333;
-    color: #ffffff;
-    border: none;
+    font-size: 16px;
+    background-color: #004080;
+    color: white;
+    border: 1px solid #004080;
+    border-radius: 0 5px 5px 0;
     cursor: pointer;
+    outline: none;
 }
 
-.search-container button:hover {
-    background: #555555;
-}
-
-/* Gallery Styles */
-.gallery {
-    margin-top: 30px;
+.search-container button[type="submit"]:hover {
+    background-color: #003060;
 }
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .grid-item {
-    background: #ffffff;
+    background-color: white;
     padding: 20px;
     text-align: center;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.grid-item:hover {
+    transform: translateY(-10px);
 }
 
 .grid-item img {
     width: 100%;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    height: auto;
+    border-radius: 5px;
 }
 
 .grid-item h3 {
-    font-size: 1.1em;
-    margin: 0;
+    margin: 10px 0 0;
+    font-size: 18px;
+    color: #004080;
+    font-weight: 500;
 }
