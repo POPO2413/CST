@@ -11,23 +11,27 @@
         <div class="header">
             <h1>Welcome, {{ session.username }}!</h1>
         </div>
+
+        <!-- Search Container -->
         <div class="search-container">
-            <form id="search-form" action="{{ url_for('search_files') }}" method="get">
+            <form id="search-form" action="{{ url_for('teacher_search_files') }}" method="get">
                 <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
                 <input type="search" id="search-folder" name="folder" placeholder="Search folder" class="textbox">
                 <button type="submit" class="btn">Search</button>
             </form>
         </div>
+
+        <!-- Upload Button -->
         <div class="upload-container">
             <button id="open-upload-popup" class="btn">Upload File</button>
         </div>
 
+        <!-- Files Table -->
         <div class="file-table-container">
             <table class="file-table" id="file-table">
                 <thead>
                     <tr>
-                        <th>Preview</th>
-                        <th>File</th>
+                        <th>File Name</th>
                         <th>Folder</th>
                         <th>Download</th>
                     </tr>
@@ -35,9 +39,6 @@
                 <tbody id="file-tbody">
                     {% for file in files %}
                     <tr>
-                        <td>
-                            <img width="100px" height="60px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
-                        </td>
                         <td>{{ file.file_name.split('.')[0].replace('_', ' ') }}</td>
                         <td>{{ file.folder }}</td>
                         <td>
@@ -51,9 +52,12 @@
             </table>
         </div>
 
-        <form>
-            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-        </form>
+        <!-- Logout Button -->
+        <div class="logout-container">
+            <form action="{{ url_for('logout') }}">
+                <button type="submit" class="btn">Logout</button>
+            </form>
+        </div>
     </div>
 
     <!-- Upload Pop-up -->
@@ -97,13 +101,10 @@
                     const tbody = document.getElementById('file-tbody');
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
-                        <td>
-                            <img width="100px" height="60px" src="{{ url_for('static', filename='images/' + data.file.file_name + '.jpg') }}" alt="${data.file.file_name}">
-                        </td>
                         <td>${data.file.file_name.replace('_', ' ')}</td>
                         <td>${data.file.folder}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name + '.pdf') }}" download>
+                            <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name) }}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>`;
@@ -114,7 +115,7 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);  // Log the error if necessary
+                console.error('Error:', error);
                 alert('File upload failed');
             });
         });

@@ -12,9 +12,8 @@
             <p>In the IB Mathematics Analysis & Approaches (AA) Higher Level (HL) page, you will be able to view all the topic files provided by the teacher.</p>
         </div>
         <div class="search-container">
-            <form action="{{ url_for('search_files') }}" method="get">
+            <form action="{{ url_for('subject_search_files', subject='Math') }}" method="get">
                 <input type="search" name="file_name" placeholder="Search files...">
-                <input type="hidden" name="subject" value="Math"> <!-- Restrict search to Math folder -->
                 <button type="submit">Search</button>
             </form>
         </div>
