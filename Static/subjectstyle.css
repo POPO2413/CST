@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+header p {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.filters {
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.filter-button.active {
+    background-color: #0073e6;
+    color: white;
+}
+
+.sort-and-toggle {
+    margin-bottom: 20px;
+}
+
+.sort-and-toggle select {
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.sort-and-toggle label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.grid-item {
+    border: 1px solid #f0f0f0;
+    padding: 20px;
+    text-align: center;
+}
+
+.grid-item img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.grid-item h3 {
+    margin-bottom: 5px;
+}
+
+.grid-item p {
+    color: #666;
+}
