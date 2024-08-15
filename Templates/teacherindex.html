@@ -20,44 +20,43 @@
         </div>
         <div class="upload-container">
             <button id="open-upload-popup" class="btn">Upload File</button>
-            <button id="open-download-popup" class="btn">Download File</button>
         </div>
+
         <div class="file-table-container">
             <table class="file-table" id="file-table">
                 <thead>
                     <tr>
+                        <th>Preview</th>
                         <th>File</th>
                         <th>Folder</th>
-                        <th>Download</th> <!-- New column for download links -->
+                        <th>Download</th>
                     </tr>
                 </thead>
                 <tbody id="file-tbody">
                     {% for file in files %}
                     <tr>
-                        <td>{{ file.file_name }}</td>
+                        <td>
+                            <img width="100px" height="60px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        </td>
+                        <td>{{ file.file_name.split('.')[0].replace('_', ' ') }}</td>
                         <td>{{ file.folder }}</td>
                         <td>
                             <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
-                        </td> <!-- Download link added here -->
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="folder-container">
-            <a href="{{ url_for('math') }}" class="folder">Math</a>
-            <a href="{{ url_for('science') }}" class="folder">Science</a>
-            <a href="{{ url_for('econs') }}" class="folder">Economics</a>
-            <a href="{{ url_for('lit') }}" class="folder">Literature</a>
-        </div>
+
         <form>
             <a href="{{ url_for('logout') }}" class="btn">Logout</a>
         </form>
     </div>
 
-    <!-- Pop-up code remains unchanged -->
+    <!-- Upload Pop-up -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -76,11 +75,7 @@
         </div>
     </div>
 
-    
-
     <script>
-        const uploadUrl = "{{ url_for('upload_file') }}";
-
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
@@ -89,33 +84,12 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch(uploadUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const tbody = document.getElementById('file-tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `<td>${data.file.file_name}</td><td>${data.file.folder}</td><td>
-                        <a href="{{ url_for('static', filename='pdfs/' + data.file.file_name) }}" download>
-                            <i class="fa fa-download"></i> Download
-                        </a>
-                    </td>`;
-                    tbody.appendChild(newRow);
-                    document.getElementById('upload-popup').style.display = 'none';
-                } else {
-                    alert(data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('File upload failed');
-            });
+        document.getElementById('open-download-popup').addEventListener('click', function() {
+            document.getElementById('download-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-download-popup').addEventListener('click', function() {
+            document.getElementById('download-popup').style.display = 'none';
         });
     </script>
 </body>
