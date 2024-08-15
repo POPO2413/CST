@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>IB Literature</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='subject.css') }}">
 </head>
 <body>
     <div class="wrapper">
@@ -22,7 +22,7 @@
                 {% for file in files %}
                 <div class="grid-item">
                     <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
-                    <a href="{{ url_for('static', filename='pdfs/Literature/' + file.file_name) }}" download>
+                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
                         <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
                     </a>
                 </div>
