@@ -269,28 +269,33 @@ def teacherindex():
 @app.route('/search_files', methods=['GET'])
 def search_files():
     file_name = request.args.get('file_name', '')
-    folder = request.args.get('folder', '')
+    subject = request.args.get('subject', '')  # Added to identify subject-specific searches
     
     connection = get_db_connection()
     cursor = connection.cursor()
+    
     query = "SELECT file_name, folder FROM files WHERE 1=1"
     params = []
+    
+    # If a specific subject/folder is requested
+    if subject:
+        query += " AND folder = %s"
+        params.append(subject)
     
     if file_name:
         query += " AND file_name LIKE %s"
         params.append(f"%{file_name}%")
-        
-    if folder:
-        query += " AND folder LIKE %s"
-        params.append(f"%{folder}%")
-        
+    
     cursor.execute(query, params)
     files = cursor.fetchall()
     cursor.close()
     connection.close()
     
+    # Determine which template to render based on role or subject
     if 'teacher' in session['role']:
         return render_template('teacherindex.html', files=files)
+    elif subject:
+        return render_template(f'{subject.lower()}.html', files=files)
     else:
         return render_template('studentindex.html', files=files)
 
@@ -301,7 +306,7 @@ def upload_file():
     folder = request.form['folder']
     
     if file and file.filename.endswith('.pdf'):
-        file_path = os.path.join('uploads', folder, file_name + '.pdf')
+        file_path = os.path.join('static', 'pdfs', folder, file_name + '.pdf')
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         file.save(file_path)
         
@@ -317,7 +322,13 @@ def upload_file():
 
 @app.route('/studentindex')
 def studentindex():
-    return render_template('studentindex.html')
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT file_name, folder FROM files')
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('studentindex.html', files=files)
 
 @app.route('/api/users', methods=['GET'])
 def api_users():
