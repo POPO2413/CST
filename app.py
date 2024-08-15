@@ -11,8 +11,8 @@ app.secret_key = 'jason.123'
 # MySQL configurations
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'jason.123'
-app.config['MYSQL_DB'] = 'CS'
+app.config['MYSQL_PASSWORD'] = 'jason.123' # enter your password
+app.config['MYSQL_DB'] = 'CS' # enter your database name
 
 def get_db_connection():
     return pymysql.connect(
