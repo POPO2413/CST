@@ -9,12 +9,6 @@
     <div class="header">
         <h1>Welcome, {{ session.username }}!</h1>
     </div>
-    <div class="search-container">
-        <form id="search-form" action="{{ url_for('student_search_files') }}" method="get">
-            <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
-            <button type="submit" class="btn">Search</button>
-        </form>
-    </div>
     <div class="grid-container">
         <div class="grid-item">
             <a href="{{ url_for('math') }}">

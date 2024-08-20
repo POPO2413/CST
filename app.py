@@ -8,10 +8,9 @@ app = Flask(__name__)
 
 app.secret_key = 'jason.123'
 
-# MySQL configurations
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'jason.123'
+app.config['MYSQL_PASSWORD'] = 'jason.123' 
 app.config['MYSQL_DB'] = 'CS'
 
 def get_db_connection():
@@ -44,7 +43,6 @@ def login():
             session['role'] = account['Role']
             msg = 'Logged in successfully!'
             
-            # Update the last_seen field with the current timestamp
             cursor.execute('UPDATE data SET last_seen = %s WHERE Username = %s', (datetime.now(), username))
             connection.commit()
 
@@ -212,6 +210,7 @@ def upload_file():
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
+
 @app.route('/math')
 def math():
     connection = get_db_connection()
@@ -294,6 +293,29 @@ def manageusers():
     if request.is_json:
         return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
+
+@app.route('/managefiles', methods=['GET', 'POST'])
+def managefiles():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        file_name = request.form.get('file_name')
+
+        if action == 'delete':
+            cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
+            connection.commit()
+        elif action == 'rename':
+            new_file_name = request.form.get('new_file_name')
+            cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, file_name))
+            connection.commit()
+
+    cursor.execute('SELECT file_name, folder FROM files')
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('managefiles.html', files=files)
 
 @app.route('/change_role', methods=['POST'])
 def change_role():

@@ -3,32 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>IB Economics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='subjectstyle.css') }}">
 </head>
 <body>
     <div class="wrapper">
-        <div class="header">
+        <header>
             <h1>IB Economics</h1>
             <p>In the IB Economics page, you will be able to view all the topic files provided by the teacher.</p>
-        </div>
-        <div class="search-container">
-            <form action="{{ url_for('subject_search_files', subject='Economics') }}" method="get">
-                <input type="search" name="file_name" placeholder="Search files...">
-                <button type="submit">Search</button>
-            </form>
-        </div>
-        <div class="gallery">
-            <div class="grid-container">
-                {% for file in files %}
-                <div class="grid-item">
-                    <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
-                    <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
-                        <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
-                    </a>
-                </div>
-                {% endfor %}
+            <div class="search-container">
+                <form action="{{ url_for('subject_search_files', subject='Economics') }}" method="get">
+                    <input type="search" name="file_name" placeholder="Search files...">
+                    <button type="submit">Search</button>
+                </form>
             </div>
-        </div>
+        </header>
+        <main>
+            <div class="gallery">
+                <div class="grid-container">
+                    {% for file in files %}
+                    <div class="grid-item">
+                        <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
+                        <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
+                            <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
     </div>
 </body>
 </html>

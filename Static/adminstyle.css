@@ -179,3 +179,53 @@ nav.active .title, nav.active ul li {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* New styles for form controls and table actions */
+.table-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-actions label {
+  font-weight: bold;
+}
+
+.table-actions select, 
+.table-actions button,
+.table-actions input[type="search"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.table-actions select:focus, 
+.table-actions button:focus,
+.table-actions input[type="search"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.table-actions button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.table-actions button:hover {
+  background-color: #0056b3;
+}
+
+.table-actions input[type="search"] {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.table-actions form {
+  display: flex;
+  gap: 10px;
+}

@@ -1,100 +1,154 @@
 body {
     font-family: 'Arial', sans-serif;
-    background: #f4f4f4;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start; /* Change from center to flex-start */
+    min-height: 100vh;
+    overflow-y: auto; /* Allow vertical scrolling if necessary */
 }
 
 .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     max-width: 800px;
-    text-align: center;
+    width: 100%;
+    margin-top: 20px; /* Add some margin from the top */
 }
 
 .header {
+    text-align: center;
     margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #333;
 }
 
 .search-container {
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: center; /* Centralizes the content horizontally */
+    align-items: center; /* Aligns items vertically */
+    gap: 10px; /* Adds space between the search elements */
+    margin-bottom: 30px; /* Increased space below the search container */
 }
 
-.search-container input[type="search"],
-.upload-container input[type="file"],
-.upload-container input[type="text"],
-.upload-container select {
-    padding: 8px;
-    margin: 5px;
+.search-container form {
+    display: flex;
+    gap: 10px; /* Adds space between the inputs and the button */
+}
+
+.search-container input[type="search"] {
+    padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+    border-radius: 5px;
 }
 
-.btn {
-    padding: 8px 16px;
-    margin: 10px;
-    text-decoration: none;
-    color: #fff;
+.search-container button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 14px;
     background-color: #007bff;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.search-container button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.upload-container {
+    text-align: center;
+    margin-bottom: 30px; /* Adds more space below the "Upload File" button */
+    margin-top: 20px; /* Adds space above the "Upload File" button */
+}
+
+.upload-container button {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-container button:hover {
     background-color: #0056b3;
 }
 
 .file-table-container {
-    margin-top: 20px;
-    max-height: 400px; /* Adjust this value as needed */
-    overflow-y: auto;
+    overflow-x: auto;
+    max-height: 400px; /* Add a max height for the table container */
+    overflow-y: auto; /* Enable vertical scrolling if the table is too long */
+    margin-top: 30px; /* Adds space above the file table */
 }
 
 .file-table {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
 }
 
-.file-table th, .file-table td {
+.file-table th,
+.file-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
 .file-table th {
-    background: #f4f4f4;
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+    font-size: 12px;
 }
 
-.folder-container {
-    margin-top: 20px;
+.file-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.folder {
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    display: inline-block;
+.file-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.file-table a {
+    color: #007bff;
     text-decoration: none;
-    color: #333;
 }
 
-.folder:hover {
-    background-color: #f0f0f0;
+.file-table a:hover {
+    text-decoration: underline;
 }
 
-/* pop-up window */
+.logout-container {
+    text-align: center;
+    margin-top: 30px; /* Adjusts the space above the logout button */
+}
+
+.logout-container button {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-container button:hover {
+    background-color: #c82333;
+}
+
 .popup {
     display: none;
     position: fixed;
@@ -108,28 +162,18 @@ body {
 }
 
 .popup-content {
-    background-color: white;
+    background-color: #fff;
     padding: 20px;
-    border-radius: 10px;
-    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
     max-width: 500px;
 }
 
 .close-popup {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
     float: right;
-    font-size: 20px;
     cursor: pointer;
-}
-
-.download-container {
-    margin-top: 20px;
-}
-
-.download-container select {
-    padding: 8px;
-    margin: 5px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
 }
