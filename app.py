@@ -166,14 +166,13 @@ def register():
 def teacherindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT file_name, folder FROM files')
+    cursor.execute('SELECT file_name, folder, semester, course FROM files')
     files = cursor.fetchall()
     cursor.close()
     connection.close()
 
-    data = files  # or any other relevant data
+    return render_template('teacherindex.html', files=files)
 
-    return render_template('teacherindex.html', files=files, data=data)
 
 @app.route('/teacher_search_files', methods=['GET'])
 def teacher_search_files():

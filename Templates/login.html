@@ -8,35 +8,48 @@
 </head>
 <body>
     <div class="container">
-        <!-- login section -->
-        <div class="login-card">
-            <div class="header">
-                <h1 class="word">Welcome! Please login.</h1>
+        <!-- login box + scrollable notif -->
+        <div class="main-content">
+            <div class="login-card">
+                <div class="header">
+                    <h1 class="word">Welcome! Please login.</h1>
+                </div>
+
+                <h2 class="word">
+                    <form action="{{ url_for('login') }}" method="post">
+                        <select name="role" id="role" class="textbox">
+                            <option value="empty">Select...</option>
+                            <option value="admin">Admin</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                        <br><br>
+                        <div class="msg">{{ msg }}</div>
+                        <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/>
+                        <br><br>
+                        <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/>
+                        <br><br>
+                        <p class="forgot-password"><a href="{{ url_for('forgotpassword') }}">Forgot Password?</a></p>
+                        <input type="submit" class="btn" value="Sign In"/>
+                        <br><br>
+                    </form>
+                </h2>
+                <p class="bottom-text">Don't have an account? <a href="{{url_for('register')}}"> Sign Up here</a></p>
             </div>
 
-            <h2 class="word">
-                <form action="{{ url_for('login') }}" method="post">
-                    <select name="role" id="role" class="textbox">
-                        <option value="empty">Select...</option>
-                        <option value="admin">Admin</option>
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </select>
-                    <br><br>
-                    <div class="msg">{{ msg }}</div>
-                    <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/>
-                    <br><br>
-                    <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/>
-                    <br><br>
-                    <p class="forgot-password"><a href="{{ url_for('forgotpassword') }}">Forgot Password?</a></p>
-                    <input type="submit" class="btn" value="Sign In"/>
-                    <br><br>
-                </form>
-            </h2>
-            <p class="bottom-text">Don't have an account? <a href="{{url_for('register')}}"> Sign Up here</a></p>
+            <!-- scrollable notification -->
+            <div class="notifications-container">
+                <h2>Latest Notifications</h2>
+                <div class="notifications-content">
+                    <!-- notifications -->
+                    <p>Notification 1: Lorem ipsum dolor sit amet.</p>
+                    <p>Notification 2: Consectetur adipiscing elit.</p>
+                    <p>Notification 3: Integer nec odio. Praesent libero.</p>
+                </div>
+            </div>
         </div>
 
-        <!-- scrollable section -->
+        <!-- description below login -->
         <div class="description-section">
             <div class="text-block">
                 <h2>About Our Digital Library</h2>

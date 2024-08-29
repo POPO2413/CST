@@ -11,12 +11,20 @@ html, body {
 
 .container {
     display: flex;
-    flex-direction: row; /* align horizontally */
-    justify-content: center;
-    align-items: flex-start; /* algin to the top */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
     min-height: 100vh;
     padding: 20px;
     width: 100%;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row; /* Align login and notifications side by side */
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 30px; /* Space between login/notifications and description */
 }
 
 .login-card {
@@ -26,7 +34,7 @@ html, body {
     padding: 60px 40px 40px 40px;
     width: 360px;
     text-align: center;
-    margin-right: 20px; /* space between login & scrollable sections */
+    margin-right: 20px; /* Space between login card and notifications */
     position: relative;
 }
 
@@ -91,15 +99,21 @@ html, body {
     text-decoration: underline;
 }
 
-.description-section {
+/* Scrollable notifications section */
+.notifications-container {
     width: 300px;
     max-height: 500px;
-    overflow-y: auto; /* to make it scrollable */
+    overflow-y: auto; /* Make the section scrollable */
     border: 1px solid #ccc;
     padding: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
+}
+
+.notifications-content {
+    max-height: 450px;
+    overflow-y: auto;
 }
 
 .text-block {
@@ -117,11 +131,24 @@ html, body {
 }
 
 .image-block {
-    margin-top: 10px; /* space between text and image */
+    margin-top: 10px; /* Add some space between text and image */
 }
 
 .image-block img {
     width: 100%;
     border-radius: 8px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.description-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    max-width: 1200px;
+    width: 100%;
 }
