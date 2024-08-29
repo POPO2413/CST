@@ -76,46 +76,54 @@ def forgotpassword():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
+        
+        # Get user password based on provided username and email
+        user_password = get_user_password_by_username_and_email(username, email)
 
-        user_data = get_user_data_by_username_and_email(username, email)
-
-        if user_data:
+        if user_password:
             try:
-                send_password_via_email(email, user_data['Password'], username)
+                send_password_via_email(email, user_password)
                 flash('Password has been sent to your email address.', 'success')
                 return redirect(url_for('login'))
             except Exception as e:
                 flash(f'Failed to send email: {str(e)}', 'danger')
         else:
-            flash('Incorrect username or email address.', 'danger')
+            flash('Username or Email not found in our system.', 'danger')
 
     return render_template('forgotpassword.html')
 
-def get_user_data_by_username_and_email(username, email):
+def get_user_password_by_username_and_email(username, email):
     connection = get_db_connection()
     cursor = connection.cursor()
 
     try:
-        cursor.execute("SELECT Username, Password FROM data WHERE Username = %s AND Email = %s", (username, email))
+        cursor.execute("SELECT Password FROM data WHERE Username = %s AND Email = %s", (username, email))
         result = cursor.fetchone()
-        return result
+        if result:
+            return result['Password']
+        else:
+            return None
     finally:
         cursor.close()
         connection.close()
 
-def send_password_via_email(email, user_password, username):
+def send_password_via_email(email, user_password):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login("xyz@gmail.com", "pwd")  
+        
+        # Replace with your own email and app-specific password (not your regular email password)
+        server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
 
         subject = "Your Website Password"
-        body = f"Your password for username '{username}' is: {user_password}"
+        body = f"Your password is: {user_password}"
         message = f"Subject: {subject}\n\n{body}"
 
-        server.sendmail("xyz@gmail.com", email, message) 
+        server.sendmail('jasonbssk@gmail.com', email, message)
         server.quit()
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -346,11 +354,13 @@ def literature():
 def adminindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT ID, Username, email, Role, Enrolled_Date FROM data')
+    # Format Enrolled_Date to show only the date (YYYY-MM-DD)
+    cursor.execute('SELECT ID, Username, email, Role, DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date FROM data')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
     return render_template('adminindex.html', users=users)
+
 
 
 @app.route('/user_activity')
