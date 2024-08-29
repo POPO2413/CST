@@ -1,8 +1,9 @@
 import pymysql
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 import re
 import os
 from datetime import datetime
+import smtplib
 
 app = Flask(__name__)
 
@@ -10,7 +11,7 @@ app.secret_key = 'jason.123'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'jason.123' 
+app.config['MYSQL_PASSWORD'] = 'jason.123'
 app.config['MYSQL_DB'] = 'CS'
 
 def get_db_connection():
@@ -30,34 +31,38 @@ def login():
         username = request.form['username']
         password = request.form['password']
         role = request.form['role']
-        
+
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s AND Password = %s AND Role = %s', (username, password, role))
         account = cursor.fetchone()
-        
+
         if account:
             session['loggedin'] = True
             session['password'] = account['Password']
             session['username'] = account['Username']
             session['role'] = account['Role']
+            session['course'] = account.get('Course')  # Assuming 'Course' column exists
             msg = 'Logged in successfully!'
-            
+
             cursor.execute('UPDATE data SET last_seen = %s WHERE Username = %s', (datetime.now(), username))
             connection.commit()
 
             if role == 'admin':
                 return redirect(url_for('adminindex'))
             elif role == 'student':
-                return redirect(url_for('studentindex'))
+                if session['course'] == 'Basic':
+                    return redirect(url_for('studentbasic'))
+                elif session['course'] == 'Advanced':
+                    return redirect(url_for('studentadv'))
             elif role == 'teacher':
                 return redirect(url_for('teacherindex'))
         else:
             msg = 'Incorrect Username / Password!'
-    
+
         cursor.close()
         connection.close()
-    
+
     return render_template('login.html', msg=msg)
 
 @app.route('/logout')
@@ -65,6 +70,55 @@ def logout():
     session.pop('loggedin', None)
     session.pop('username', None)
     return redirect(url_for('login'))
+
+@app.route('/forgotpassword', methods=['GET', 'POST'])
+def forgotpassword():
+    if request.method == 'POST':
+        email = request.form['email']
+        email_password = request.form['email_password']
+
+        user_password = get_user_password_by_email(email)
+
+        if user_password:
+            try:
+                send_password_via_email(email, email_password, user_password)
+                flash('Password has been sent to your email address.', 'success')
+                return redirect(url_for('login'))
+            except Exception as e:
+                flash(f'Failed to send email: {str(e)}', 'danger')
+        else:
+            flash('Email not found in our system.', 'danger')
+
+    return render_template('forgotpassword.html')
+
+def get_user_password_by_email(email):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("SELECT Password FROM data WHERE Email = %s", (email,))
+        result = cursor.fetchone()
+        if result:
+            return result['Password']
+        else:
+            return None
+    finally:
+        cursor.close()
+        connection.close()
+
+def send_password_via_email(user_email, email_password, user_password):
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(user_email, email_password)
+
+        subject = "Your Website Password"
+        body = f"Your password is: {user_password}"
+        message = f"Subject: {subject}\n\n{body}"
+
+        server.sendmail(user_email, user_email, message)
+        server.quit()
+    except Exception as e:
+        raise Exception(f"Error sending email: {str(e)}")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -74,6 +128,7 @@ def register():
         password = request.form['password']
         email = request.form['email']
         role = request.form['role']
+        course = request.form['course']  # Assuming course is being selected during registration
 
         connection = get_db_connection()
         cursor = connection.cursor()
@@ -89,16 +144,17 @@ def register():
         elif not username or not password or not email:
             msg = 'Please fill out the form!'
         else:
-            cursor.execute('INSERT INTO data (Username, Password, Email, Role) VALUES (%s, %s, %s, %s)', (username, password, email, role))
+            cursor.execute('INSERT INTO data (Username, Password, Email, Role, Course) VALUES (%s, %s, %s, %s, %s)', 
+                           (username, password, email, role, course))
             connection.commit()
             msg = 'You have successfully registered!'
-        
+
         cursor.close()
         connection.close()
 
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
-    
+
     return render_template('register.html', msg=msg)
 
 @app.route('/teacherindex')
@@ -110,11 +166,9 @@ def teacherindex():
     cursor.close()
     connection.close()
 
-    # Assuming data should be the same as files or any other data
     data = files  # or any other relevant data
 
     return render_template('teacherindex.html', files=files, data=data)
-
 
 @app.route('/teacher_search_files', methods=['GET'])
 def teacher_search_files():
@@ -126,15 +180,15 @@ def teacher_search_files():
 
     query = "SELECT file_name, folder FROM files WHERE 1=1"
     params = []
-    
+
     if file_name:
         query += " AND file_name LIKE %s"
         params.append(f"%{file_name}%")
-        
+
     if folder:
         query += " AND folder LIKE %s"
         params.append(f"%{folder}%")
-    
+
     cursor.execute(query, params)
     files = cursor.fetchall()
     cursor.close()
@@ -142,15 +196,25 @@ def teacher_search_files():
 
     return render_template('teacherindex.html', files=files)
 
-@app.route('/studentindex')
-def studentindex():
+@app.route('/studentbasic')
+def studentbasic():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT file_name, folder FROM files')
+    cursor.execute("SELECT file_name, folder FROM files WHERE Course = 'Basic'")
     files = cursor.fetchall()
     cursor.close()
     connection.close()
-    return render_template('studentindex.html', files=files)
+    return render_template('studentbasic.html', files=files)
+
+@app.route('/studentadv')
+def studentadv():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT file_name, folder FROM files WHERE Course IN ('Basic', 'Advanced')")
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('studentadv.html', files=files)
 
 @app.route('/student_search_files', methods=['GET'])
 def student_search_files():
@@ -161,7 +225,7 @@ def student_search_files():
 
     query = "SELECT file_name, folder FROM files WHERE 1=1"
     params = []
-    
+
     if file_name:
         query += " AND file_name LIKE %s"
         params.append(f"%{file_name}%")
@@ -182,7 +246,7 @@ def subject_search_files(subject):
 
     query = "SELECT file_name, folder FROM files WHERE folder = %s"
     params = [subject]
-    
+
     if file_name:
         query += " AND file_name LIKE %s"
         params.append(f"%{file_name}%")
@@ -199,22 +263,21 @@ def upload_file():
     file = request.files['file']
     file_name = request.form['file_name']
     folder = request.form['folder']
-    
+
     if file and file.filename.endswith('.pdf'):
         file_path = os.path.join('static', 'pdfs', folder, file_name + '.pdf')
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         file.save(file_path)
-        
+
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute('INSERT INTO files (file_name, folder) VALUES (%s, %s)', (file_name, folder))
         connection.commit()
         cursor.close()
         connection.close()
-        
+
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
-
 
 @app.route('/math')
 def math():
@@ -273,10 +336,10 @@ def user_activity():
     cursor = connection.cursor()
     cursor.execute('SELECT Username, modified, last_seen FROM data')
     activities = cursor.fetchall()
-    
+
     if query:
         activities = [activity for activity in activities if query in activity['Username'].lower()]
-    
+
     cursor.close()
     connection.close()
     return render_template('user_activity.html', activities=activities)
@@ -288,13 +351,13 @@ def manageusers():
     cursor = connection.cursor()
     cursor.execute('SELECT Username, email, Role FROM data')
     users = cursor.fetchall()
-    
+
     if query:
         users = [user for user in users if query in user['Username'].lower()]
-    
+
     cursor.close()
     connection.close()
-    
+
     if request.is_json:
         return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
@@ -381,7 +444,7 @@ def delete_file():
         cursor.close()
         connection.close()
         return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
-    
+
 @app.route('/rename_user', methods=['POST'])
 def rename_user():
     data = request.get_json()
@@ -420,6 +483,7 @@ def delete_user():
         cursor.close()
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     with app.test_request_context():
