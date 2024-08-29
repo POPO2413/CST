@@ -209,6 +209,10 @@ def studentbasic():
     files = cursor.fetchall()
     cursor.close()
     connection.close()
+    
+    # data = files
+    
+    # return render_template('studentbasic.html', files=files, data=data)
     return render_template('studentbasic.html', files=files)
 
 @app.route('/studentadv')

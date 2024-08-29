@@ -8,10 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo">
-        </div>
-
+        <!-- login section -->
         <div class="login-card">
             <div class="header">
                 <h1 class="word">Welcome! Please login.</h1>
@@ -39,7 +36,7 @@
             <p class="bottom-text">Don't have an account? <a href="{{url_for('register')}}"> Sign Up here</a></p>
         </div>
 
-        <!-- Lower section for brief descriptions -->
+        <!-- scrollable section -->
         <div class="description-section">
             <div class="text-block">
                 <h2>About Our Digital Library</h2>
