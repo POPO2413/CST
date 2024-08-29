@@ -349,11 +349,12 @@ def literature():
 def adminindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT Username, email, Role FROM data')
+    cursor.execute('SELECT ID, Username, email, Role, Enrolled_Date FROM data')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
     return render_template('adminindex.html', users=users)
+
 
 @app.route('/user_activity')
 def user_activity():

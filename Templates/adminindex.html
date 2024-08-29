@@ -29,17 +29,21 @@
                 <table class="file-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
+                            <th>Enrolled Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
                         <tr>
+                            <td>{{ user.ID }}</td>
                             <td>{{ user.Username }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.Role }}</td>
+                            <td>{{ user.Enrolled_Date }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
