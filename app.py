@@ -197,7 +197,7 @@ def teacher_search_files():
 def studentbasic():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name, folder FROM files WHERE Course = 'Basic'")
+    cursor.execute("SELECT file_name, folder AS subject, semester, course FROM files WHERE Course = 'Basic'")
     files = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -207,7 +207,7 @@ def studentbasic():
 def studentadv():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name, folder FROM files WHERE Course IN ('Basic', 'Advanced')")
+    cursor.execute("SELECT file_name, folder AS subject, semester, course FROM files WHERE Course IN ('Basic', 'Advanced')")
     files = cursor.fetchall()
     cursor.close()
     connection.close()
