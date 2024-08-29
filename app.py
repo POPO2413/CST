@@ -74,48 +74,45 @@ def logout():
 @app.route('/forgotpassword', methods=['GET', 'POST'])
 def forgotpassword():
     if request.method == 'POST':
+        username = request.form['username']
         email = request.form['email']
-        email_password = request.form['email_password']
 
-        user_password = get_user_password_by_email(email)
+        user_data = get_user_data_by_username_and_email(username, email)
 
-        if user_password:
+        if user_data:
             try:
-                send_password_via_email(email, email_password, user_password)
+                send_password_via_email(email, user_data['Password'], username)
                 flash('Password has been sent to your email address.', 'success')
                 return redirect(url_for('login'))
             except Exception as e:
                 flash(f'Failed to send email: {str(e)}', 'danger')
         else:
-            flash('Email not found in our system.', 'danger')
+            flash('Incorrect username or email address.', 'danger')
 
     return render_template('forgotpassword.html')
 
-def get_user_password_by_email(email):
+def get_user_data_by_username_and_email(username, email):
     connection = get_db_connection()
     cursor = connection.cursor()
 
     try:
-        cursor.execute("SELECT Password FROM data WHERE Email = %s", (email,))
+        cursor.execute("SELECT Username, Password FROM data WHERE Username = %s AND Email = %s", (username, email))
         result = cursor.fetchone()
-        if result:
-            return result['Password']
-        else:
-            return None
+        return result
     finally:
         cursor.close()
         connection.close()
 
-def send_password_via_email(user_email, email_password, user_password):
+def send_password_via_email(email, user_password, username):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login(user_email, email_password)
+        server.login("xyz@gmail.com", "pwd")  
 
         subject = "Your Website Password"
-        body = f"Your password is: {user_password}"
+        body = f"Your password for username '{username}' is: {user_password}"
         message = f"Subject: {subject}\n\n{body}"
 
-        server.sendmail(user_email, user_email, message)
+        server.sendmail("xyz@gmail.com", email, message) 
         server.quit()
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
@@ -128,7 +125,7 @@ def register():
         password = request.form['password']
         email = request.form['email']
         role = request.form['role']
-        course = request.form['course']  # Assuming course is being selected during registration
+        course = request.form['course']
 
         connection = get_db_connection()
         cursor = connection.cursor()
@@ -216,26 +213,26 @@ def studentadv():
     connection.close()
     return render_template('studentadv.html', files=files)
 
-@app.route('/student_search_files', methods=['GET'])
-def student_search_files():
-    file_name = request.args.get('file_name', '')
+# @app.route('/student_search_files', methods=['GET'])
+# def student_search_files():
+#     file_name = request.args.get('file_name', '')
 
-    connection = get_db_connection()
-    cursor = connection.cursor()
+#     connection = get_db_connection()
+#     cursor = connection.cursor()
 
-    query = "SELECT file_name, folder FROM files WHERE 1=1"
-    params = []
+#     query = "SELECT file_name, folder FROM files WHERE 1=1"
+#     params = []
 
-    if file_name:
-        query += " AND file_name LIKE %s"
-        params.append(f"%{file_name}%")
+#     if file_name:
+#         query += " AND file_name LIKE %s"
+#         params.append(f"%{file_name}%")
 
-    cursor.execute(query, params)
-    files = cursor.fetchall()
-    cursor.close()
-    connection.close()
+#     cursor.execute(query, params)
+#     files = cursor.fetchall()
+#     cursor.close()
+#     connection.close()
 
-    return render_template('studentindex.html', files=files)
+#     return render_template('studentindex.html', files=files)
 
 @app.route('/subject_search_files/<subject>', methods=['GET'])
 def subject_search_files(subject):
