@@ -33,6 +33,8 @@
                     <tr>
                         <th>File Name</th>
                         <th>Folder</th>
+                        <th>Semester</th>
+                        <th>Course</th>
                         <th>Download</th>
                     </tr>
                 </thead>
@@ -41,8 +43,10 @@
                     <tr>
                         <td>{{ file.file_name.split('.')[0].replace('_', ' ') }}</td>
                         <td>{{ file.folder }}</td>
+                        <td>{{ file.semester }}</td>
+                        <td>{{ file.course }}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download>
+                            <a href="{{ url_for('static', filename='pdfs/' + file.folder + '/' + file.semester + '/' + file.course + '/' + file.file_name) }}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>
@@ -74,6 +78,16 @@
                     <option value="Economics">Economics</option>
                     <option value="Literature">Literature</option>
                 </select>
+                <select name="semester" required class="textbox">
+                    <option value="" disabled selected>Select Semester</option>
+                    <option value="Semester 1">Semester 1</option>
+                    <option value="Semester 2">Semester 2</option>
+                </select>
+                <select name="course" required class="textbox">
+                    <option value="" disabled selected>Select Course</option>
+                    <option value="Basic">Basic</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
                 <button type="submit" class="btn">Upload File</button>
             </form>
         </div>
@@ -83,11 +97,11 @@
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
-    
+
         document.getElementById('close-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'none';
         });
-    
+
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -103,8 +117,10 @@
                     newRow.innerHTML = `
                         <td>${data.file.file_name.replace('_', ' ')}</td>
                         <td>${data.file.folder}</td>
+                        <td>${data.file.semester}</td>
+                        <td>${data.file.course}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.file_name}" download>
+                            <a href="{{ url_for('static', filename='pdfs/' + data.file.folder + '/' + data.file.semester + '/' + data.file.course + '/') }}${data.file.file_name}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>`;

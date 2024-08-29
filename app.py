@@ -263,20 +263,46 @@ def upload_file():
     file = request.files['file']
     file_name = request.form['file_name']
     folder = request.form['folder']
-
+    semester = request.form['semester']
+    course = request.form['course']
+    
     if file and file.filename.endswith('.pdf'):
-        file_path = os.path.join('static', 'pdfs', folder, file_name + '.pdf')
+        file_path = os.path.join('static', 'pdfs', folder, semester, course, file_name + '.pdf')
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         file.save(file_path)
 
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute('INSERT INTO files (file_name, folder) VALUES (%s, %s)', (file_name, folder))
+        cursor.execute('INSERT INTO files (file_name, folder, semester, course) VALUES (%s, %s, %s, %s)', (file_name, folder, semester, course))
         connection.commit()
         cursor.close()
         connection.close()
+        
+        return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder, 'semester': semester, 'course': course}})
+    return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
-        return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder}})
+@app.route('/student_upload_file', methods=['POST'])
+def student_upload_file():
+    file = request.files['file']
+    file_name = request.form['file_name']
+    folder = request.form['folder']
+    semester = request.form['semester']
+    course = request.form['course']
+    subject = request.form['subject']
+    
+    if file and file.filename.endswith('.pdf'):
+        file_path = os.path.join('static', 'pdfs', folder, subject, semester, course, file_name + '.pdf')
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        file.save(file_path)
+        
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute('INSERT INTO files (file_name, folder, subject, semester, course) VALUES (%s, %s, %s, %s, %s)', (file_name, folder, subject, semester, course))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        
+        return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder, 'semester': semester, 'course': course, 'subject': subject}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
 @app.route('/math')
