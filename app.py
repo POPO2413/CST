@@ -360,7 +360,7 @@ def math():
 def science():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name FROM files WHERE folder='Science'")
+    cursor.execute("SELECT file_name, folder FROM files WHERE folder='Science'")
     files = cursor.fetchall()
     cursor.close()
     connection.close()
