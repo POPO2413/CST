@@ -561,24 +561,6 @@ def send_message_to_teacher():
         return redirect(url_for('login'))
 
 
-@app.route('/view_messages')
-def view_messages():
-    if 'username' in session and session['role'] == 'teacher':
-        teacher_name = session['username']
-        
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        
-        cursor.execute("SELECT student_name, message_content, sent_time FROM messages WHERE teacher_name = %s ORDER BY sent_time DESC", (teacher_name,))
-        messages = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-        
-        return render_template('view_messages.html', messages=messages)
-    else:
-        flash('Unauthorized access!', 'danger')
-        return redirect(url_for('login'))
 
 
 @app.route('/messages')
