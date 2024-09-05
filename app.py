@@ -129,7 +129,7 @@ def send_password_via_email(email, user_password):
         body = f"Your password is: {user_password}"
         message = f"Subject: {subject}\n\n{body}"
 
-        server.sendmail('jasonbssk@gmail.com', email, message)
+        server.sendmail('annieeeee2203@gmail.com', email, message)
         server.quit()
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
@@ -579,6 +579,53 @@ def view_messages():
     else:
         flash('Unauthorized access!', 'danger')
         return redirect(url_for('login'))
+
+
+@app.route('/messages', methods=['GET'])
+def view_messages():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Assuming the teacher is logged in
+    recipient = session['username']
+
+    # Fetch all messages where the teacher is the recipient
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT sender, content, sent_at FROM messages WHERE recipient = %s", (recipient,))
+    messages = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('messages.html', messages=messages, recipient=recipient)
+
+
+@app.route('/send_reply', methods=['POST'])
+def send_reply():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    sender = session['username']  # The teacher is sending the reply
+    recipient = request.form['recipient']  # Get the recipient from the form
+    reply_content = request.form['reply_content']
+    sent_at = datetime.now()
+
+    # Insert the reply into the messages table
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
+        (sender, recipient, reply_content, sent_at)
+    )
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    flash("Reply sent successfully!", "success")
+    return redirect(url_for('view_messages'))
+
+
+
 
 if __name__ == '__main__':
     with app.test_request_context():

@@ -2,33 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher Messages</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='teacherstyle.css') }}">
+    <title>Messages</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Add some basic styles for the chat interface */
+        .message-container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .sender {
+            font-weight: bold;
+        }
+
+        .content {
+            margin-top: 5px;
+        }
+
+        .message-input {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-send {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-send:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Messages for {{ session.username }}</h1>
-    </div>
-    
-    <div class="messages-container">
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>
-                        <strong>From:</strong> {{ message.student_name }}<br>
-                        <strong>Sent At:</strong> {{ message.sent_time }}<br>
-                        <p>{{ message.message_content }}</p>
-                    </li>
-                    <hr>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No messages found.</p>
-        {% endif %}
-    </div>
 
-    <div class="logout-container">
-        <a href="{{ url_for('logout') }}">Logout</a>
+<div class="message-container">
+    <h2>Messages</h2>
+
+    <!-- Display the received messages -->
+    {% for message in messages %}
+    <div class="message">
+        <div class="sender">{{ message.sender }}:</div>
+        <div class="content">{{ message.content }}</div>
+        <div class="sent_at">{{ message.sent_at }}</div>
     </div>
+    {% endfor %}
+
+    <!-- Reply form -->
+    <div class="message-input">
+        <form action="{{ url_for('send_reply') }}" method="post">
+            <input type="hidden" name="recipient" value="{{ recipient }}">  <!-- Teacher can select the recipient -->
+            <textarea name="reply_content" placeholder="Write your reply..." required></textarea>
+            <button type="submit" class="btn-send">Send Reply</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>
