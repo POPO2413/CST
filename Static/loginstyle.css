@@ -102,7 +102,7 @@ html, body {
 /* Scrollable notifications section */
 .notifications-container {
     width: 300px;
-    max-height: 500px;
+    max-height: 150px;
     overflow-y: auto; /* Make the section scrollable */
     border: 1px solid #ccc;
     padding: 15px;
