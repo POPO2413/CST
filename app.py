@@ -32,6 +32,8 @@ def login():
         password = request.form['password']
         role = request.form['role']
 
+        print(f"Login attempt: username={username}, role={role}")
+
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s AND Password = %s AND Role = %s', (username, password, role))
@@ -42,7 +44,12 @@ def login():
             session['password'] = account['Password']
             session['username'] = account['Username']
             session['role'] = account['Role']
-            session['course'] = account.get('Course')  # Assuming 'Course' column exists
+            
+            if role == 'student':
+                session['course'] = account.get('Course')
+            else:
+                session['course'] = None
+            
             msg = 'Logged in successfully!'
 
             cursor.execute('UPDATE data SET last_seen = %s WHERE Username = %s', (datetime.now(), username))
@@ -56,14 +63,17 @@ def login():
                 elif session['course'] == 'Advanced':
                     return redirect(url_for('studentadv'))
             elif role == 'teacher':
+                print("Redirecting to teacher index.")
                 return redirect(url_for('teacherindex'))
         else:
             msg = 'Incorrect Username / Password!'
+            print("Account not found or incorrect credentials.")
 
         cursor.close()
         connection.close()
 
     return render_template('login.html', msg=msg)
+
 
 @app.route('/logout')
 def logout():
