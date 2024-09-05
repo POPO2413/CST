@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Index - Advanced</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='studentstyle.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome, {{ session.username }}!</h1>
+    </div>
+    <div class="grid-container">
+        <!-- Content for both Basic and Advanced courses -->
+        <div class="grid-item">
+            <a href="{{ url_for('math') }}">
+                <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
+                <h3>Math</h3>
+            </a>
+        </div>
+        <div class="grid-item">
+            <a href="{{ url_for('science') }}">
+                <img src="{{ url_for('static', filename='images/science.jpg') }}" alt="Science">
+                <h3>Science</h3>
+            </a>
+        </div>
+        <div class="grid-item">
+            <a href="{{ url_for('economics') }}">
+                <img src="{{ url_for('static', filename='images/economics.jpg') }}" alt="Economics">
+                <h3>Economics</h3>
+            </a>
+        </div>
+        <div class="grid-item">
+            <a href="{{ url_for('literature') }}">
+                <img src="{{ url_for('static', filename='images/literature.jpg') }}" alt="Literature">
+                <h3>Literature</h3>
+            </a>
+        </div>
+    </div>
+    <div class="file-table-container">
+        <table class="file-table" id="file-table">
+            <!-- Display files available for both Basic and Advanced courses -->
+            {% for file in files %}
+            <tr>
+                <td>{{ file['folder'] }}</td>
+                <td>{{ file['file_name'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>

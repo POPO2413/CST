@@ -7,10 +7,15 @@
 </head>
 <body>
     <div class="header">
-        <h1>Welcome, {{ session.username }}!</h1>
+        <h1>Advanced contents</h1>
     </div>
+
+    <!-- Button to go to Basic page -->
+    <div class="basic-container">
+        <a href="{{ url_for('studentbasic') }}" class="btn">Go to Basic contents</a>
+    </div>
+
     <div class="grid-container">
-        <!-- Content for both Basic and Advanced courses -->
         <div class="grid-item">
             <a href="{{ url_for('math') }}">
                 <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
@@ -36,19 +41,141 @@
             </a>
         </div>
     </div>
-    <div class="file-table-container">
-        <table class="file-table" id="file-table">
-            <!-- Display files available for both Basic and Advanced courses -->
-            {% for file in files %}
-            <tr>
-                <td>{{ file['folder'] }}</td>
-                <td>{{ file['file_name'] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+
+    <!-- Upload HW file button -->
+    <div class="upload-container">
+        <button id="open-upload-popup" class="btn">Submit HW file</button>
     </div>
+
+    <!-- Talk to my teacher button -->
+    <div class="talk-container">
+        <button id="open-talk-popup" class="btn">Talk to my teacher</button>
+    </div>
+
+    <!-- Talk to my teacher pop-up window -->
+    <div class="popup" id="talk-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-talk-popup">&times;</span>
+            <form id="talk-form" action="{{ url_for('send_message_to_teacher') }}" method="post">
+                <select name="teacher_name" required class="textbox">
+                    <option value="" disabled selected>Select Teacher</option>
+                    {% for teacher in teachers %}
+                        <option value="{{ teacher.Username }}">{{ teacher.Username }}</option>
+                    {% endfor %}
+                </select>
+                <textarea name="message_content" placeholder="Enter your message" required class="textbox"></textarea>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Upload pop-up window -->
+    <div class="popup" id="upload-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-upload-popup">&times;</span>
+            <form id="upload-form" action="{{ url_for('student_upload_file') }}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="application/pdf" required>
+                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
+                <select name="subject" required class="textbox">
+                    <option value="" disabled selected>Select Subject</option>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Literature">Literature</option>
+                </select>
+                <select name="semester" required class="textbox">
+                    <option value="" disabled selected>Select Semester</option>
+                    <option value="Semester 1">Semester 1</option>
+                    <option value="Semester 2">Semester 2</option>
+                </select>
+                <select name="course" required class="textbox">
+                    <option value="" disabled selected>Select Course</option>
+                    <option value="Basic">Basic</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+                <button type="submit" class="btn">Upload File</button>
+            </form>
+        </div>
+    </div>
+
     <div class="logout-container">
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
+
+    <script>
+        // Handle pop-up for "Talk to my teacher"
+        document.getElementById('open-talk-popup').addEventListener('click', function() {
+            document.getElementById('talk-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-talk-popup').addEventListener('click', function() {
+            document.getElementById('talk-popup').style.display = 'none';
+        });
+
+        document.getElementById('talk-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('send_message_to_teacher') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Message sent successfully!');
+                    document.getElementById('talk-popup').style.display = 'none';
+                } else {
+                    alert('Failed to send message: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send message');
+            });
+        });
+
+        // Handle pop-up for file upload
+        document.getElementById('open-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'none';
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('student_upload_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.file) {
+                    const tbody = document.getElementById('file-tbody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${data.file.file_name.split('.')[0].replace('_', ' ')}</td>
+                        <td>${data.file.subject}</td>
+                        <td>${data.file.semester}</td>
+                        <td>${data.file.course}</td>
+                        <td>
+                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.subject}/${data.file.semester}/${data.file.course}/${data.file.file_name}" download>
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        </td>`;
+                    tbody.appendChild(newRow);
+                    document.getElementById('upload-popup').style.display = 'none';
+                } else {
+                    alert('File upload failed: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('File upload failed');
+            });
+        });
+    </script>
 </body>
 </html>
