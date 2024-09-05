@@ -581,7 +581,7 @@ def view_messages():
         return redirect(url_for('login'))
 
 
-@app.route('/messages', methods=['GET'])
+@app.route('/messages')
 def view_messages():
     if 'username' not in session:
         return redirect(url_for('login'))
@@ -599,7 +599,7 @@ def view_messages():
 
     return render_template('messages.html', messages=messages, recipient=recipient)
 
-
+# Route to send a reply
 @app.route('/send_reply', methods=['POST'])
 def send_reply():
     if 'username' not in session:
@@ -624,10 +624,5 @@ def send_reply():
     flash("Reply sent successfully!", "success")
     return redirect(url_for('view_messages'))
 
-
-
-
 if __name__ == '__main__':
-    with app.test_request_context():
-        print(app.url_map)
     app.run(debug=True)
