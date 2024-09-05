@@ -91,8 +91,9 @@ body {
 }
 
 .logout-container {
-    text-align: center;
-    margin: 250px 0 20px;  
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }
 
 .logout-container a {
@@ -102,6 +103,7 @@ body {
     text-decoration: none;
     border: none;
     cursor: pointer;
+    border-radius: 5px; /* Optional: for a rounded button look */
 }
 
 .logout-container a:hover {
@@ -114,7 +116,13 @@ body {
     margin-top: 20px;
 }
 
-.upload-container .btn {
+.talk-container {
+    text-align: center;
+    margin-top: 20px; /* Adjust this value to control the spacing between the buttons */
+}
+
+.upload-container .btn,
+.talk-container .btn {
     padding: 10px 20px;
     background-color: #004080;
     color: white;
@@ -123,7 +131,8 @@ body {
     font-size: 16px;
 }
 
-.upload-container .btn:hover {
+.upload-container .btn:hover,
+.talk-container .btn:hover {
     background-color: #003060;
 }
 
@@ -160,7 +169,10 @@ body {
     align-items: center;
 }
 
-.popup-content input[type="file"], .popup-content input[type="text"], .popup-content select {
+.popup-content input[type="file"], 
+.popup-content input[type="text"], 
+.popup-content select,
+.popup-content textarea {
     margin-bottom: 15px;
     padding: 10px;
     width: 100%;

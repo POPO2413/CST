@@ -36,11 +36,34 @@
         </div>
     </div>
 
+    <!-- Upload HW file button -->
     <div class="upload-container">
-        <button id="open-upload-popup" class="btn">Upload File</button>
+        <button id="open-upload-popup" class="btn">Submit HW file</button>
     </div>
 
-    <!-- upload pop-up window -->
+    <!-- Talk to my teacher button -->
+    <div class="talk-container">
+        <button id="open-talk-popup" class="btn">Talk to my teacher</button>
+    </div>
+
+    <!-- Talk to my teacher pop-up window -->
+    <div class="popup" id="talk-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-talk-popup">&times;</span>
+            <form id="talk-form" action="{{ url_for('send_message_to_teacher') }}" method="post">
+                <select name="teacher_name" required class="textbox">
+                    <option value="" disabled selected>Select Teacher</option>
+                    {% for teacher in teachers %}
+                        <option value="{{ teacher.Username }}">{{ teacher.Username }}</option>
+                    {% endfor %}
+                </select>
+                <textarea name="message_content" placeholder="Enter your message" required class="textbox"></textarea>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Upload pop-up window -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -69,41 +92,43 @@
         </div>
     </div>
 
-    <!-- table with file info -->
-    <div class="file-table-container">
-        <table class="file-table" id="file-table">
-            <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>Subject</th>
-                    <th>Semester</th>
-                    <th>Course</th>
-                    <th>Download</th>
-                </tr>
-            </thead>
-            <tbody id="file-tbody">
-                {% for file in files %}
-                <tr>
-                    <td>{{ file.file_name.split('.')[0].replace('_', ' ') }}</td>
-                    <td>{{ file.subject }}</td> 
-                    <td>{{ file.semester }}</td>
-                    <td>{{ file.course }}</td>
-                    <td>
-                        <a href="{{ url_for('static', filename='pdfs/' + file.subject + '/' + file.semester + '/' + file.course + '/' + file.file_name) }}" download>
-                            <i class="fa fa-download"></i> Download
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
     <div class="logout-container">
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
     <script>
+        // Handle pop-up for "Talk to my teacher"
+        document.getElementById('open-talk-popup').addEventListener('click', function() {
+            document.getElementById('talk-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-talk-popup').addEventListener('click', function() {
+            document.getElementById('talk-popup').style.display = 'none';
+        });
+
+        document.getElementById('talk-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('send_message_to_teacher') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Message sent successfully!');
+                    document.getElementById('talk-popup').style.display = 'none';
+                } else {
+                    alert('Failed to send message: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send message');
+            });
+        });
+
+        // Handle pop-up for file upload
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });

@@ -13,7 +13,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items to the top */
+    justify-content: flex-start;
     min-height: 100vh;
     padding: 20px;
     width: 100%;
@@ -21,10 +21,11 @@ html, body {
 
 .main-content {
     display: flex;
-    flex-direction: row; /* Align login and notifications side by side */
-    justify-content: center;
+    justify-content: center; /* Center the login and notifications container */
     align-items: flex-start;
-    margin-bottom: 30px; /* Space between login/notifications and description */
+    width: 100%;
+    max-width: 1200px; /* Max width to limit the content area */
+    margin-bottom: 30px;
 }
 
 .login-card {
@@ -35,7 +36,6 @@ html, body {
     width: 360px;
     text-align: center;
     margin-right: 20px; /* Space between login card and notifications */
-    position: relative;
 }
 
 .textbox {
@@ -109,6 +109,7 @@ html, body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
+    position: relative;
 }
 
 .notifications-content {
@@ -151,4 +152,28 @@ html, body {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
     max-width: 1200px;
     width: 100%;
+}
+
+.description-section .text-block {
+    width: 60%; /* Adjust the width to allow more space for text */
+}
+
+.description-section .image-block {
+    width: 35%; /* Adjust the width to fit next to the text */
+    margin-left: 5%;
+}
+
+.login-card img.logo {
+    width: 100px; /* Adjust this size as needed */
+    height: 100px; /* Adjust this size as needed */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px; /* Adjust to add some space at the top */
+}
+
+
+.login-card .header {
+    text-align: center;
+    margin-bottom: 20px;
 }

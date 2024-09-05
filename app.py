@@ -204,15 +204,20 @@ def teacher_search_files():
 def studentbasic():
     connection = get_db_connection()
     cursor = connection.cursor()
+
+    # Fetch files for the student
     cursor.execute("SELECT file_name, folder AS subject, semester, course FROM files WHERE Course = 'Basic'")
     files = cursor.fetchall()
+
+    # Fetch the list of teachers
+    cursor.execute("SELECT Username FROM data WHERE Role = 'Teacher'")
+    teachers = cursor.fetchall()
+
     cursor.close()
     connection.close()
     
-    # data = files
-    
-    # return render_template('studentbasic.html', files=files, data=data)
-    return render_template('studentbasic.html', files=files)
+    return render_template('studentbasic.html', files=files, teachers=teachers)
+
 
 @app.route('/studentadv')
 def studentadv():
@@ -520,7 +525,49 @@ def delete_user():
         cursor.close()
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
+    
+@app.route('/send_message_to_teacher', methods=['POST'])
+def send_message_to_teacher():
+    if 'username' in session and session['role'] == 'student':
+        student_name = session['username']
+        teacher_name = request.form['teacher_name']
+        message_content = request.form['message_content']
 
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO messages (student_name, teacher_name, message_content, sent_time) VALUES (%s, %s, %s, %s)", 
+                       (student_name, teacher_name, message_content, datetime.now()))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        flash('Your message has been sent!', 'success')
+        return redirect(url_for('studentbasic'))
+    else:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('login'))
+
+
+@app.route('/view_messages')
+def view_messages():
+    if 'username' in session and session['role'] == 'teacher':
+        teacher_name = session['username']
+        
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        
+        cursor.execute("SELECT student_name, message_content, sent_time FROM messages WHERE teacher_name = %s ORDER BY sent_time DESC", (teacher_name,))
+        messages = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+        
+        return render_template('view_messages.html', messages=messages)
+    else:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     with app.test_request_context():

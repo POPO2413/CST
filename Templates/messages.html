@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Messages</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='teacherstyle.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Messages for {{ session.username }}</h1>
+    </div>
+    
+    <div class="messages-container">
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>
+                        <strong>From:</strong> {{ message.student_name }}<br>
+                        <strong>Sent At:</strong> {{ message.sent_time }}<br>
+                        <p>{{ message.message_content }}</p>
+                    </li>
+                    <hr>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No messages found.</p>
+        {% endif %}
+    </div>
+
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>

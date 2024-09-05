@@ -15,25 +15,23 @@
                     <h1 class="word">Welcome! Please login.</h1>
                 </div>
 
-                <h2 class="word">
-                    <form action="{{ url_for('login') }}" method="post">
-                        <select name="role" id="role" class="textbox">
-                            <option value="empty">Select...</option>
-                            <option value="admin">Admin</option>
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                        </select>
-                        <br><br>
-                        <div class="msg">{{ msg }}</div>
-                        <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/>
-                        <br><br>
-                        <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/>
-                        <br><br>
-                        <p class="forgot-password"><a href="{{ url_for('forgotpassword') }}">Forgot Password?</a></p>
-                        <input type="submit" class="btn" value="Sign In"/>
-                        <br><br>
-                    </form>
-                </h2>
+                <form action="{{ url_for('login') }}" method="post">
+                    <select name="role" id="role" class="textbox">
+                        <option value="empty">Select...</option>
+                        <option value="admin">Admin</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                    <br><br>
+                    <div class="msg">{{ msg }}</div>
+                    <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox" required/>
+                    <br><br>
+                    <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox" required/>
+                    <br><br>
+                    <p class="forgot-password"><a href="{{ url_for('forgotpassword') }}">Forgot Password?</a></p>
+                    <input type="submit" class="btn" value="Sign In"/>
+                    <br><br>
+                </form>
                 <p class="bottom-text">Don't have an account? <a href="{{url_for('register')}}"> Sign Up here</a></p>
             </div>
 
@@ -42,9 +40,9 @@
                 <h2>Latest Notifications</h2>
                 <div class="notifications-content">
                     <!-- notifications -->
-                    <p>Notification 1: Lorem ipsum dolor sit amet.</p>
-                    <p>Notification 2: Consectetur adipiscing elit.</p>
-                    <p>Notification 3: Integer nec odio. Praesent libero.</p>
+                    <p>Notification 1: Update in the student page.</p>
+                    <p>Notification 2: Addition of submission for students.</p>
+                    <p>Notification 3: Addition of semester 2 files.</p>
                 </div>
             </div>
         </div>
