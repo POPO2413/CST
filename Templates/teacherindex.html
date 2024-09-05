@@ -97,11 +97,11 @@
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
-
+    
         document.getElementById('close-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'none';
         });
-
+    
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -120,7 +120,7 @@
                         <td>${data.file.semester}</td>
                         <td>${data.file.course}</td>
                         <td>
-                            <a href="{{ url_for('static', filename='pdfs/' + data.file.folder + '/' + data.file.semester + '/' + data.file.course + '/') }}${data.file.file_name}" download>
+                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.folder}/${data.file.semester}/${data.file.course}/${data.file.file_name}" download>
                                 <i class="fa fa-download"></i> Download
                             </a>
                         </td>`;
@@ -135,7 +135,6 @@
                 alert('File upload failed');
             });
         });
-    </script>
-    
+    </script>    
 </body>
 </html>
