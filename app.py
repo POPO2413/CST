@@ -330,14 +330,31 @@ def student_upload_file():
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
 @app.route('/math')
+# def math():
+#     connection = get_db_connection()
+#     cursor = connection.cursor()
+#     cursor.execute("SELECT file_name FROM files WHERE folder='Math'")
+#     files = cursor.fetchall()
+#     cursor.close()
+#     connection.close()
+#     return render_template('math.html', files=files)
 def math():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name FROM files WHERE folder='Math'")
-    files = cursor.fetchall()
+    
+    # files for Semester 1
+    cursor.execute("SELECT file_name FROM files WHERE folder='Math' AND semester=1")
+    files_semester1 = cursor.fetchall()
+    
+    # files for Semester 2
+    cursor.execute("SELECT file_name FROM files WHERE folder='Math' AND semester=2")
+    files_semester2 = cursor.fetchall()
+    
     cursor.close()
     connection.close()
-    return render_template('math.html', files=files)
+    
+    return render_template('math.html', files_semester1=files_semester1, files_semester2=files_semester2)
+
 
 @app.route('/science')
 def science():
