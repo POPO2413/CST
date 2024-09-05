@@ -122,8 +122,8 @@ def send_password_via_email(email, user_password):
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         
         # Replace with your own email and app-specific password (not your regular email password)
-        # server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
-        server.login('annieeeee2203@gmail.com', 'abCde!123987')
+        server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
+        # server.login('annieeeee2203@gmail.com', 'abCde!123987')
 
         subject = "Your Website Password"
         body = f"Your password is: {user_password}"
