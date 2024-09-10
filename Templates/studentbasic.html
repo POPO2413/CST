@@ -50,7 +50,7 @@
     <div class="popup" id="talk-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-talk-popup">&times;</span>
-            <form id="talk-form" action="{{ url_for('send_message_to_teacher') }}" method="post">
+            <form id="talk-form" action="{{ url_for('send_message') }}" method="post">
                 <select name="teacher_name" required class="textbox">
                     <option value="" disabled selected>Select Teacher</option>
                     {% for teacher in teachers %}
@@ -109,7 +109,7 @@
         document.getElementById('talk-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            fetch("{{ url_for('send_message_to_teacher') }}", {
+            fetch("{{ url_for('send_message') }}", {
                 method: 'POST',
                 body: formData
             })

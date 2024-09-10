@@ -5,19 +5,82 @@
     <title>Messages</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* Add some basic styles for the chat interface */
-        .message-container {
-            width: 80%;
-            margin: auto;
+        /* Basic layout */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            gap: 20px;
         }
 
+        /* Back to dashboard button */
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        .back-button a {
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .back-button a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Student List */
+        .student-list {
+            width: 250px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-list h3 {
+            margin-bottom: 10px;
+        }
+
+        .student-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .student-list li {
+            margin-bottom: 10px;
+        }
+
+        .student-list a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .student-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Chatbox */
+        .chat-box {
+            flex-grow: 1;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        .chat-box h2 {
+            margin-bottom: 20px;
+        }
+
+        /* Message styling */
         .message {
             padding: 10px;
-            margin: 10px 0;
+            margin-bottom: 10px;
             background-color: #e0e0e0;
             border-radius: 5px;
         }
@@ -26,10 +89,12 @@
             font-weight: bold;
         }
 
-        .content {
-            margin-top: 5px;
+        .sent_at {
+            font-size: 12px;
+            color: #888;
         }
 
+        /* Reply form */
         .message-input {
             margin-top: 20px;
         }
@@ -48,6 +113,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         .btn-send:hover {
@@ -57,25 +123,43 @@
 </head>
 <body>
 
-<div class="message-container">
-    <h2>Messages</h2>
-
-    <!-- Display the received messages -->
-    {% for message in messages %}
-    <div class="message">
-        <div class="sender">{{ message.sender }}:</div>
-        <div class="content">{{ message.content }}</div>
-        <div class="sent_at">{{ message.sent_at }}</div>
+<div class="container">
+    <!-- Back to Dashboard Button -->
+    <div class="back-button">
+        <a href="{{ url_for('teacherindex') }}">Back to Dashboard</a>
     </div>
-    {% endfor %}
 
-    <!-- Reply form -->
-    <div class="message-input">
-        <form action="{{ url_for('send_reply') }}" method="post">
-            <input type="hidden" name="recipient" value="{{ recipient }}">  <!-- Teacher can select the recipient -->
-            <textarea name="reply_content" placeholder="Write your reply..." required></textarea>
-            <button type="submit" class="btn-send">Send Reply</button>
-        </form>
+    <!-- Student List -->
+    <div class="student-list">
+        <h3>Students</h3>
+        <ul>
+            {% for student in students %}
+            <li><a href="{{ url_for('view_messages', student=student.sender) }}">{{ student.sender }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box">
+        <h2>Messages with {{ selected_student }}</h2>
+
+        <!-- Display the received messages -->
+        {% for message in messages %}
+        <div class="message">
+            <div class="sender">{{ message.sender }}:</div>
+            <div class="content">{{ message.content }}</div>
+            <div class="sent_at">{{ message.sent_at }}</div>
+        </div>
+        {% endfor %}
+
+        <!-- Reply form -->
+        <div class="message-input">
+            <form action="{{ url_for('send_reply') }}" method="post">
+                <input type="hidden" name="recipient" value="{{ selected_student }}">  <!-- The teacher can select the recipient -->
+                <textarea name="reply_content" placeholder="Write your reply..." required></textarea>
+                <button type="submit" class="btn-send">Send Reply</button>
+            </form>
+        </div>
     </div>
 </div>
 
