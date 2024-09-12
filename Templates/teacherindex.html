@@ -14,21 +14,16 @@
 
         <!-- Search Container -->
         <div class="search-container">
-            <form id="search-form" action="{{ url_for('subject_search_files', subject='Math') }}" method="get">
+            <form id="search-form" action="{{ url_for('teacher_search_files') }}" method="get">
                 <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
                 <input type="search" id="search-folder" name="folder" placeholder="Search folder" class="textbox">
                 <button type="submit" class="btn">Search</button>
             </form>
         </div>
 
-        <!-- Upload Button -->
+        <!-- upload marked files -->
         <div class="upload-container">
-            <button id="open-upload-popup" class="btn">Upload File</button>
-        </div>
-
-        <!-- Messages Button -->
-        <div class="messages-container">
-            <a href="{{ url_for('messages') }}" class="btn">View Messages</a>
+            <button id="open-upload-popup" class="btn">Send Marked Files</button>
         </div>
 
         <!-- Files Table -->
@@ -69,69 +64,51 @@
         </div>
     </div>
 
-    <!-- Upload Pop-up -->
+    <!-- pop-up to send marked files -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
-            <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+            <form id="upload-form" action="{{ url_for('upload_and_send_file') }}" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" accept="application/pdf" required>
                 <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
-                <select name="folder" required class="textbox">
-                    <option value="" disabled selected>Select folder</option>
-                    <option value="Math">Math</option>
-                    <option value="Science">Science</option>
-                    <option value="Economics">Economics</option>
-                    <option value="Literature">Literature</option>
+                <select name="student_username" required class="textbox">
+                    <option value="" disabled selected>Select Student</option>
+                    {% for student in students %}
+                    <option value="{{ student.Username }}">{{ student.Username }}</option>
+                    {% endfor %}
                 </select>
-                <select name="semester" required class="textbox">
-                    <option value="" disabled selected>Select Semester</option>
-                    <option value="Semester 1">Semester 1</option>
-                    <option value="Semester 2">Semester 2</option>
-                </select>
-                <select name="course" required class="textbox">
-                    <option value="" disabled selected>Select Course</option>
-                    <option value="Basic">Basic</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
-                <button type="submit" class="btn">Upload File</button>
+                <button type="submit" class="btn">Send File</button>
             </form>
         </div>
     </div>
 
     <script>
+
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
-    
+
         document.getElementById('close-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'none';
         });
-    
+
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            fetch("{{ url_for('upload_file') }}", {
+
+            fetch("{{ url_for('upload_and_send_file') }}", {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.file) {
-                    const tbody = document.getElementById('file-tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td>${data.file.file_name.replace('_', ' ')}</td>
-                        <td>${data.file.folder}</td>
-                        <td>${data.file.semester}</td>
-                        <td>${data.file.course}</td>
-                        <td>
-                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.folder}/${data.file.semester}/${data.file.course}/${data.file.file_name}" download>
-                                <i class="fa fa-download"></i> Download
-                            </a>
-                        </td>`;
-                    tbody.appendChild(newRow);
+
+                if (data.success) {
+                    alert('File sent successfully!');
+                    document.getElementById('upload-form').reset();
                     document.getElementById('upload-popup').style.display = 'none';
                 } else {
+                    console.error('Upload error:', data);
                     alert('File upload failed: ' + (data.error || 'Unknown error'));
                 }
             })
@@ -140,6 +117,7 @@
                 alert('File upload failed');
             });
         });
-    </script>    
+    </script>
+    
 </body>
 </html>

@@ -4,6 +4,12 @@ import re
 import os
 from datetime import datetime
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+from flask import send_file
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -116,16 +122,18 @@ def get_user_password_by_username_and_email(username, email):
 def send_password_via_email(email, user_password):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.set_debuglevel(1) 
         server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
-
-        subject = "Your Website Password"
+        
+        subject = "Your Password"
         body = f"Your password is: {user_password}"
         message = f"Subject: {subject}\n\n{body}"
 
-        server.sendmail('annieeeee2203@gmail.com', email, message)
+        server.sendmail('jasonbssk@gmail.com', email, message)
         server.quit()
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -327,16 +335,99 @@ def delete_user():
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
+# @app.route('/teacherindex')
+# def teacherindex():
+#     connection = get_db_connection()
+#     cursor = connection.cursor()
+#     cursor.execute('SELECT file_name, folder, semester, course FROM files')
+#     files = cursor.fetchall()
+#     cursor.close()
+#     connection.close()
+
+#     return render_template('teacherindex.html', files=files)
 @app.route('/teacherindex')
 def teacherindex():
     connection = get_db_connection()
     cursor = connection.cursor()
+
     cursor.execute('SELECT file_name, folder, semester, course FROM files')
     files = cursor.fetchall()
+    
+    cursor.execute('SELECT Username FROM data WHERE Role = %s', ('student',))
+    students = cursor.fetchall()
+
     cursor.close()
     connection.close()
 
-    return render_template('teacherindex.html', files=files)
+    return render_template('teacherindex.html', files=files, students=students)
+
+
+@app.route('/upload_and_send_file', methods=['POST'])
+def upload_and_send_file():
+    if 'username' not in session or session['role'] != 'teacher':
+        return redirect(url_for('login'))
+
+    file = request.files['file']
+    file_name = request.form['file_name']
+    student_username = request.form['student_username']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT Email FROM data WHERE Username = %s", (student_username,))
+    student = cursor.fetchone()
+
+    if not student or not student['Email']:
+        flash('Student not found or email is missing.', 'danger')
+        return redirect(url_for('teacherindex'))
+
+    if file and file.filename.endswith('.pdf'):
+        filename = secure_filename(file_name + ".pdf")
+        file_path = os.path.join('static', 'uploads', filename)
+        file.save(file_path)
+
+        try:
+            send_marked_file_via_email(student['Email'], file_path)
+            flash('Marked file sent to student successfully!', 'success')
+        except Exception as e:
+            flash(f'Error sending file: {str(e)}', 'danger')
+
+    else:
+        flash('Invalid file. Only PDF files are allowed.', 'danger')
+
+    cursor.close()
+    connection.close()
+    return redirect(url_for('teacherindex'))
+
+
+
+def send_marked_file_via_email(student_email, file_path):
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw') 
+
+        msg = MIMEMultipart()
+        msg['From'] = 'jasonbssk@gmail.com'
+        msg['To'] = student_email
+        msg['Subject'] = 'Your submission has been marked'
+
+        body = 'Your work with comments has been attached to this email.'
+        msg.attach(MIMEText(body, 'plain'))
+
+        attachment = open(file_path, 'rb')
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename= {os.path.basename(file_path)}')
+        msg.attach(part)
+
+        server.sendmail('jasonbssk@gmail.com', student_email, msg.as_string())
+        server.quit()
+
+        print('Email sent successfully')
+
+    except Exception as e:
+        raise Exception(f"Error sending email: {str(e)}")
+
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
