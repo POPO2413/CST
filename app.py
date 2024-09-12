@@ -159,6 +159,148 @@ def register():
 
     return render_template('register.html', msg=msg)
 
+@app.route('/adminindex')
+def adminindex():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT Username, email, Role FROM data')
+    users = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('adminindex.html', users=users)
+
+@app.route('/user_activity')
+def user_activity():
+    query = request.args.get('search', '').lower()
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT Username, modified, last_seen FROM data')
+    activities = cursor.fetchall()
+    
+    if query:
+        activities = [activity for activity in activities if query in activity['Username'].lower()]
+    
+    cursor.close()
+    connection.close()
+    return render_template('user_activity.html', activities=activities)
+
+@app.route('/manageusers')
+def manageusers():
+    query = request.args.get('search', '').lower()
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT Username, email, Role FROM data')
+    users = cursor.fetchall()
+    
+    if query:
+        users = [user for user in users if query in user['Username'].lower()]
+    
+    cursor.close()
+    connection.close()
+    
+    if request.is_json:
+        return jsonify({'users': users})
+    return render_template('manageusers.html', users=users)
+
+@app.route('/change_role', methods=['POST'])
+def change_role():
+    data = request.get_json()
+    new_role = data.get('role')
+    user_ids = data.get('users')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        for username in user_ids:
+            cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role.capitalize(), username))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Role updated successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to update role', 'error': str(e)}), 500
+
+@app.route('/rename_file', methods=['POST'])
+def rename_file():
+    data = request.get_json()
+    old_file_name = data.get('old_file_name')
+    new_file_name = data.get('new_file_name')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, old_file_name))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'File renamed successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to rename file', 'error': str(e)}), 500
+
+@app.route('/delete_file', methods=['POST'])
+def delete_file():
+    data = request.get_json()
+    file_name = data.get('file_name')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'File deleted successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
+    
+@app.route('/rename_user', methods=['POST'])
+def rename_user():
+    data = request.get_json()
+    old_username = data.get('old_username')
+    new_username = data.get('new_username')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("UPDATE data SET Username = %s WHERE Username = %s", (new_username, old_username))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'User renamed successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to rename user', 'error': str(e)}), 500
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    data = request.get_json()
+    username = data.get('username')
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM data WHERE Username = %s", (username,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except Exception as e:
+        connection.rollback()
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
+
 @app.route('/teacherindex')
 def teacherindex():
     connection = get_db_connection()
@@ -337,11 +479,19 @@ def math():
 def science():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name, folder FROM files WHERE folder='Science'")
-    files = cursor.fetchall()
+
+    # files for Semester 1 
+    cursor.execute("SELECT file_name FROM files WHERE folder='Science' AND semester=1")
+    files_semester1 = cursor.fetchall()
+    
+    # files for Semester 2 
+    cursor.execute("SELECT file_name FROM files WHERE folder='Science' AND semester=2")
+    files_semester2 = cursor.fetchall()
+
     cursor.close()
     connection.close()
-    return render_template('science.html', files=files)
+
+    return render_template('science.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
 @app.route('/economics')
 def economics():
