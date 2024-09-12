@@ -23,7 +23,6 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-@app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''
@@ -48,7 +47,9 @@ def login():
             else:
                 session['course'] = None
             
-            msg = 'Logged in successfully!'
+            # Set last login and message check time
+            session['last_login'] = account.get('last_seen', datetime.now())
+            session['last_checked_messages'] = account.get('last_checked_messages', datetime.now())
 
             cursor.execute('UPDATE data SET last_seen = %s WHERE Username = %s', (datetime.now(), username))
             connection.commit()
@@ -69,6 +70,7 @@ def login():
         connection.close()
 
     return render_template('login.html', msg=msg)
+
 
 @app.route('/logout')
 def logout():
@@ -354,7 +356,13 @@ def messages():
     if selected_student:
         # Fetch all messages exchanged between the teacher and the selected student
         cursor.execute(
-            "SELECT sender, content, sent_at FROM messages WHERE (recipient = %s AND sender = %s) OR (recipient = %s AND sender = %s) ORDER BY sent_at ASC",
+            """
+            SELECT sender, content, sent_at 
+            FROM messages 
+            WHERE (recipient = %s AND sender = %s) 
+               OR (recipient = %s AND sender = %s) 
+            ORDER BY sent_at ASC
+            """, 
             (teacher_username, selected_student, selected_student, teacher_username)
         )
         messages = cursor.fetchall()
@@ -369,6 +377,13 @@ def messages():
         cursor.execute(
             "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
             (teacher_username, recipient, reply_content, sent_at)
+        )
+        connection.commit()
+
+        # Update the last_checked_messages field for the teacher
+        cursor.execute(
+            "UPDATE messages SET last_checked_messages = NOW() WHERE sender = %s",
+            (teacher_username,)
         )
         connection.commit()
 
@@ -396,21 +411,54 @@ def studentbasic():
     cursor.execute("SELECT Username FROM data WHERE Role = 'Teacher'")
     teachers = cursor.fetchall()
 
+    # Calculate unread messages count
+    student_username = session.get('username')
+    cursor.execute("""
+        SELECT COUNT(*) AS unread_count
+        FROM messages
+        WHERE recipient = %s AND sent_at > (
+            SELECT MAX(last_checked_messages) FROM messages WHERE sender = %s
+        )
+    """, (student_username, student_username))
+    unread_messages_count = cursor.fetchone()['unread_count'] if cursor.fetchone() else 0
+
     cursor.close()
     connection.close()
-    
-    return render_template('studentbasic.html', files=files, teachers=teachers)
+
+    return render_template('studentbasic.html', files=files, teachers=teachers, unread_messages_count=unread_messages_count)
+
+
 
 
 @app.route('/studentadv')
 def studentadv():
+    student_username = session.get('username')  # Assuming the user is logged in and the username is stored in the session
+    
     connection = get_db_connection()
     cursor = connection.cursor()
+    
+    # Fetch files for the student
     cursor.execute("SELECT file_name, folder AS subject, semester, course FROM files WHERE Course IN ('Basic', 'Advanced')")
     files = cursor.fetchall()
+    
+    # Calculate unread messages count
+    cursor.execute(
+        """
+        SELECT COUNT(*) AS unread_count 
+        FROM messages 
+        WHERE recipient = %s 
+        AND sent_at > (SELECT MAX(last_checked_messages) FROM messages WHERE sender = %s)
+        """, 
+        (student_username, student_username)
+    )
+    unread_messages_count = cursor.fetchone()['unread_count'] if cursor.fetchone() else 0
+    
     cursor.close()
     connection.close()
-    return render_template('studentadv.html', files=files)
+    
+    return render_template('studentadv.html', files=files, unread_messages_count=unread_messages_count)
+
+
 
 @app.route('/subject_search_files/<subject>', methods=['GET'])
 def subject_search_files(subject):
@@ -565,6 +613,10 @@ def studentmessages():
     connection = get_db_connection()
     cursor = connection.cursor()
 
+    # Update the last_checked_messages field when the student checks their messages
+    cursor.execute("UPDATE data SET last_checked_messages = NOW() WHERE Username = %s", (student_username,))
+    connection.commit()
+
     # Fetch the list of teachers
     cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
     teachers = cursor.fetchall()
@@ -602,6 +654,10 @@ def studentmessages():
     connection.close()
 
     return render_template('studentmessages.html', teachers=teachers, messages=messages, selected_teacher=selected_teacher)
+
+
+
+
 
 
 @app.route('/send_reply', methods=['POST'])
