@@ -203,6 +203,29 @@ def manageusers():
         return jsonify({'users': users})
     return render_template('manageusers.html', users=users)
 
+@app.route('/managefiles', methods=['GET', 'POST'])
+def managefiles():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        file_name = request.form.get('file_name')
+
+        if action == 'delete':
+            cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
+            connection.commit()
+        elif action == 'rename':
+            new_file_name = request.form.get('new_file_name')
+            cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, file_name))
+            connection.commit()
+
+    cursor.execute('SELECT file_name, folder FROM files')
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return render_template('managefiles.html', files=files)
+
 @app.route('/change_role', methods=['POST'])
 def change_role():
     data = request.get_json()
