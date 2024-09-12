@@ -4,502 +4,57 @@
     <meta charset="UTF-8">
     <title>Student Index - Advanced</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='studentstyle.css') }}">
-    <style>
-        /* Additional Styles for Chatbox */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .grid-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .grid-item {
-            flex: 1 1 200px;
-            text-align: center;
-        }
-
-        .chat-container {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 40px;
-            gap: 20px;
-        }
-
-        /* Teacher List */
-        .teacher-list {
-            width: 250px;
-            padding: 20px;
-            background-color: #f1f1f1;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            height: 500px;
-            overflow-y: auto;
-        }
-
-        .teacher-list h3 {
-            margin-bottom: 10px;
-        }
-
-        .teacher-list ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .teacher-list li {
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .teacher-list a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        .teacher-list a:hover {
-            text-decoration: underline;
-        }
-
-        /* Chatbox */
-        .chat-box {
-            flex-grow: 1;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 500px;
-        }
-
-        .chat-box-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .chat-box-header h2 {
-            margin: 0;
-        }
-
-        .chat-messages {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-
-        .message.sender {
-            background-color: #d1e7dd;
-            align-self: flex-start;
-        }
-
-        .message.recipient {
-            background-color: #cfe2ff;
-            align-self: flex-end;
-        }
-
-        .message .sender-name {
-            font-weight: bold;
-        }
-
-        .message .sent_at {
-            font-size: 12px;
-            color: #888;
-            text-align: right;
-        }
-
-        /* Reply form */
-        .message-input {
-            display: flex;
-            gap: 10px;
-        }
-
-        .message-input textarea {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            resize: none;
-            height: 60px;
-        }
-
-        .btn-send {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-send:hover {
-            background-color: #0056b3;
-        }
-
-        /* Existing Popups Styling (Optional: Remove if not needed) */
-        .popup {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .popup-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close-popup {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .chat-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .teacher-list, .chat-box {
-                width: 100%;
-                max-width: none;
-                height: auto;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="header">
         <h1>Advanced Contents</h1>
     </div>
-    <div class="container">
-        <div class="grid-container">
-            <div class="grid-item">
-                <a href="{{ url_for('math') }}">
-                    <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
-                    <h3>Math</h3>
-                </a>
-            </div>
-            <div class="grid-item">
-                <a href="{{ url_for('science') }}">
-                    <img src="{{ url_for('static', filename='images/science.jpg') }}" alt="Science">
-                    <h3>Science</h3>
-                </a>
-            </div>
-            <div class="grid-item">
-                <a href="{{ url_for('economics') }}">
-                    <img src="{{ url_for('static', filename='images/economics.jpg') }}" alt="Economics">
-                    <h3>Economics</h3>
-                </a>
-            </div>
-            <div class="grid-item">
-                <a href="{{ url_for('literature') }}">
-                    <img src="{{ url_for('static', filename='images/literature.jpg') }}" alt="Literature">
-                    <h3>Literature</h3>
-                </a>
-            </div>
+
+    <!-- Grid of subject links -->
+    <div class="grid-container">
+        <div class="grid-item">
+            <a href="{{ url_for('math') }}">
+                <img src="{{ url_for('static', filename='images/math.jpg') }}" alt="Math">
+                <h3>Math</h3>
+            </a>
         </div>
-
-        <!-- Upload HW file button -->
-        <div class="upload-container">
-            <button id="open-upload-popup" class="btn">Submit HW file</button>
+        <div class="grid-item">
+            <a href="{{ url_for('science') }}">
+                <img src="{{ url_for('static', filename='images/science.jpg') }}" alt="Science">
+                <h3>Science</h3>
+            </a>
         </div>
-
-        <!-- Logout Button -->
-        <div class="logout-container">
-            <a href="{{ url_for('logout') }}">Logout</a>
+        <div class="grid-item">
+            <a href="{{ url_for('economics') }}">
+                <img src="{{ url_for('static', filename='images/economics.jpg') }}" alt="Economics">
+                <h3>Economics</h3>
+            </a>
         </div>
-
-        <!-- Chat Container -->
-        <div class="chat-container">
-            <!-- Teacher List -->
-            <div class="teacher-list">
-                <h3>Teachers</h3>
-                <ul>
-                    {% for teacher in teachers %}
-                    <li data-teacher="{{ teacher.Username }}"><a href="#">{{ teacher.Username }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- Chat Box -->
-            <div class="chat-box">
-                <div class="chat-box-header">
-                    <h2 id="chat-with">Select a Teacher to Chat</h2>
-                </div>
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will be dynamically loaded here -->
-                </div>
-                <div class="message-input">
-                    <textarea id="message-input" placeholder="Write your message..." disabled></textarea>
-                    <button id="send-message" class="btn-send" disabled>Send</button>
-                </div>
-            </div>
+        <div class="grid-item">
+            <a href="{{ url_for('literature') }}">
+                <img src="{{ url_for('static', filename='images/literature.jpg') }}" alt="Literature">
+                <h3>Literature</h3>
+            </a>
         </div>
     </div>
 
-    <!-- Existing Pop-up Windows (Optional: Remove if integrating chat into main page) -->
-    <!-- Talk to my teacher pop-up window -->
-    <div class="popup" id="talk-popup">
-        <div class="popup-content">
-            <span class="close-popup" id="close-talk-popup">&times;</span>
-            <form id="talk-form" action="{{ url_for('send_message') }}" method="post">
-                <select name="teacher_name" required class="textbox">
-                    <option value="" disabled selected>Select Teacher</option>
-                    {% for teacher in teachers %}
-                        <option value="{{ teacher.Username }}">{{ teacher.Username }}</option>
-                    {% endfor %}
-                </select>
-                <textarea name="message_content" placeholder="Enter your message" required class="textbox"></textarea>
-                <button type="submit" class="btn">Send Message</button>
-            </form>
+    <!-- Centralized action buttons -->
+    <div class="actions-container" style="text-align: center; margin-top: 40px;">
+        <!-- Submit HW button -->
+        <div class="upload-container" style="display: inline-block;">
+            <button id="open-upload-popup" class="btn">Submit HW File</button>
+        </div>
+        <!-- Messages button -->
+        <div class="talk-container" style="display: inline-block; margin-left: 20px;">
+            <a href="{{ url_for('studentmessages') }}" class="btn">Messages</a>
         </div>
     </div>
 
-    <!-- Upload pop-up window -->
-    <div class="popup" id="upload-popup">
-        <div class="popup-content">
-            <span class="close-popup" id="close-upload-popup">&times;</span>
-            <form id="upload-form" action="{{ url_for('student_upload_file') }}" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept="application/pdf" required>
-                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
-                <select name="subject" required class="textbox">
-                    <option value="" disabled selected>Select Subject</option>
-                    <option value="Math">Math</option>
-                    <option value="Science">Science</option>
-                    <option value="Economics">Economics</option>
-                    <option value="Literature">Literature</option>
-                </select>
-                <select name="semester" required class="textbox">
-                    <option value="" disabled selected>Select Semester</option>
-                    <option value="Semester 1">Semester 1</option>
-                    <option value="Semester 2">Semester 2</option>
-                </select>
-                <select name="course" required class="textbox">
-                    <option value="" disabled selected>Select Course</option>
-                    <option value="Basic">Basic</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
-                <button type="submit" class="btn">Upload File</button>
-            </form>
-        </div>
+    <!-- Logout button -->
+    <div class="logout-container">
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
-    <script>
-        // Existing JavaScript for Popups
-        // Handle pop-up for "Talk to my teacher"
-        document.getElementById('open-talk-popup')?.addEventListener('click', function() {
-            document.getElementById('talk-popup').style.display = 'flex';
-        });
-
-        document.getElementById('close-talk-popup')?.addEventListener('click', function() {
-            document.getElementById('talk-popup').style.display = 'none';
-        });
-
-        document.getElementById('talk-form')?.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch("{{ url_for('send_message') }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Message sent successfully!');
-                    document.getElementById('talk-popup').style.display = 'none';
-                } else {
-                    alert('Failed to send message: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to send message');
-            });
-        });
-
-        // Handle pop-up for file upload
-        document.getElementById('open-upload-popup').addEventListener('click', function() {
-            document.getElementById('upload-popup').style.display = 'flex';
-        });
-
-        document.getElementById('close-upload-popup').addEventListener('click', function() {
-            document.getElementById('upload-popup').style.display = 'none';
-        });
-
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch("{{ url_for('student_upload_file') }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.file) {
-                    const tbody = document.getElementById('file-tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td>${data.file.file_name.split('.')[0].replace('_', ' ')}</td>
-                        <td>${data.file.subject}</td>
-                        <td>${data.file.semester}</td>
-                        <td>${data.file.course}</td>
-                        <td>
-                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.subject}/${data.file.semester}/${data.file.course}/${data.file.file_name}" download>
-                                <i class="fa fa-download"></i> Download
-                            </a>
-                        </td>`;
-                    tbody.appendChild(newRow);
-                    document.getElementById('upload-popup').style.display = 'none';
-                } else {
-                    alert('File upload failed: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('File upload failed');
-            });
-        });
-
-        // New JavaScript for Chatbox Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const teacherListItems = document.querySelectorAll('.teacher-list li');
-            const chatWithHeader = document.getElementById('chat-with');
-            const chatMessages = document.getElementById('chat-messages');
-            const messageInput = document.getElementById('message-input');
-            const sendMessageButton = document.getElementById('send-message');
-            let selectedTeacher = null;
-
-            teacherListItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const teacher = this.getAttribute('data-teacher');
-                    selectedTeacher = teacher;
-                    chatWithHeader.textContent = `Chat with ${teacher}`;
-                    messageInput.disabled = false;
-                    sendMessageButton.disabled = false;
-                    loadMessages(teacher);
-                });
-            });
-
-            sendMessageButton.addEventListener('click', function() {
-                const message = messageInput.value.trim();
-                if (message === '' || !selectedTeacher) return;
-
-                // Send the message via Fetch API
-                fetch("{{ url_for('send_student_message') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token() }}' // If using CSRF protection
-                    },
-                    body: JSON.stringify({
-                        recipient: selectedTeacher,
-                        message_content: message
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        appendMessage(data.message, 'student');
-                        messageInput.value = '';
-                        // Optionally, scroll to the bottom
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    } else {
-                        alert('Failed to send message: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to send message');
-                });
-            });
-
-            function loadMessages(teacher) {
-                // Clear existing messages
-                chatMessages.innerHTML = '';
-
-                // Fetch messages from the server
-                fetch(`{{ url_for('get_messages') }}?teacher=${teacher}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        data.messages.forEach(msg => {
-                            appendMessage(msg, msg.sender === '{{ session["username"] }}' ? 'student' : 'teacher');
-                        });
-                        // Scroll to the bottom
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    } else {
-                        alert('Failed to load messages: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to load messages');
-                });
-            }
-
-            function appendMessage(message, senderType) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', senderType);
-                
-                const senderNameDiv = document.createElement('div');
-                senderNameDiv.classList.add('sender-name');
-                senderNameDiv.textContent = senderType === 'student' ? '{{ session["username"] }}' : message.sender;
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.classList.add('content');
-                contentDiv.textContent = message.content;
-                
-                const sentAtDiv = document.createElement('div');
-                sentAtDiv.classList.add('sent_at');
-                const date = new Date(message.sent_at);
-                sentAtDiv.textContent = date.toLocaleString();
-
-                messageDiv.appendChild(senderNameDiv);
-                messageDiv.appendChild(contentDiv);
-                messageDiv.appendChild(sentAtDiv);
-
-                chatMessages.appendChild(messageDiv);
-            }
-        });
-    </script>
+    <!-- Add scripts for popups if necessary -->
 </body>
 </html>

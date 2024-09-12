@@ -14,7 +14,7 @@
 
         <!-- Search Container -->
         <div class="search-container">
-            <form id="search-form" action="{{ url_for('teacher_search_files') }}" method="get">
+            <form id="search-form" action="{{ url_for('subject_search_files', subject='Math') }}" method="get">
                 <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
                 <input type="search" id="search-folder" name="folder" placeholder="Search folder" class="textbox">
                 <button type="submit" class="btn">Search</button>
@@ -28,7 +28,7 @@
 
         <!-- Messages Button -->
         <div class="messages-container">
-            <a href="{{ url_for('view_messages') }}" class="btn">View Messages</a>
+            <a href="{{ url_for('messages') }}" class="btn">View Messages</a>
         </div>
 
         <!-- Files Table -->

@@ -31,8 +31,8 @@
             background-color: #0056b3;
         }
 
-        /* Student List */
-        .student-list {
+        /* Teacher List */
+        .teacher-list {
             width: 250px;
             padding: 20px;
             background-color: #f1f1f1;
@@ -40,26 +40,26 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .student-list h3 {
+        .teacher-list h3 {
             margin-bottom: 10px;
         }
 
-        .student-list ul {
+        .teacher-list ul {
             list-style: none;
             padding: 0;
         }
 
-        .student-list li {
+        .teacher-list li {
             margin-bottom: 10px;
         }
 
-        .student-list a {
+        .teacher-list a {
             text-decoration: none;
             color: #007bff;
             font-weight: bold;
         }
 
-        .student-list a:hover {
+        .teacher-list a:hover {
             text-decoration: underline;
         }
 
@@ -126,22 +126,22 @@
 <div class="container">
     <!-- Back to Dashboard Button -->
     <div class="back-button">
-        <a href="{{ url_for('teacherindex') }}">Back to Dashboard</a>
+        <a href="{{ url_for('studentbasic') }}">Back to Dashboard</a>
     </div>
 
-    <!-- Student List -->
-    <div class="student-list">
-        <h3>Students</h3>
+    <!-- Teacher List -->
+    <div class="teacher-list">
+        <h3>Teachers</h3>
         <ul>
-            {% for student in students %}
-            <li><a href="{{ url_for('messages', student=student.sender) }}">{{ student.sender }}</a></li>
+            {% for teacher in teachers %}
+            <li><a href="{{ url_for('studentmessages', teacher=teacher.username) }}">{{ teacher.username }}</a></li>
             {% endfor %}
         </ul>
     </div>
 
     <!-- Chat Box -->
     <div class="chat-box">
-        <h2>Messages with {{ selected_student }}</h2>
+        <h2>Messages with {{ selected_teacher }}</h2>
 
         <!-- Display the received messages -->
         {% for message in messages %}
@@ -152,12 +152,12 @@
         </div>
         {% endfor %}
 
-        <!-- Reply form -->
+        <!-- Message form -->
         <div class="message-input">
-            <form action="{{ url_for('messages') }}" method="post">
-                <input type="hidden" name="recipient" value="{{ selected_student }}">  <!-- The teacher can select the recipient -->
-                <textarea name="reply_content" placeholder="Write your reply..." required></textarea>
-                <button type="submit" class="btn-send">Send Reply</button>
+            <form action="{{ url_for('studentmessages') }}" method="post">
+                <input type="hidden" name="recipient" value="{{ selected_teacher }}">  <!-- Hidden field for the selected teacher -->
+                <textarea name="message_content" placeholder="Write your message..." required></textarea>
+                <button type="submit" class="btn-send">Send Message</button>
             </form>
         </div>
     </div>

@@ -32,8 +32,6 @@ def login():
         password = request.form['password']
         role = request.form['role']
 
-        print(f"Login attempt: username={username}, role={role}")
-
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM data WHERE Username = %s AND Password = %s AND Role = %s', (username, password, role))
@@ -63,17 +61,14 @@ def login():
                 elif session['course'] == 'Advanced':
                     return redirect(url_for('studentadv'))
             elif role == 'teacher':
-                print("Redirecting to teacher index.")
                 return redirect(url_for('teacherindex'))
         else:
             msg = 'Incorrect Username / Password!'
-            print("Account not found or incorrect credentials.")
 
         cursor.close()
         connection.close()
 
     return render_template('login.html', msg=msg)
-
 
 @app.route('/logout')
 def logout():
@@ -87,7 +82,6 @@ def forgotpassword():
         username = request.form['username']
         email = request.form['email']
         
-        # Get user password based on provided username and email
         user_password = get_user_password_by_username_and_email(username, email)
 
         if user_password:
@@ -120,10 +114,7 @@ def get_user_password_by_username_and_email(username, email):
 def send_password_via_email(email, user_password):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        
-        # Replace with your own email and app-specific password (not your regular email password)
         server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
-        # server.login('annieeeee2203@gmail.com', 'abCde!123987')
 
         subject = "Your Website Password"
         body = f"Your password is: {user_password}"
@@ -133,8 +124,6 @@ def send_password_via_email(email, user_password):
         server.quit()
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -168,9 +157,6 @@ def register():
         cursor.close()
         connection.close()
 
-    elif request.method == 'POST':
-        msg = 'Please fill out the form!'
-
     return render_template('register.html', msg=msg)
 
 @app.route('/teacherindex')
@@ -184,32 +170,52 @@ def teacherindex():
 
     return render_template('teacherindex.html', files=files)
 
-
-@app.route('/teacher_search_files', methods=['GET'])
-def teacher_search_files():
-    file_name = request.args.get('file_name', '')
-    folder = request.args.get('folder', '')
+@app.route('/messages', methods=['GET', 'POST'])
+def messages():
+    teacher_username = session.get('username')  # Get the teacher's username from the session
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = "SELECT file_name, folder FROM files WHERE 1=1"
-    params = []
+    # Fetch the list of unique students who have messaged the teacher
+    cursor.execute("SELECT DISTINCT sender FROM messages WHERE recipient = %s", (teacher_username,))
+    students = cursor.fetchall()
 
-    if file_name:
-        query += " AND file_name LIKE %s"
-        params.append(f"%{file_name}%")
+    # Default to the first student if none is selected
+    selected_student = request.args.get('student', students[0]['sender'] if students else None)
+    messages = []
 
-    if folder:
-        query += " AND folder LIKE %s"
-        params.append(f"%{folder}%")
+    if selected_student:
+        # Fetch all messages exchanged between the teacher and the selected student
+        cursor.execute(
+            "SELECT sender, content, sent_at FROM messages WHERE (recipient = %s AND sender = %s) OR (recipient = %s AND sender = %s) ORDER BY sent_at ASC",
+            (teacher_username, selected_student, selected_student, teacher_username)
+        )
+        messages = cursor.fetchall()
 
-    cursor.execute(query, params)
-    files = cursor.fetchall()
+    if request.method == 'POST':
+        # Teacher sends a reply
+        recipient = request.form['recipient']
+        reply_content = request.form['reply_content']
+        sent_at = datetime.now()
+
+        # Insert the reply into the messages table
+        cursor.execute(
+            "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
+            (teacher_username, recipient, reply_content, sent_at)
+        )
+        connection.commit()
+
+        flash("Reply sent successfully!", "success")
+        return redirect(url_for('messages', student=recipient))
+
     cursor.close()
     connection.close()
 
-    return render_template('teacherindex.html', files=files)
+    return render_template('messages.html', students=students, messages=messages, selected_student=selected_student)
+
+
+
 
 @app.route('/studentbasic')
 def studentbasic():
@@ -240,27 +246,6 @@ def studentadv():
     connection.close()
     return render_template('studentadv.html', files=files)
 
-# @app.route('/student_search_files', methods=['GET'])
-# def student_search_files():
-#     file_name = request.args.get('file_name', '')
-
-#     connection = get_db_connection()
-#     cursor = connection.cursor()
-
-#     query = "SELECT file_name, folder FROM files WHERE 1=1"
-#     params = []
-
-#     if file_name:
-#         query += " AND file_name LIKE %s"
-#         params.append(f"%{file_name}%")
-
-#     cursor.execute(query, params)
-#     files = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-
-#     return render_template('studentindex.html', files=files)
-
 @app.route('/subject_search_files/<subject>', methods=['GET'])
 def subject_search_files(subject):
     file_name = request.args.get('file_name', '')
@@ -281,6 +266,7 @@ def subject_search_files(subject):
     connection.close()
 
     return render_template(f'{subject.lower()}.html', files=files)
+
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
@@ -330,14 +316,6 @@ def student_upload_file():
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
 @app.route('/math')
-# def math():
-#     connection = get_db_connection()
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT file_name FROM files WHERE folder='Math'")
-#     files = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-#     return render_template('math.html', files=files)
 def math():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -354,7 +332,6 @@ def math():
     connection.close()
     
     return render_template('math.html', files_semester1=files_semester1, files_semester2=files_semester2)
-
 
 @app.route('/science')
 def science():
@@ -390,7 +367,6 @@ def literature():
 def adminindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    # Format Enrolled_Date to show only the date (YYYY-MM-DD)
     cursor.execute('SELECT ID, Username, email, Role, DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date FROM data')
     users = cursor.fetchall()
     cursor.close()
@@ -398,282 +374,55 @@ def adminindex():
     return render_template('adminindex.html', users=users)
 
 
+@app.route('/studentmessages', methods=['GET', 'POST'])
+def studentmessages():
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-@app.route('/user_activity')
-def user_activity():
-    query = request.args.get('search', '').lower()
+    student_username = session['username']
+
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT Username, modified, last_seen FROM data')
-    activities = cursor.fetchall()
 
-    if query:
-        activities = [activity for activity in activities if query in activity['Username'].lower()]
-
-    cursor.close()
-    connection.close()
-    return render_template('user_activity.html', activities=activities)
-
-@app.route('/manageusers')
-def manageusers():
-    query = request.args.get('search', '').lower()
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT Username, email, Role FROM data')
-    users = cursor.fetchall()
-
-    if query:
-        users = [user for user in users if query in user['Username'].lower()]
-
-    cursor.close()
-    connection.close()
-
-    if request.is_json:
-        return jsonify({'users': users})
-    return render_template('manageusers.html', users=users)
-
-@app.route('/managefiles', methods=['GET', 'POST'])
-def managefiles():
-    connection = get_db_connection()
-    cursor = connection.cursor()
+    # Fetch the list of teachers
+    cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
+    teachers = cursor.fetchall()
 
     if request.method == 'POST':
-        action = request.form.get('action')
-        file_name = request.form.get('file_name')
+        # Handle the form submission
+        recipient = request.form['recipient']  # The teacher's username (recipient)
+        message_content = request.form['message_content']
+        sent_at = datetime.now()
 
-        if action == 'delete':
-            cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
-            connection.commit()
-        elif action == 'rename':
-            new_file_name = request.form.get('new_file_name')
-            cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, file_name))
-            connection.commit()
-
-    cursor.execute('SELECT file_name, folder FROM files')
-    files = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    return render_template('managefiles.html', files=files)
-
-@app.route('/change_role', methods=['POST'])
-def change_role():
-    data = request.get_json()
-    new_role = data.get('role')
-    user_ids = data.get('users')
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        for username in user_ids:
-            cursor.execute("UPDATE data SET Role = %s WHERE Username = %s", (new_role.capitalize(), username))
+        # Insert the new message into the database
+        cursor.execute(
+            "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
+            (student_username, recipient, message_content, sent_at)
+        )
         connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Role updated successfully'}), 200
-    except Exception as e:
-        connection.rollback()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Failed to update role', 'error': str(e)}), 500
 
-@app.route('/rename_file', methods=['POST'])
-def rename_file():
-    data = request.get_json()
-    old_file_name = data.get('old_file_name')
-    new_file_name = data.get('new_file_name')
+        # After inserting, reload the conversation with the selected teacher
+        flash("Message sent successfully!", "success")
+        return redirect(url_for('studentmessages', teacher=recipient))
 
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("UPDATE files SET file_name = %s WHERE file_name = %s", (new_file_name, old_file_name))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'File renamed successfully'}), 200
-    except Exception as e:
-        connection.rollback()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Failed to rename file', 'error': str(e)}), 500
-
-@app.route('/delete_file', methods=['POST'])
-def delete_file():
-    data = request.get_json()
-    file_name = data.get('file_name')
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM files WHERE file_name = %s", (file_name,))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'File deleted successfully'}), 200
-    except Exception as e:
-        connection.rollback()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Failed to delete file', 'error': str(e)}), 500
-
-@app.route('/rename_user', methods=['POST'])
-def rename_user():
-    data = request.get_json()
-    old_username = data.get('old_username')
-    new_username = data.get('new_username')
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("UPDATE data SET Username = %s WHERE Username = %s", (new_username, old_username))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'User renamed successfully'}), 200
-    except Exception as e:
-        connection.rollback()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Failed to rename user', 'error': str(e)}), 500
-
-@app.route('/delete_user', methods=['POST'])
-def delete_user():
-    data = request.get_json()
-    username = data.get('username')
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM data WHERE Username = %s", (username,))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'User deleted successfully'}), 200
-    except Exception as e:
-        connection.rollback()
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
-    
-@app.route('/send_student_message', methods=['POST'])
-def send_student_message():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    sender = session['username']  # The student sending the message
-    recipient = request.form['recipient']  # The selected teacher
-    message_content = request.form['reply_content']
-    sent_at = datetime.now()
-
-    # Insert the message into the messages table
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(
-        "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
-        (sender, recipient, message_content, sent_at)
-    )
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-    flash("Message sent successfully!", "success")
-    return redirect(url_for('view_messages', teacher=recipient))
-
-
-@app.route('/student_chat')
-def student_chat():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    # Get the list of all teachers
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT username FROM users WHERE role = 'teacher'")
-    teachers = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    # Get the messages for the selected teacher (if any)
+    # If it's a GET request, show the conversation with the selected teacher
     selected_teacher = request.args.get('teacher')
     messages = []
+
     if selected_teacher:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("SELECT sender, content, sent_at FROM messages WHERE (sender = %s AND recipient = %s) OR (sender = %s AND recipient = %s)",
-                       (session['username'], selected_teacher, selected_teacher, session['username']))
-        messages = cursor.fetchall()
-        cursor.close()
-        connection.close()
-
-    return render_template('student_chat.html', teachers=teachers, messages=messages, selected_teacher=selected_teacher)
-
-@app.route('/get_messages', methods=['GET'])
-def get_messages():
-    if 'username' not in session:
-        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
-
-    teacher = request.args.get('teacher')
-    student = session['username']
-
-    if not teacher:
-        return jsonify({'success': False, 'error': 'No teacher specified'}), 400
-
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    try:
+        # Fetch messages between the student and the selected teacher
         cursor.execute(
-            """
-            SELECT sender, recipient, content, sent_at
-            FROM messages
-            WHERE (sender = %s AND recipient = %s) OR (sender = %s AND recipient = %s)
-            ORDER BY sent_at ASC
-            """,
-            (student, teacher, teacher, student)
+            "SELECT sender, content, sent_at FROM messages WHERE (sender = %s AND recipient = %s) OR (sender = %s AND recipient = %s) ORDER BY sent_at ASC",
+            (student_username, selected_teacher, selected_teacher, student_username)
         )
         messages = cursor.fetchall()
-        messages_list = []
-        for msg in messages:
-            messages_list.append({
-                'sender': msg['sender'],
-                'recipient': msg['recipient'],
-                'content': msg['content'],
-                'sent_at': msg['sent_at'].strftime('%Y-%m-%d %H:%M:%S')
-            })
-        return jsonify({'success': True, 'messages': messages_list}), 200
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        cursor.close()
-        connection.close()
-
-
-@app.route('/send_student_messages', methods=['GET', 'POST'])
-def view_messages():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    recipient = session['username']  # Teacher's username
-
-    # Get a list of unique students who have messaged the teacher
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT DISTINCT sender FROM messages WHERE recipient = %s", (recipient,))
-    students = cursor.fetchall()
-
-    # Default to the first student if none is selected
-    selected_student = request.args.get('student', students[0]['sender'] if students else None)
-
-    # Fetch all messages exchanged between the teacher and the selected student
-    cursor.execute("SELECT sender, content, sent_at FROM messages WHERE (recipient = %s AND sender = %s) OR (recipient = %s AND sender = %s)",
-                   (recipient, selected_student, selected_student, recipient))
-    messages = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    return render_template('messages.html', messages=messages, students=students, selected_student=selected_student)
+    return render_template('studentmessages.html', teachers=teachers, messages=messages, selected_teacher=selected_teacher)
 
 
-# Route to send a reply
 @app.route('/send_reply', methods=['POST'])
 def send_reply():
     if 'username' not in session:
@@ -696,7 +445,7 @@ def send_reply():
     connection.close()
 
     flash("Reply sent successfully!", "success")
-    return redirect(url_for('view_messages'))
+    return redirect(url_for('messages'))
 
 if __name__ == '__main__':
     app.run(debug=True)
