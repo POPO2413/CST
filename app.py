@@ -159,11 +159,12 @@ def register():
 
     return render_template('register.html', msg=msg)
 
+
 @app.route('/adminindex')
 def adminindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT Username, email, Role FROM data')
+    cursor.execute('SELECT ID, Username, email, Role, DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date FROM data')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -497,31 +498,38 @@ def science():
 def economics():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name FROM files WHERE folder='Economics'")
-    files = cursor.fetchall()
+
+    # files for Semester 1
+    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=1")
+    files_semester1 = cursor.fetchall()
+
+    # files for Semester 2
+    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=2")
+    files_semester2 = cursor.fetchall()
+
     cursor.close()
     connection.close()
-    return render_template('economics.html', files=files)
+
+    return render_template('economics.html', files_semester1=files_semester1, files_semester2=files_semester2)
+
 
 @app.route('/literature')
 def literature():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT file_name FROM files WHERE folder='Literature'")
-    files = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    return render_template('literature.html', files=files)
 
-@app.route('/adminindex')
-def adminindex():
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT ID, Username, email, Role, DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date FROM data')
-    users = cursor.fetchall()
+    # files for Semester 1
+    cursor.execute("SELECT file_name FROM files WHERE folder='Literature' AND semester=1")
+    files_semester1 = cursor.fetchall()
+
+    # files for Semester 2
+    cursor.execute("SELECT file_name FROM files WHERE folder='Literature' AND semester=2")
+    files_semester2 = cursor.fetchall()
+
     cursor.close()
     connection.close()
-    return render_template('adminindex.html', users=users)
+
+    return render_template('literature.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
 
 @app.route('/studentmessages', methods=['GET', 'POST'])
