@@ -5,18 +5,19 @@
     <title>Messages</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* Basic layout */
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-            gap: 20px;
+        /* Ensure the background for the whole page is white */
+        html, body {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            height: 100%;
         }
 
-        /* Back to dashboard button */
+        /* Back to dashboard button at top-left */
         .back-button {
-            margin-bottom: 20px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
 
         .back-button a {
@@ -29,6 +30,15 @@
 
         .back-button a:hover {
             background-color: #0056b3;
+        }
+
+        /* Center the rest of the content */
+        .page-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 100px; /* Padding to avoid the button overlapping with content */
+            min-height: 100vh; /* Ensure full-page centering */
         }
 
         /* Teacher List */
@@ -123,12 +133,13 @@
 </head>
 <body>
 
-<div class="container">
-    <!-- Back to Dashboard Button -->
-    <div class="back-button">
-        <a href="{{ url_for('studentbasic') }}">Back to Dashboard</a>
-    </div>
+<!-- Back to Dashboard Button at the top-left -->
+<div class="back-button">
+    <a href="{{ url_for('studentbasic') }}">Back to Dashboard</a>
+</div>
 
+<!-- Centered content for the rest of the page -->
+<div class="page-container">
     <!-- Teacher List -->
     <div class="teacher-list">
         <h3>Teachers</h3>

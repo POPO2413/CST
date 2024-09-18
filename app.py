@@ -338,8 +338,8 @@ def delete_user():
 
 @app.route('/submission_report')
 def submission_report():
-    if 'loggedin' not in session:
-        return redirect(url_for('login'))
+    # if 'loggedin' not in session:
+    #     return redirect(url_for('login'))
 
     if session['role'] not in ['teacher', 'admin']:
         flash('You do not have permission to view this page.', 'danger')
@@ -691,40 +691,53 @@ def studentmessages():
     if 'username' not in session:
         return redirect(url_for('login'))
 
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Fetch the list of teachers
+    cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
+    teachers = cursor.fetchall()
+
+    selected_teacher = request.args.get('teacher')  # The selected teacher for chatting
+    messages = []
+
     if request.method == 'POST':
         sender = session['username']  # The student sending the message
-        recipient = request.form.get('recipient')  # Use get to handle missing field
-        message_content = request.form.get('reply_content', '')
-        
+        recipient = request.form.get('recipient')
+        message_content = request.form.get('message_content', '')
+
         if not recipient or not message_content:
             flash("Recipient or message content missing!", "danger")
             return redirect(url_for('studentmessages'))
 
         sent_at = datetime.now()
-        
+
         # Insert the message into the messages table
-        connection = get_db_connection()
-        cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
             (sender, recipient, message_content, sent_at)
         )
         connection.commit()
-        cursor.close()
-        connection.close()
 
         flash("Message sent successfully!", "success")
-        return redirect(url_for('view_messages', teacher=recipient))
+        return redirect(url_for('studentmessages', teacher=recipient))
 
-    # Fetch the list of teachers
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
-    teachers = cursor.fetchall()
+    # Fetch chat history with the selected teacher
+    if selected_teacher:
+        cursor.execute("""
+            SELECT sender, content, sent_at 
+            FROM messages 
+            WHERE (sender = %s AND recipient = %s) 
+            OR (sender = %s AND recipient = %s)
+            ORDER BY sent_at ASC
+        """, (session['username'], selected_teacher, selected_teacher, session['username']))
+        messages = cursor.fetchall()
+
     cursor.close()
     connection.close()
 
-    return render_template('studentmessages.html', teachers=teachers)
+    return render_template('studentmessages.html', teachers=teachers, selected_teacher=selected_teacher, messages=messages)
+
 
 
 
