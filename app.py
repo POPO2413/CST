@@ -336,6 +336,33 @@ def delete_user():
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
+@app.route('/submission_report')
+def submission_report():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+
+    if session['role'] not in ['teacher', 'admin']:
+        flash('You do not have permission to view this page.', 'danger')
+        return redirect(url_for('login'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
+        FROM files f
+        JOIN data d ON f.user_id = d.ID
+        WHERE f.submitted_time IS NOT NULL
+        ORDER BY f.submitted_time DESC
+    """)
+    submissions = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template('submission_report.html', submissions=submissions)
+
+
 @app.route('/teacherindex')
 def teacherindex():
     connection = get_db_connection()
@@ -422,21 +449,23 @@ def send_marked_file_via_email(student_email, file_path):
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    teacher_username = session.get('username')  # Get the teacher's username from the session
+    teacher_username = session.get('username') 
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # Fetch the list of unique students who have messaged the teacher
-    cursor.execute("SELECT DISTINCT sender FROM messages WHERE recipient = %s", (teacher_username,))
+    cursor.execute("""
+        SELECT sender, COUNT(*) AS unread_count
+        FROM messages
+        WHERE recipient = %s AND is_read = 0
+        GROUP BY sender
+    """, (teacher_username,))
     students = cursor.fetchall()
 
-    # Default to the first student if none is selected
     selected_student = request.args.get('student', students[0]['sender'] if students else None)
     messages = []
 
     if selected_student:
-        # Fetch all messages exchanged between the teacher and the selected student
         cursor.execute(
             """
             SELECT sender, content, sent_at 
@@ -449,13 +478,17 @@ def messages():
         )
         messages = cursor.fetchall()
 
+        cursor.execute(
+            "UPDATE messages SET is_read = 1 WHERE sender = %s AND recipient = %s",
+            (selected_student, teacher_username)
+        )
+        connection.commit()
+
     if request.method == 'POST':
-        # Teacher sends a reply
         recipient = request.form['recipient']
         reply_content = request.form['reply_content']
         sent_at = datetime.now()
-
-        # Insert the reply into the messages table
+        
         cursor.execute(
             "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
             (teacher_username, recipient, reply_content, sent_at)

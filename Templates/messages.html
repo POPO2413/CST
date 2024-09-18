@@ -51,6 +51,7 @@
 
         .student-list li {
             margin-bottom: 10px;
+            position: relative;
         }
 
         .student-list a {
@@ -61,6 +62,18 @@
 
         .student-list a:hover {
             text-decoration: underline;
+        }
+
+        /* notification badge */
+        .badge {
+            display: inline-block;
+            padding: 0.2em 0.4em;
+            font-size: 0.75em;
+            color: white;
+            background-color: red;
+            border-radius: 50%;
+            margin-left: 5px;
+            vertical-align: top;
         }
 
         /* Chatbox */
@@ -134,7 +147,14 @@
         <h3>Students</h3>
         <ul>
             {% for student in students %}
-            <li><a href="{{ url_for('messages', student=student.sender) }}">{{ student.sender }}</a></li>
+            <li>
+                <a href="{{ url_for('messages', student=student.sender) }}">
+                    {{ student.sender }}
+                    {% if student.unread_count > 0 %}
+                        <span class="badge">{{ student.unread_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
             {% endfor %}
         </ul>
     </div>
