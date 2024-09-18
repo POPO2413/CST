@@ -29,6 +29,7 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''
@@ -335,16 +336,6 @@ def delete_user():
         connection.close()
         return jsonify({'message': 'Failed to delete user', 'error': str(e)}), 500
 
-# @app.route('/teacherindex')
-# def teacherindex():
-#     connection = get_db_connection()
-#     cursor = connection.cursor()
-#     cursor.execute('SELECT file_name, folder, semester, course FROM files')
-#     files = cursor.fetchall()
-#     cursor.close()
-#     connection.close()
-
-#     return render_template('teacherindex.html', files=files)
 @app.route('/teacherindex')
 def teacherindex():
     connection = get_db_connection()
@@ -487,8 +478,6 @@ def messages():
     return render_template('messages.html', students=students, messages=messages, selected_student=selected_student)
 
 
-
-
 @app.route('/studentbasic')
 def studentbasic():
     connection = get_db_connection()
@@ -517,8 +506,6 @@ def studentbasic():
     connection.close()
 
     return render_template('studentbasic.html', files=files, teachers=teachers, unread_messages_count=unread_messages_count)
-
-
 
 
 @app.route('/studentadv')
@@ -699,65 +686,134 @@ def studentmessages():
     if 'username' not in session:
         return redirect(url_for('login'))
 
+    sender = session['username']  # The student sending the message
+    recipient = request.form['recipient']  # The selected teacher
+    message_content = request.form['reply_content']
+    sent_at = datetime.now()
     student_username = session['username']
+
+    # Insert the message into the messages table
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
+        (sender, recipient, message_content, sent_at)
+    )
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    flash("Message sent successfully!", "success")
+    return redirect(url_for('view_messages', teacher=recipient))
+
+
+@app.route('/student_chat')
+def student_chat():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Get the list of all teachers
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT username FROM users WHERE role = 'teacher'")
+    teachers = cursor.fetchall()
+
+    # Get the messages for the selected teacher (if any)
+    selected_teacher = request.args.get('teacher')
+    messages = []
+    if selected_teacher:
+        cursor.execute("""
+            SELECT sender, content, sent_at FROM messages 
+            WHERE (sender = %s AND recipient = %s) 
+            OR (sender = %s AND recipient = %s) 
+            ORDER BY sent_at ASC
+        """, (session['username'], selected_teacher, selected_teacher, session['username']))
+        messages = cursor.fetchall()
+    
+    cursor.close()
+    connection.close()
+
+    return render_template('student_chat.html', teachers=teachers, messages=messages, selected_teacher=selected_teacher)
+
+
+@app.route('/get_messages', methods=['GET'])
+def get_messages():
+    if 'username' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    teacher = request.args.get('teacher')
+    student = session['username']
+
+    if not teacher:
+        return jsonify({'success': False, 'error': 'No teacher specified'}), 400
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # Update the last_checked_messages field when the student checks their messages
-    cursor.execute("UPDATE data SET last_checked_messages = NOW() WHERE Username = %s", (student_username,))
-    connection.commit()
-
-    # Fetch the list of teachers
-    cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
-    teachers = cursor.fetchall()
-
-    if request.method == 'POST':
-        # Handle the form submission
-        recipient = request.form['recipient']  # The teacher's username (recipient)
-        message_content = request.form['message_content']
-        sent_at = datetime.now()
-
-        # Insert the new message into the database
-        cursor.execute(
-            "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
-            (student_username, recipient, message_content, sent_at)
-        )
-        connection.commit()
-
-        # After inserting, reload the conversation with the selected teacher
-        flash("Message sent successfully!", "success")
-        return redirect(url_for('studentmessages', teacher=recipient))
-
-    # If it's a GET request, show the conversation with the selected teacher
-    selected_teacher = request.args.get('teacher')
-    messages = []
-
-    if selected_teacher:
-        # Fetch messages between the student and the selected teacher
-        cursor.execute(
-            "SELECT sender, content, sent_at FROM messages WHERE (sender = %s AND recipient = %s) OR (sender = %s AND recipient = %s) ORDER BY sent_at ASC",
-            (student_username, selected_teacher, selected_teacher, student_username)
-        )
+    try:
+        cursor.execute("""
+            SELECT sender, recipient, content, sent_at
+            FROM messages
+            WHERE (sender = %s AND recipient = %s) 
+            OR (sender = %s AND recipient = %s)
+            ORDER BY sent_at ASC
+        """, (student, teacher, teacher, student))
         messages = cursor.fetchall()
+        
+        messages_list = []
+        for msg in messages:
+            messages_list.append({
+                'sender': msg['sender'],
+                'recipient': msg['recipient'],
+                'content': msg['content'],
+                'sent_at': msg['sent_at'].strftime('%Y-%m-%d %H:%M:%S')
+            })
+        return jsonify({'success': True, 'messages': messages_list}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+
+@app.route('/send_student_messages', methods=['GET', 'POST'])
+def view_messages():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    recipient = session['username']  # Teacher's username
+
+    # Get a list of unique students who have messaged the teacher
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT DISTINCT sender FROM messages WHERE recipient = %s", (recipient,))
+    students = cursor.fetchall()
+
+    # Default to the first student if none is selected
+    selected_student = request.args.get('student', students[0]['sender'] if students else None)
+
+    # Fetch all messages exchanged between the teacher and the selected student
+    cursor.execute("""
+        SELECT sender, content, sent_at FROM messages 
+        WHERE (recipient = %s AND sender = %s) 
+        OR (recipient = %s AND sender = %s)
+    """, (recipient, selected_student, selected_student, recipient))
+    messages = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    return render_template('studentmessages.html', teachers=teachers, messages=messages, selected_teacher=selected_teacher)
+    return render_template('messages.html', messages=messages, students=students, selected_student=selected_student)
 
 
-
-
-
-
+# Route to send a reply
 @app.route('/send_reply', methods=['POST'])
 def send_reply():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    sender = session['username']  # The teacher is sending the reply
-    recipient = request.form['recipient']  # Get the recipient from the form
+    sender = session['username']  # The teacher sending the reply
+    recipient = request.form['recipient']  # The selected student
     reply_content = request.form['reply_content']
     sent_at = datetime.now()
 
@@ -773,7 +829,7 @@ def send_reply():
     connection.close()
 
     flash("Reply sent successfully!", "success")
-    return redirect(url_for('messages'))
+    return redirect(url_for('view_messages'))
 
 if __name__ == '__main__':
     app.run(debug=True)
