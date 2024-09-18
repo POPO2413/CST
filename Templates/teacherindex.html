@@ -12,6 +12,13 @@
             <h1>Welcome, {{ session.username }}!</h1>
         </div>
 
+        <!-- report link -->
+        {% if session.role in ['teacher', 'admin'] %}
+        <div class="report-link">
+            <a href="{{ url_for('submission_report') }}" class="btn">View Submission Report</a>
+        </div>
+        {% endif %}
+
         <!-- Search Container -->
         <div class="search-container">
             <form id="search-form" action="{{ url_for('teacher_search_files') }}" method="get">
@@ -21,7 +28,7 @@
             </form>
         </div>
 
-        <!-- upload marked files -->
+        <!-- Upload Marked Files -->
         <div class="upload-container">
             <button id="open-upload-popup" class="btn">Send Marked Files</button>
         </div>
@@ -64,7 +71,7 @@
         </div>
     </div>
 
-    <!-- pop-up to send marked files -->
+    <!-- Pop-up to Send Marked Files -->
     <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
@@ -83,7 +90,6 @@
     </div>
 
     <script>
-
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
@@ -102,7 +108,6 @@
             })
             .then(response => response.json())
             .then(data => {
-
                 if (data.success) {
                     alert('File sent successfully!');
                     document.getElementById('upload-form').reset();
