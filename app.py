@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from flask import send_file
+from fpdf import FPDF
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -347,7 +348,7 @@ def submission_report():
 
     connection = get_db_connection()
     cursor = connection.cursor()
-
+    
     cursor.execute("""
         SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
         FROM files f
@@ -357,10 +358,67 @@ def submission_report():
     """)
     submissions = cursor.fetchall()
 
+    cursor.execute("SELECT DISTINCT Username FROM data WHERE Role = 'student'")
+    students = cursor.fetchall()
+
     cursor.close()
     connection.close()
 
-    return render_template('submission_report.html', submissions=submissions)
+    return render_template('submission_report.html', submissions=submissions, students=students)
+
+
+@app.route('/generate_pdf_report', methods=['POST'])
+def generate_pdf_report():
+    student_name = request.form['student_name']
+
+    # Fetch student's submissions from the database
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT d.Username AS student_name, f.file_name, f.submitted_time, f.semester, f.course
+        FROM files f
+        JOIN data d ON f.user_id = d.ID
+        WHERE d.Username = %s AND f.submitted_time IS NOT NULL
+        ORDER BY f.submitted_time DESC
+    """, (student_name,))
+    submissions = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    # Create the reports directory if it does not exist
+    pdf_output_dir = "static/reports"
+    if not os.path.exists(pdf_output_dir):
+        os.makedirs(pdf_output_dir)
+
+    # Create PDF
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(200, 10, f"Submission Report for {student_name}", 0, 1, 'C')
+    pdf.set_font('Arial', 'B', 12)
+
+    # Add table header
+    pdf.cell(40, 10, 'Course', 1)
+    pdf.cell(60, 10, 'File Name', 1)
+    pdf.cell(60, 10, 'Submitted Time', 1)
+    pdf.cell(30, 10, 'Semester', 1)
+    pdf.ln()
+
+    # Add table rows
+    pdf.set_font('Arial', '', 12)
+    for submission in submissions:
+        pdf.cell(40, 10, submission['course'], 1)
+        pdf.cell(60, 10, submission['file_name'], 1)
+        pdf.cell(60, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
+        pdf.cell(30, 10, str(submission['semester']), 1)
+        pdf.ln()
+
+    # Save PDF to a file
+    pdf_output_path = os.path.join(pdf_output_dir, f"{student_name}_submission_report.pdf")
+    pdf.output(pdf_output_path)
+
+    # Send file to the user
+    return send_file(pdf_output_path, as_attachment=True)
 
 
 @app.route('/teacherindex')
@@ -379,6 +437,31 @@ def teacherindex():
 
     return render_template('teacherindex.html', files=files, students=students)
 
+@app.route('/teacher_search_files', methods=['GET'])
+def teacher_search_files():
+    file_name = request.args.get('file_name', '')
+    folder = request.args.get('folder', '')
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    query = "SELECT file_name, folder FROM files WHERE 1=1"
+    params = []
+    
+    if file_name:
+        query += " AND file_name LIKE %s"
+        params.append(f"%{file_name}%")
+        
+    if folder:
+        query += " AND folder LIKE %s"
+        params.append(f"%{folder}%")
+    
+    cursor.execute(query, params)
+    files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('teacherindex.html', files=files)
 
 @app.route('/upload_and_send_file', methods=['POST'])
 def upload_and_send_file():
