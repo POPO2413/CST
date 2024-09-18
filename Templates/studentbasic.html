@@ -4,24 +4,6 @@
     <meta charset="UTF-8">
     <title>Student Index - Basic</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='studentstyle.css') }}">
-    <style>
-        /* Styling for the notification badge */
-        .notification-badge {
-            position: relative;
-            display: inline-block;
-        }
-
-        .notification-badge .badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    </style>
 </head>
 <body>
     <div class="header">
@@ -63,13 +45,10 @@
             <button id="open-upload-popup" class="btn">Submit HW File</button>
         </div>
 
-        <!-- Messages button with notification badge -->
+        <!-- Messages button without notification badge -->
         <div class="talk-container" style="display: inline-block; margin-left: 20px;">
-            <a href="{{ url_for('studentmessages') }}" class="btn notification-badge">
+            <a href="{{ url_for('studentmessages') }}" class="btn">
                 Messages
-                {% if unread_messages_count > 0 %}
-                    <span class="badge">{{ unread_messages_count }}</span>
-                {% endif %}
             </a>
         </div>
     </div>
