@@ -462,13 +462,6 @@ def messages():
         )
         connection.commit()
 
-        # Update the last_checked_messages field for the teacher
-        cursor.execute(
-            "UPDATE messages SET last_checked_messages = NOW() WHERE sender = %s",
-            (teacher_username,)
-        )
-        connection.commit()
-
         flash("Reply sent successfully!", "success")
         return redirect(url_for('messages', student=recipient))
 
@@ -476,6 +469,7 @@ def messages():
     connection.close()
 
     return render_template('messages.html', students=students, messages=messages, selected_student=selected_student)
+
 
 
 @app.route('/studentbasic')
@@ -491,21 +485,10 @@ def studentbasic():
     cursor.execute("SELECT Username FROM data WHERE Role = 'Teacher'")
     teachers = cursor.fetchall()
 
-    # Calculate unread messages count
-    student_username = session.get('username')
-    cursor.execute("""
-        SELECT COUNT(*) AS unread_count
-        FROM messages
-        WHERE recipient = %s AND sent_at > (
-            SELECT MAX(last_checked_messages) FROM messages WHERE sender = %s
-        )
-    """, (student_username, student_username))
-    unread_messages_count = cursor.fetchone()['unread_count'] if cursor.fetchone() else 0
-
     cursor.close()
     connection.close()
 
-    return render_template('studentbasic.html', files=files, teachers=teachers, unread_messages_count=unread_messages_count)
+    return render_template('studentbasic.html', files=files, teachers=teachers)
 
 
 @app.route('/studentadv')
@@ -519,22 +502,11 @@ def studentadv():
     cursor.execute("SELECT file_name, folder AS subject, semester, course FROM files WHERE Course IN ('Basic', 'Advanced')")
     files = cursor.fetchall()
     
-    # Calculate unread messages count
-    cursor.execute(
-        """
-        SELECT COUNT(*) AS unread_count 
-        FROM messages 
-        WHERE recipient = %s 
-        AND sent_at > (SELECT MAX(last_checked_messages) FROM messages WHERE sender = %s)
-        """, 
-        (student_username, student_username)
-    )
-    unread_messages_count = cursor.fetchone()['unread_count'] if cursor.fetchone() else 0
-    
     cursor.close()
     connection.close()
     
-    return render_template('studentadv.html', files=files, unread_messages_count=unread_messages_count)
+    return render_template('studentadv.html', files=files)
+
 
 
 
@@ -686,25 +658,41 @@ def studentmessages():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    sender = session['username']  # The student sending the message
-    recipient = request.form['recipient']  # The selected teacher
-    message_content = request.form['reply_content']
-    sent_at = datetime.now()
-    student_username = session['username']
+    if request.method == 'POST':
+        sender = session['username']  # The student sending the message
+        recipient = request.form.get('recipient')  # Use get to handle missing field
+        message_content = request.form.get('reply_content', '')
+        
+        if not recipient or not message_content:
+            flash("Recipient or message content missing!", "danger")
+            return redirect(url_for('studentmessages'))
 
-    # Insert the message into the messages table
+        sent_at = datetime.now()
+        
+        # Insert the message into the messages table
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
+            (sender, recipient, message_content, sent_at)
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        flash("Message sent successfully!", "success")
+        return redirect(url_for('view_messages', teacher=recipient))
+
+    # Fetch the list of teachers
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute(
-        "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
-        (sender, recipient, message_content, sent_at)
-    )
-    connection.commit()
+    cursor.execute("SELECT Username AS username FROM data WHERE Role = 'Teacher'")
+    teachers = cursor.fetchall()
     cursor.close()
     connection.close()
 
-    flash("Message sent successfully!", "success")
-    return redirect(url_for('view_messages', teacher=recipient))
+    return render_template('studentmessages.html', teachers=teachers)
+
 
 
 @app.route('/student_chat')
