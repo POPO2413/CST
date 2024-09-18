@@ -342,7 +342,7 @@ def submission_report():
     # if 'loggedin' not in session:
     #     return redirect(url_for('login'))
 
-    if session['role'] not in ['teacher', 'admin']:
+    if session['role'] not in ['Teacher', 'Admin']:
         flash('You do not have permission to view this page.', 'danger')
         return redirect(url_for('login'))
 
