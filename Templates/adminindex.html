@@ -26,9 +26,13 @@
         </nav>
         <div class="content">
             <h1>Admin Page</h1>
-            <div class="report-link">
-                <a href="{{ url_for('submission_report') }}" class="btn">View Submission Report</a>
+
+            <!-- Generate Submission Report Button -->
+            <div class="generate-report-container">
+                <button id="generate-report-btn" class="btn">Generate Submission Report</button>
             </div>
+
+            <!-- Table for Users -->
             <div class="file-table-container">
                 <table class="file-table">
                     <thead>
@@ -55,11 +59,18 @@
             </div>
         </div>
     </div>
+
     <script>
+        // Toggle Sidebar Menu
         document.querySelector('.menu-btn').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('#sidebar').classList.toggle('active');
             document.querySelector('.content').classList.toggle('active');
+        });
+
+        // Generate Report Logic
+        document.getElementById('generate-report-btn').addEventListener('click', function() {
+            window.location.href = "{{ url_for('generate_submission_report') }}";
         });
     </script>
 </body>

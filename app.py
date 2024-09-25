@@ -367,59 +367,53 @@ def submission_report():
     return render_template('submission_report.html', submissions=submissions, students=students)
 
 
-@app.route('/generate_pdf_report', methods=['POST'])
-def generate_pdf_report():
-    student_name = request.form['student_name']
+@app.route('/generate_submission_report', methods=['GET'])
+def generate_submission_report():
+    if 'username' not in session or session['role'] not in ['teacher', 'admin']:
+        return redirect(url_for('login'))
 
-    # Fetch student's submissions from the database
     connection = get_db_connection()
     cursor = connection.cursor()
+
     cursor.execute("""
-        SELECT d.Username AS student_name, f.file_name, f.submitted_time, f.semester, f.course
+        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
         FROM files f
         JOIN data d ON f.user_id = d.ID
-        WHERE d.Username = %s AND f.submitted_time IS NOT NULL
+        WHERE f.submitted_time IS NOT NULL
         ORDER BY f.submitted_time DESC
-    """, (student_name,))
+    """)
     submissions = cursor.fetchall()
     cursor.close()
     connection.close()
 
-    # Create the reports directory if it does not exist
     pdf_output_dir = "static/reports"
     if not os.path.exists(pdf_output_dir):
         os.makedirs(pdf_output_dir)
 
-    # Create PDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font('Arial', 'B', 16)
-    pdf.cell(200, 10, f"Submission Report for {student_name}", 0, 1, 'C')
+    pdf.cell(200, 10, "Submission Report", 0, 1, 'C')
     pdf.set_font('Arial', 'B', 12)
 
-    # Add table header
-    pdf.cell(40, 10, 'Course', 1)
-    pdf.cell(60, 10, 'File Name', 1)
+    pdf.cell(50, 10, 'Student Name', 1)
     pdf.cell(60, 10, 'Submitted Time', 1)
-    pdf.cell(30, 10, 'Semester', 1)
+    pdf.cell(40, 10, 'Semester', 1)
+    pdf.cell(40, 10, 'Filename', 1)
     pdf.ln()
 
-    # Add table rows
     pdf.set_font('Arial', '', 12)
     for submission in submissions:
-        pdf.cell(40, 10, submission['course'], 1)
-        pdf.cell(60, 10, submission['file_name'], 1)
+        pdf.cell(50, 10, submission['student_name'], 1)
         pdf.cell(60, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
-        pdf.cell(30, 10, str(submission['semester']), 1)
+        pdf.cell(40, 10, submission['semester'], 1)
+        pdf.cell(40, 10, submission['file_name'], 1)
         pdf.ln()
-
-    # Save PDF to a file
-    pdf_output_path = os.path.join(pdf_output_dir, f"{student_name}_submission_report.pdf")
+        
+    pdf_output_path = os.path.join(pdf_output_dir, "submission_report.pdf")
     pdf.output(pdf_output_path)
 
-    # Send file to the user
     return send_file(pdf_output_path, as_attachment=True)
-
 
 @app.route('/teacherindex')
 def teacherindex():
@@ -463,7 +457,7 @@ def teacher_search_files():
 
     return render_template('teacherindex.html', files=files)
 
-@app.route('/upload_and_send_file', methods=['POST'])
+@app.route('/upload_and_send_file', methods=['POST'])@app.route('/upload_and_send_file', methods=['POST'])
 def upload_and_send_file():
     if 'username' not in session or session['role'] != 'teacher':
         return redirect(url_for('login'))
@@ -500,14 +494,13 @@ def upload_and_send_file():
     return redirect(url_for('teacherindex'))
 
 
-
 def send_marked_file_via_email(student_email, file_path):
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw') 
+        server.login('your-email@gmail.com', 'your-email-password')  # Use your credentials
 
         msg = MIMEMultipart()
-        msg['From'] = 'jasonbssk@gmail.com'
+        msg['From'] = 'your-email@gmail.com'
         msg['To'] = student_email
         msg['Subject'] = 'Your submission has been marked'
 
@@ -521,14 +514,13 @@ def send_marked_file_via_email(student_email, file_path):
         part.add_header('Content-Disposition', f'attachment; filename= {os.path.basename(file_path)}')
         msg.attach(part)
 
-        server.sendmail('jasonbssk@gmail.com', student_email, msg.as_string())
+        server.sendmail('your-email@gmail.com', student_email, msg.as_string())
         server.quit()
 
         print('Email sent successfully')
 
     except Exception as e:
         raise Exception(f"Error sending email: {str(e)}")
-
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():

@@ -26,6 +26,16 @@
             <button id="open-upload-popup" class="btn">Upload File</button>
         </div>
 
+        <!-- Upload and Send Button -->
+        <div class="upload-and-send-container">
+            <button id="open-upload-send-popup" class="btn">Upload and Send File</button>
+        </div>
+
+        <!-- Generate Submission Report Button -->
+        <div class="generate-report-container">
+            <button id="generate-report-btn" class="btn">Generate Submission Report</button>
+        </div>
+
         <!-- Messages Button -->
         <div class="messages-container">
             <a href="{{ url_for('view_messages') }}" class="btn">View Messages</a>
@@ -98,15 +108,44 @@
         </div>
     </div>
 
+    <!-- Upload and Send Pop-up -->
+    <div class="popup" id="upload-send-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-upload-send-popup">&times;</span>
+            <form id="upload-send-form" action="{{ url_for('upload_and_send_file') }}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="application/pdf" required>
+                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
+                <label for="student_username">Select Student:</label>
+                <select name="student_username" id="student_username" required>
+                    {% for student in students %}
+                    <option value="{{ student.Username }}">{{ student.Username }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn">Upload and Send File</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Upload Popup Logic
         document.getElementById('open-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'flex';
         });
-    
+
         document.getElementById('close-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'none';
         });
-    
+
+        // Upload and Send Popup Logic
+        document.getElementById('open-upload-send-popup').addEventListener('click', function() {
+            document.getElementById('upload-send-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-upload-send-popup').addEventListener('click', function() {
+            document.getElementById('upload-send-popup').style.display = 'none';
+        });
+
+        // File Upload Logic
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -140,6 +179,34 @@
                 alert('File upload failed');
             });
         });
-    </script>    
+
+        // Upload and Send File Logic
+        document.getElementById('upload-send-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('upload_and_send_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('File uploaded and sent successfully!');
+                    document.getElementById('upload-send-popup').style.display = 'none';
+                } else {
+                    alert('Failed to send file: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send file');
+            });
+        });
+
+        // Generate Report Logic
+        document.getElementById('generate-report-btn').addEventListener('click', function() {
+            window.location.href = "{{ url_for('generate_submission_report') }}";
+        });
+    </script>
 </body>
 </html>
