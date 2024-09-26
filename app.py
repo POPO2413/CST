@@ -394,16 +394,18 @@ def submission_report():
 
 @app.route('/generate_submission_report', methods=['GET'])
 def generate_submission_report():
-    # if 'username' not in session or session['role'] not in ['teacher', 'admin']:
-    #     return redirect(url_for('login'))
+#     if 'username' not in session or session['role'] not in ['teacher', 'admin']:
+#         return redirect(url_for('login'))
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT student_name, submitted_time, semester, file_name
-        FROM submitted_files
-        ORDER BY submitted_time DESC
+        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
+        FROM submitted_files f
+        JOIN data d ON f.username = d.Username
+        WHERE f.submitted_time IS NOT NULL
+        ORDER BY f.submitted_time DESC
     """)
     submissions = cursor.fetchall()
     cursor.close()
@@ -424,20 +426,26 @@ def generate_submission_report():
     pdf.cell(40, 10, 'Semester', 1)
     pdf.cell(40, 10, 'Filename', 1)
     pdf.ln()
-
+    
     pdf.set_font('Arial', '', 12)
+    
     for submission in submissions:
-        pdf.cell(50, 10, submission['student_name'], 1)
-        pdf.cell(60, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
-        semester = submission.get('semester', 'N/A')
-        pdf.cell(40, 10, semester, 1)
-        pdf.cell(40, 10, submission['file_name'], 1)
-        pdf.ln()
+        student_name = submission['student_name']
+        submitted_time = submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S")
+        semester = submission['semester']
+        file_name = submission['file_name']
 
+        pdf.cell(50, 10, student_name, 1)
+        pdf.cell(60, 10, submitted_time, 1)
+        pdf.cell(40, 10, semester, 1)
+        pdf.cell(40, 10, file_name, 1)
+        pdf.ln()
+        
     pdf_output_path = os.path.join(pdf_output_dir, "submission_report.pdf")
     pdf.output(pdf_output_path)
 
     return send_file(pdf_output_path, as_attachment=True)
+
 
 @app.route('/teacherindex')
 def teacherindex():
@@ -689,9 +697,8 @@ def upload_file():
 
 @app.route('/student_upload_file', methods=['POST'])
 def student_upload_file():
-    if 'username' not in session:
-        flash("Please login to upload files.", "danger")
-        return redirect(url_for('login'))
+    # if 'username' not in session:
+    #     return jsonify({'success': False, 'error': 'User not logged in.'}), 401
     
     username = session['username']
     subject = request.form['subject']
@@ -699,34 +706,31 @@ def student_upload_file():
     file = request.files['file']
     
     if file and file.filename.endswith('.pdf'):
-        filename = secure_filename(file.filename)
+        try:
+            filename = secure_filename(file.filename)
+            upload_folder = os.path.join('static', 'uploads', username)
+            os.makedirs(upload_folder, exist_ok=True)
 
-        upload_folder = os.path.join('static', 'uploads', username)
-        os.makedirs(upload_folder, exist_ok=True)
-        
-        file_path = os.path.join(upload_folder, filename)
-        file.save(file_path)
-        
-        submitted_time = datetime.now()
-        
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("""
-            INSERT INTO submitted_files (username, subject, semester, file_name, submitted_time, file_path)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (username, subject, semester, filename, submitted_time, file_path))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        
-        # to notify the users
-        flash('Homework submitted successfully!', 'success')
-        return redirect(url_for('studentbasic'))
-    
+            file_path = os.path.join(upload_folder, filename)
+            file.save(file_path)
+            
+            submitted_time = datetime.now()
+            
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            cursor.execute("""
+                INSERT INTO submitted_files (username, subject, semester, filename, submitted_time, file_path)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (username, subject, semester, filename, submitted_time, file_path))
+            connection.commit()
+            cursor.close()
+            connection.close()
+            
+            return jsonify({'success': True, 'message': 'Homework submitted successfully!'}), 200
+        except Exception as e:
+            return jsonify({'success': False, 'error': str(e)}), 500
     else:
-        flash('Invalid file type. Only PDF files are allowed.', 'danger')
-        return redirect(url_for('studentbasic'))
-
+        return jsonify({'success': False, 'error': 'Invalid file type. Only PDF files are allowed.'}), 400
 
 @app.route('/math')
 def math():
