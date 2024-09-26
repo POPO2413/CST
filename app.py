@@ -563,42 +563,34 @@ def messages():
 
     connection = get_db_connection()
     cursor = connection.cursor()
-
     cursor.execute("""
-        SELECT sender, COUNT(*) AS unread_count
-        FROM messages
-        WHERE recipient = %s AND is_read = 0
-        GROUP BY sender
-    """, (teacher_username,))
+        SELECT DISTINCT sender AS username 
+        FROM messages 
+        WHERE recipient = %s
+        UNION
+        SELECT DISTINCT recipient AS username 
+        FROM messages 
+        WHERE sender = %s
+    """, (teacher_username, teacher_username))
     students = cursor.fetchall()
 
-    selected_student = request.args.get('student', students[0]['sender'] if students else None)
+    selected_student = request.args.get('student', students[0]['username'] if students else None)
     messages = []
-
     if selected_student:
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT sender, content, sent_at 
             FROM messages 
             WHERE (recipient = %s AND sender = %s) 
                OR (recipient = %s AND sender = %s) 
             ORDER BY sent_at ASC
-            """, 
-            (teacher_username, selected_student, selected_student, teacher_username)
-        )
+        """, (teacher_username, selected_student, selected_student, teacher_username))
         messages = cursor.fetchall()
-
-        cursor.execute(
-            "UPDATE messages SET is_read = 1 WHERE sender = %s AND recipient = %s",
-            (selected_student, teacher_username)
-        )
-        connection.commit()
 
     if request.method == 'POST':
         recipient = request.form['recipient']
         reply_content = request.form['reply_content']
         sent_at = datetime.now()
-        
+
         cursor.execute(
             "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
             (teacher_username, recipient, reply_content, sent_at)
@@ -612,6 +604,7 @@ def messages():
     connection.close()
 
     return render_template('messages.html', students=students, messages=messages, selected_student=selected_student)
+
 
 
 
