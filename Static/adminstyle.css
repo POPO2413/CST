@@ -125,10 +125,10 @@ nav.active .title, nav.active ul li {
 .dropbtn {
   background-color: #d3d3d3;
   color: black; /* text color */
-  padding: 10px; /* padding to match the text box style */
+  padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px; 
+  border-radius: 5px;
   cursor: pointer;
 }
 

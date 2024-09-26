@@ -339,9 +339,6 @@ def delete_user():
 
 @app.route('/submission_report')
 def submission_report():
-    # if 'loggedin' not in session:
-    #     return redirect(url_for('login'))
-
     if session['role'] not in ['Teacher', 'Admin']:
         flash('You do not have permission to view this page.', 'danger')
         return redirect(url_for('login'))
@@ -350,15 +347,13 @@ def submission_report():
     cursor = connection.cursor()
     
     cursor.execute("""
-        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
-        FROM files f
-        JOIN data d ON f.user_id = d.ID
-        WHERE f.submitted_time IS NOT NULL
-        ORDER BY f.submitted_time DESC
+        SELECT username, subject, semester, file_name, submitted_time 
+        FROM submitted_files
+        ORDER BY submitted_time DESC
     """)
     submissions = cursor.fetchall()
 
-    cursor.execute("SELECT DISTINCT Username FROM data WHERE Role = 'student'")
+    cursor.execute("SELECT DISTINCT username FROM submitted_files")
     students = cursor.fetchall()
 
     cursor.close()
@@ -374,13 +369,11 @@ def generate_submission_report():
 
     connection = get_db_connection()
     cursor = connection.cursor()
-
+    
     cursor.execute("""
-        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
-        FROM files f
-        JOIN data d ON f.user_id = d.ID
-        WHERE f.submitted_time IS NOT NULL
-        ORDER BY f.submitted_time DESC
+        SELECT username, subject, semester, file_name, submitted_time 
+        FROM submitted_files
+        ORDER BY submitted_time DESC
     """)
     submissions = cursor.fetchall()
     cursor.close()
@@ -396,20 +389,22 @@ def generate_submission_report():
     pdf.cell(200, 10, "Submission Report", 0, 1, 'C')
     pdf.set_font('Arial', 'B', 12)
 
-    pdf.cell(50, 10, 'Student Name', 1)
-    pdf.cell(60, 10, 'Submitted Time', 1)
-    pdf.cell(40, 10, 'Semester', 1)
-    pdf.cell(40, 10, 'Filename', 1)
+    pdf.cell(40, 10, 'Student Name', 1)
+    pdf.cell(40, 10, 'Subject', 1)
+    pdf.cell(30, 10, 'Semester', 1)
+    pdf.cell(60, 10, 'Filename', 1)
+    pdf.cell(50, 10, 'Submitted Time', 1)
     pdf.ln()
 
     pdf.set_font('Arial', '', 12)
     for submission in submissions:
-        pdf.cell(50, 10, submission['student_name'], 1)
-        pdf.cell(60, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
-        pdf.cell(40, 10, submission['semester'], 1)
-        pdf.cell(40, 10, submission['file_name'], 1)
+        pdf.cell(40, 10, submission['username'], 1)
+        pdf.cell(40, 10, submission['subject'], 1)
+        pdf.cell(30, 10, submission['semester'], 1)
+        pdf.cell(60, 10, submission['file_name'], 1)
+        pdf.cell(50, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
         pdf.ln()
-        
+
     pdf_output_path = os.path.join(pdf_output_dir, "submission_report.pdf")
     pdf.output(pdf_output_path)
 
