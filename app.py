@@ -665,27 +665,44 @@ def upload_file():
 
 @app.route('/student_upload_file', methods=['POST'])
 def student_upload_file():
-    file = request.files['file']
-    file_name = request.form['file_name']
-    folder = request.form['folder']
-    semester = request.form['semester']
-    course = request.form['course']
+    if 'username' not in session:
+        flash("Please login to upload files.", "danger")
+        return redirect(url_for('login'))
+    
+    username = session['username']
     subject = request.form['subject']
+    semester = request.form['semester']
+    file = request.files['file']
     
     if file and file.filename.endswith('.pdf'):
-        file_path = os.path.join('static', 'pdfs', folder, subject, semester, course, file_name + '.pdf')
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        filename = secure_filename(file.filename)
+
+        upload_folder = os.path.join('static', 'uploads', username)
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        file_path = os.path.join(upload_folder, filename)
         file.save(file_path)
+        
+        submitted_time = datetime.now()
         
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute('INSERT INTO files (file_name, folder, subject, semester, course) VALUES (%s, %s, %s, %s, %s)', (file_name, folder, subject, semester, course))
+        cursor.execute("""
+            INSERT INTO submitted_files (username, subject, semester, file_name, submitted_time, file_path)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (username, subject, semester, filename, submitted_time, file_path))
         connection.commit()
         cursor.close()
         connection.close()
         
-        return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder, 'semester': semester, 'course': course, 'subject': subject}})
-    return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
+        # to notify the users
+        flash('Homework submitted successfully!', 'success')
+        return redirect(url_for('studentbasic'))
+    
+    else:
+        flash('Invalid file type. Only PDF files are allowed.', 'danger')
+        return redirect(url_for('studentbasic'))
+
 
 @app.route('/math')
 def math():
