@@ -452,7 +452,7 @@ def teacher_search_files():
 
     return render_template('teacherindex.html', files=files)
 
-@app.route('/upload_and_send_file', methods=['POST'])@app.route('/upload_and_send_file', methods=['POST'])
+@app.route('/upload_and_send_file', methods=['POST'])
 def upload_and_send_file():
     if 'username' not in session or session['role'] != 'teacher':
         return redirect(url_for('login'))
