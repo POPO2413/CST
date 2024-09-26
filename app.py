@@ -394,14 +394,14 @@ def submission_report():
 
 @app.route('/generate_submission_report', methods=['GET'])
 def generate_submission_report():
-    if 'username' not in session or session['role'] not in ['teacher', 'admin']:
-        return redirect(url_for('login'))
+    # if 'username' not in session or session['role'] not in ['teacher', 'admin']:
+    #     return redirect(url_for('login'))
 
     connection = get_db_connection()
     cursor = connection.cursor()
-    
+
     cursor.execute("""
-        SELECT username, subject, semester, file_name, submitted_time 
+        SELECT student_name, submitted_time, semester, file_name
         FROM submitted_files
         ORDER BY submitted_time DESC
     """)
@@ -419,20 +419,19 @@ def generate_submission_report():
     pdf.cell(200, 10, "Submission Report", 0, 1, 'C')
     pdf.set_font('Arial', 'B', 12)
 
-    pdf.cell(40, 10, 'Student Name', 1)
-    pdf.cell(40, 10, 'Subject', 1)
-    pdf.cell(30, 10, 'Semester', 1)
-    pdf.cell(60, 10, 'Filename', 1)
-    pdf.cell(50, 10, 'Submitted Time', 1)
+    pdf.cell(50, 10, 'Student Name', 1)
+    pdf.cell(60, 10, 'Submitted Time', 1)
+    pdf.cell(40, 10, 'Semester', 1)
+    pdf.cell(40, 10, 'Filename', 1)
     pdf.ln()
 
     pdf.set_font('Arial', '', 12)
     for submission in submissions:
-        pdf.cell(40, 10, submission['username'], 1)
-        pdf.cell(40, 10, submission['subject'], 1)
-        pdf.cell(30, 10, submission['semester'], 1)
-        pdf.cell(60, 10, submission['file_name'], 1)
-        pdf.cell(50, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
+        pdf.cell(50, 10, submission['student_name'], 1)
+        pdf.cell(60, 10, submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S"), 1)
+        semester = submission.get('semester', 'N/A')
+        pdf.cell(40, 10, semester, 1)
+        pdf.cell(40, 10, submission['file_name'], 1)
         pdf.ln()
 
     pdf_output_path = os.path.join(pdf_output_dir, "submission_report.pdf")

@@ -39,32 +39,9 @@
         </div>
     </div>
 
-    <!-- Form to upload homework -->
-    <div class="upload-container" style="margin-top: 40px;">
-        <h3>Submit Homework</h3>
-        <form action="{{ url_for('student_upload_file') }}" method="POST" enctype="multipart/form-data">
-            <label for="subject">Select Subject:</label>
-            <select name="subject" id="subject" required>
-                <option value="Math">Math</option>
-                <option value="Science">Science</option>
-                <option value="Economics">Economics</option>
-                <option value="Literature">Literature</option>
-            </select>
-            <br><br>
-
-            <label for="semester">Select Semester:</label>
-            <select name="semester" id="semester" required>
-                <option value="1">Semester 1</option>
-                <option value="2">Semester 2</option>
-            </select>
-            <br><br>
-
-            <label for="file">Upload PDF:</label>
-            <input type="file" name="file" id="file" accept=".pdf" required>
-            <br><br>
-
-            <button type="submit">Submit Homework</button>
-        </form>
+    <!-- Submit Homework Button -->
+    <div class="upload-container" style="margin-top: 40px; text-align: center;">
+        <button id="open-upload-popup" class="btn">Submit Homework</button>
     </div>
 
     <!-- Messages button without notification badge -->
@@ -76,5 +53,71 @@
     <div class="logout-container" style="margin-top: 20px; text-align: center;">
         <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
+
+    <!-- Upload Homework Popup -->
+    <div class="popup" id="upload-popup">
+        <div class="popup-content">
+            <span class="close-popup" id="close-upload-popup">&times;</span>
+            <h3>Submit Homework</h3>
+            <form id="upload-form" action="{{ url_for('student_upload_file') }}" method="POST" enctype="multipart/form-data">
+                <label for="subject">Select Subject:</label>
+                <select name="subject" id="subject" required>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Literature">Literature</option>
+                </select>
+                <br><br>
+
+                <label for="semester">Select Semester:</label>
+                <select name="semester" id="semester" required>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                </select>
+                <br><br>
+
+                <label for="file">Upload PDF:</label>
+                <input type="file" name="file" id="file" accept=".pdf" required>
+                <br><br>
+
+                <button type="submit" class="btn">Submit Homework</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Upload Popup Logic
+        document.getElementById('open-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'none';
+        });
+
+        // File Upload Logic
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('student_upload_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Homework submitted successfully!');
+                    document.getElementById('upload-popup').style.display = 'none';
+                } else {
+                    alert('Failed to submit homework: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit homework');
+            });
+        });
+    </script>
+
 </body>
 </html>

@@ -39,32 +39,40 @@
         </div>
     </div>
 
-    <!-- Form to upload homework -->
+    <!-- Button to open upload popup -->
     <div class="upload-container" style="margin-top: 40px;">
-        <h3>Submit Homework</h3>
-        <form action="{{ url_for('student_upload_file') }}" method="POST" enctype="multipart/form-data">
-            <label for="subject">Select Subject:</label>
-            <select name="subject" id="subject" required>
-                <option value="Math">Math</option>
-                <option value="Science">Science</option>
-                <option value="Economics">Economics</option>
-                <option value="Literature">Literature</option>
-            </select>
-            <br><br>
+        <button id="open-upload-popup" class="btn">Submit Homework</button>
+    </div>
 
-            <label for="semester">Select Semester:</label>
-            <select name="semester" id="semester" required>
-                <option value="1">Semester 1</option>
-                <option value="2">Semester 2</option>
-            </select>
-            <br><br>
+    <!-- Upload Pop-up -->
+    <div class="popup" id="upload-popup" style="display: none;">
+        <div class="popup-content">
+            <span class="close-popup" id="close-upload-popup">&times;</span>
+            <h3>Submit Homework</h3>
+            <form id="upload-form" action="{{ url_for('student_upload_file') }}" method="POST" enctype="multipart/form-data">
+                <label for="subject">Select Subject:</label>
+                <select name="subject" id="subject" required>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Literature">Literature</option>
+                </select>
+                <br><br>
 
-            <label for="file">Upload PDF:</label>
-            <input type="file" name="file" id="file" accept=".pdf" required>
-            <br><br>
+                <label for="semester">Select Semester:</label>
+                <select name="semester" id="semester" required>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                </select>
+                <br><br>
 
-            <button type="submit">Submit Homework</button>
-        </form>
+                <label for="file">Upload PDF:</label>
+                <input type="file" name="file" id="file" accept=".pdf" required>
+                <br><br>
+
+                <button type="submit">Submit Homework</button>
+            </form>
+        </div>
     </div>
 
     <!-- Messages button -->
@@ -76,5 +84,17 @@
     <div class="logout-container" style="margin-top: 20px; text-align: center;">
         <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
+
+    <script>
+        // Upload Popup Logic
+        document.getElementById('open-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'flex';
+        });
+
+        document.getElementById('close-upload-popup').addEventListener('click', function() {
+            document.getElementById('upload-popup').style.display = 'none';
+        });
+    </script>
+
 </body>
 </html>
