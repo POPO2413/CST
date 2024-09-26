@@ -402,6 +402,7 @@ def generate_submission_report():
 
     cursor.execute("""
         SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
+        SELECT d.Username AS username, f.submitted_time, f.semester, f.filename
         FROM submitted_files f
         JOIN data d ON f.username = d.Username
         WHERE f.submitted_time IS NOT NULL
@@ -431,9 +432,11 @@ def generate_submission_report():
     
     for submission in submissions:
         student_name = submission['student_name']
+        student_name = submission['username']
         submitted_time = submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S")
         semester = submission['semester']
         file_name = submission['file_name']
+        file_name = submission['filename']
 
         pdf.cell(50, 10, student_name, 1)
         pdf.cell(60, 10, submitted_time, 1)
