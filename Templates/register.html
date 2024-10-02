@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='loginstyle.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="register-page">
     <div class="container">
-        <div class="login-card"> <!-- Changed 'border' to 'login-card' -->
+        <div class="login-card">
             <!-- Logo Section -->
-            <div class="logo">
-                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo">
             </div>
 
             <div class="header">
@@ -42,7 +42,7 @@
                     <br><br>
                 </form>
             </h2>
-            <p class="bottom">Already have an account? <a class="bottom" href="{{url_for('login')}}"> Sign In here</a></p>
+            <p class="bottom-text">Already have an account? <a class="bottom-text" href="{{url_for('login')}}"> Sign In here</a></p>
         </div>
     </div>
 </body>

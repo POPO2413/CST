@@ -394,15 +394,13 @@ def submission_report():
 
 @app.route('/generate_submission_report', methods=['GET'])
 def generate_submission_report():
-#     if 'username' not in session or session['role'] not in ['teacher', 'admin']:
-#         return redirect(url_for('login'))
-
+    # Connect to the database
     connection = get_db_connection()
     cursor = connection.cursor()
 
+    # Fetch submission records
     cursor.execute("""
-        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.file_name
-        SELECT d.Username AS username, f.submitted_time, f.semester, f.filename
+        SELECT d.Username AS student_name, f.submitted_time, f.semester, f.filename
         FROM submitted_files f
         JOIN data d ON f.username = d.Username
         WHERE f.submitted_time IS NOT NULL
@@ -412,42 +410,51 @@ def generate_submission_report():
     cursor.close()
     connection.close()
 
+    # Create output directory for the PDF
     pdf_output_dir = "static/reports"
     if not os.path.exists(pdf_output_dir):
         os.makedirs(pdf_output_dir)
 
     pdf = FPDF()
     pdf.add_page()
+
+    # Title of the report
     pdf.set_font('Arial', 'B', 16)
     pdf.cell(200, 10, "Submission Report", 0, 1, 'C')
-    pdf.set_font('Arial', 'B', 12)
 
-    pdf.cell(50, 10, 'Student Name', 1)
-    pdf.cell(60, 10, 'Submitted Time', 1)
-    pdf.cell(40, 10, 'Semester', 1)
-    pdf.cell(40, 10, 'Filename', 1)
+    # Set the table header font size
+    pdf.set_font('Arial', 'B', 10)
+
+    # Adjust column widths to ensure text fits
+    pdf.cell(40, 10, 'Student Name', 1)
+    pdf.cell(55, 10, 'Submitted Time', 1)
+    pdf.cell(20, 10, 'Semester', 1)
+    pdf.cell(75, 10, 'Filename', 1)  # Increased width to fit longer filenames
     pdf.ln()
-    
-    pdf.set_font('Arial', '', 12)
-    
+
+    # Set the table body font size slightly smaller to fit content better
+    pdf.set_font('Arial', '', 9)
+
     for submission in submissions:
         student_name = submission['student_name']
-        student_name = submission['username']
         submitted_time = submission['submitted_time'].strftime("%Y-%m-%d %H:%M:%S")
         semester = submission['semester']
-        file_name = submission['file_name']
         file_name = submission['filename']
 
-        pdf.cell(50, 10, student_name, 1)
-        pdf.cell(60, 10, submitted_time, 1)
-        pdf.cell(40, 10, semester, 1)
-        pdf.cell(40, 10, file_name, 1)
+        pdf.cell(40, 10, student_name, 1)
+        pdf.cell(55, 10, submitted_time, 1)
+        pdf.cell(20, 10, semester, 1)
+        pdf.cell(75, 10, file_name, 1)  # Wider cell for filenames
         pdf.ln()
-        
+
+    # Save the report as a PDF file
     pdf_output_path = os.path.join(pdf_output_dir, "submission_report.pdf")
     pdf.output(pdf_output_path)
 
+    # Return the file for download
     return send_file(pdf_output_path, as_attachment=True)
+
+
 
 
 @app.route('/teacherindex')
@@ -559,10 +566,14 @@ def send_marked_file_via_email(student_email, file_path):
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    teacher_username = session.get('username') 
+    # Get the current logged-in user's username from the session
+    username = session.get('username')
 
+    # Connect to the database
     connection = get_db_connection()
     cursor = connection.cursor()
+
+    # Fetch the list of students the user has communicated with
     cursor.execute("""
         SELECT DISTINCT sender AS username 
         FROM messages 
@@ -571,39 +582,49 @@ def messages():
         SELECT DISTINCT recipient AS username 
         FROM messages 
         WHERE sender = %s
-    """, (teacher_username, teacher_username))
+    """, (username, username))
     students = cursor.fetchall()
 
-    selected_student = request.args.get('student', students[0]['username'] if students else None)
+    # Determine the selected student from the URL query parameters or default to the first student
+    selected_username = request.args.get('student', students[0]['username'] if students else None)
+
+    # Fetch messages with the selected student
     messages = []
-    if selected_student:
+    if selected_username:
         cursor.execute("""
             SELECT sender, content, sent_at 
             FROM messages 
             WHERE (recipient = %s AND sender = %s) 
                OR (recipient = %s AND sender = %s) 
             ORDER BY sent_at ASC
-        """, (teacher_username, selected_student, selected_student, teacher_username))
+        """, (username, selected_username, selected_username, username))
         messages = cursor.fetchall()
 
+    # Handle reply (POST) requests
     if request.method == 'POST':
         recipient = request.form['recipient']
         reply_content = request.form['reply_content']
         sent_at = datetime.now()
 
+        # Insert the new message (reply)
         cursor.execute(
             "INSERT INTO messages (sender, recipient, content, sent_at) VALUES (%s, %s, %s, %s)",
-            (teacher_username, recipient, reply_content, sent_at)
+            (username, recipient, reply_content, sent_at)
         )
         connection.commit()
 
+        # Redirect back to the same page to avoid resubmission
         flash("Reply sent successfully!", "success")
         return redirect(url_for('messages', student=recipient))
 
+    # Close the database connection
     cursor.close()
     connection.close()
 
-    return render_template('messages.html', students=students, messages=messages, selected_student=selected_student)
+    # Render the template, passing both students and messages to the front-end
+    return render_template('messages.html', students=students, messages=messages, selected_username=selected_username)
+
+
 
 
 
