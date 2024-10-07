@@ -89,82 +89,35 @@ def logout():
 
 @app.route('/forgotpassword', methods=['GET', 'POST'])
 def forgotpassword():
+    msg = ''
     if request.method == 'POST':
         username = request.form['username']
-        email = request.form['email']
+        birthdate = request.form['birthdate']
         
-        user_password = get_user_password_by_username_and_email(username, email)
+        # Format the birthdate to match the database format
+        try:
+            birthdate = datetime.strptime(birthdate, '%Y-%m-%d').date()  # Adjust format as per your database
+        except ValueError:
+            msg = 'Invalid birthdate format!'
+            return render_template('forgotpassword.html', msg=msg)
 
-        if user_password:
-            try:
-                send_password_via_email(email, user_password)
-                flash('Password has been sent to your email address.', 'success')
-                return redirect(url_for('login'))
-            except Exception as e:
-                flash(f'Failed to send email: {str(e)}', 'danger')
+        # Query database for username and birthdate
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute('SELECT Password FROM data WHERE Username = %s AND birthdate = %s', (username, birthdate))
+        account = cursor.fetchone()
+        
+        if account:
+            # If found, show the password
+            msg = f'Your password is: {account["Password"]}'
         else:
-            flash('Username or Email not found in our system.', 'danger')
-
-    return render_template('forgotpassword.html')
-
-def get_user_password_by_username_and_email(username, email):
-    connection = get_db_connection()
-    cursor = connection.cursor()
-
-    try:
-        cursor.execute("SELECT Password FROM data WHERE Username = %s AND Email = %s", (username, email))
-        result = cursor.fetchone()
-        if result:
-            return result['Password']
-        else:
-            return None
-    finally:
+            msg = 'Incorrect username or birthdate!'
+        
         cursor.close()
         connection.close()
 
-# def send_password_via_email(email, user_password):
-#     try:
-#         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-#         server.set_debuglevel(1) 
-#         server.login('jasonbssk@gmail.com', 'mbadyjlgosqwtkrw')
-        
-#         subject = "Your Password"
-#         body = f"Your password is: {user_password}"
-#         message = f"Subject: {subject}\n\n{body}"
+    return render_template('forgotpassword.html', msg=msg)
 
-#         server.sendmail('jasonbssk@gmail.com', email, message)
-#         server.quit()
-#     except Exception as e:
-#         raise Exception(f"Error sending email: {str(e)}")
-
-def send_password_via_email(email, user_password):
-    smtp_server = "smtp.gmail.com"
-    port = 587  # For starttls
-    sender_email = "jasonbssk@gmail.com"
-    password = os.getenv("EMAIL_PASSWORD")
-
-    subject = "Your Password"
-    body = f"Your password is: {user_password}"
-    message = f"Subject: {subject}\n\n{body}"
-
-    context = ssl.create_default_context()
-
-    try:
-        server = smtplib.SMTP(smtp_server, port)
-        server.ehlo()
-        server.starttls(context=context) 
-        server.ehlo()
-        server.login(sender_email, password)
-
-        server.sendmail(sender_email, email, message)
-
-        print("Email sent successfully!")
-
-    except Exception as e:
-        print(f"Error sending email: {str(e)}")
-
-    finally:
-        server.quit()
         
 
 @app.route('/register', methods=['GET', 'POST'])
