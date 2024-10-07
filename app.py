@@ -694,26 +694,6 @@ def upload_file():
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder, 'semester': semester, 'course': course}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
-@app.route('/marked_files')
-def marked_files():
-    student_username = session['username']
-
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
-        SELECT file_name, subject, Semester, marked_time 
-        FROM marked_files 
-        WHERE username = %s
-        ORDER BY marked_time DESC
-    """, (student_username,))
-    
-    marked_files = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    return render_template('marked_files.html', marked_files=marked_files)
-
-
 @app.route('/student_upload_file', methods=['POST'])
 def student_upload_file():
     # if 'username' not in session:
