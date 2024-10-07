@@ -678,6 +678,32 @@ def marked_files():
     return render_template('marked_files.html', marked_files=marked_files)
 
 
+@app.route('/subject_search_files/<folder>', methods=['GET'])
+def subject_search_files(folder):
+    file_name = request.args.get('file_name', '')
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    query = "SELECT file_name, folder, semester, course FROM files WHERE folder = %s"
+    params = [folder]
+
+    if file_name:
+        query += " AND LOWER(file_name) LIKE LOWER(%s)"
+        params.append(f"%{file_name}%")
+
+    cursor.execute(query, params)
+    files = cursor.fetchall()
+
+    files_semester1 = [file for file in files if file['semester'] == 1]
+    files_semester2 = [file for file in files if file['semester'] == 2]
+
+    cursor.close()
+    connection.close()
+
+    return render_template(f'{folder.lower()}.html', files_semester1=files_semester1, files_semester2=files_semester2)
+
+
 @app.route('/math')
 def math():
     connection = get_db_connection()
@@ -714,30 +740,23 @@ def science():
 
     return render_template('science.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
-@app.route('/subject_search_files/<folder>', methods=['GET'])
-def subject_search_files(folder):
-    file_name = request.args.get('file_name', '')
-
+@app.route('/economics')
+def economics():
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = "SELECT file_name, folder, semester, course FROM files WHERE folder = %s"
-    params = [folder]
+    # files for Semester 1
+    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=1")
+    files_semester1 = cursor.fetchall()
 
-    if file_name:
-        query += " AND LOWER(file_name) LIKE LOWER(%s)"
-        params.append(f"%{file_name}%")
-
-    cursor.execute(query, params)
-    files = cursor.fetchall()
-
-    files_semester1 = [file for file in files if file['semester'] == 1]
-    files_semester2 = [file for file in files if file['semester'] == 2]
+    # files for Semester 2
+    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=2")
+    files_semester2 = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    return render_template(f'{folder.lower()}.html', files_semester1=files_semester1, files_semester2=files_semester2)
+    return render_template('economics.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
 @app.route('/literature')
 def literature():
