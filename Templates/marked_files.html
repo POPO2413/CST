@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marked Works</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='studentstyle.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Your Marked Works</h1>
+    </div>
+
+    <div class="marked-works-container">
+        {% if marked_files %}
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Subject</th>
+                    <th>Semester</th>
+                    <th>Marked Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in marked_files %}
+                <tr>
+                    <td><a href="{{ url_for('static', filename='marked/' + file.file_name) }}" download>{{ file.file_name }}</a></td>
+                    <td>{{ file.subject }}</td>
+                    <td>{{ file.Semester }}</td>
+                    <td>{{ file.marked_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No marked works found.</p>
+        {% endif %}
+    </div>
+
+    <div class="back-button" style="margin-top: 20px; text-align: center;">
+        <a href="{{ url_for('studentbasic') }}" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>
