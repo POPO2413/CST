@@ -747,12 +747,12 @@ def economics():
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # files for Semester 1
-    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=1")
+    # Fetch files for Semester 1
+    cursor.execute("SELECT file_name, folder, semester, course FROM files WHERE folder='Economics' AND semester=1")
     files_semester1 = cursor.fetchall()
 
-    # files for Semester 2
-    cursor.execute("SELECT file_name FROM files WHERE folder='Economics' AND semester=2")
+    # Fetch files for Semester 2
+    cursor.execute("SELECT file_name, folder, semester, course FROM files WHERE folder='Economics' AND semester=2")
     files_semester2 = cursor.fetchall()
 
     cursor.close()
