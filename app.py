@@ -606,7 +606,7 @@ def subject_search_files(folder):
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = "SELECT file_name FROM files WHERE folder = %s"
+    query = "SELECT file_name, folder, semester, course FROM files WHERE folder = %s"
     params = [folder]
 
     if file_name:
@@ -616,8 +616,8 @@ def subject_search_files(folder):
     cursor.execute(query, params)
     files = cursor.fetchall()
 
-    files_semester1 = [file for file in files if file['Semester'] == 1]
-    files_semester2 = [file for file in files if file['Semester'] == 2]
+    files_semester1 = [file for file in files if file['semester'] == 1]
+    files_semester2 = [file for file in files if file['semester'] == 2]
 
     cursor.close()
     connection.close()
