@@ -176,6 +176,7 @@ def register():
         email = request.form['email']
         role = request.form['role']
         course = request.form['course']
+        birthdate = request.form['birthdate']  # Capture birthdate from the form
 
         connection = get_db_connection()
         cursor = connection.cursor()
@@ -188,11 +189,11 @@ def register():
             msg = 'Invalid email address!'
         elif not re.match(r'[A-Za-z0-9]+', username):
             msg = 'Username must contain only characters and numbers!'
-        elif not username or not password or not email:
-            msg = 'Please fill out the form!'
+        elif not username or not password or not email or not birthdate:  # Ensure birthdate is filled
+            msg = 'Please fill out the form completely!'
         else:
-            cursor.execute('INSERT INTO data (Username, Password, Email, Role, Course) VALUES (%s, %s, %s, %s, %s)', 
-                           (username, password, email, role, course))
+            cursor.execute('INSERT INTO data (Username, Password, Email, Role, Course, Birthdate) VALUES (%s, %s, %s, %s, %s, %s)', 
+                           (username, password, email, role, course, birthdate))  # Insert birthdate
             connection.commit()
             msg = 'You have successfully registered!'
 
@@ -202,14 +203,24 @@ def register():
     return render_template('register.html', msg=msg)
 
 
+
 @app.route('/adminindex')
 def adminindex():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT ID, Username, email, Role, DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date FROM data')
+
+    # Include birthdate in the SELECT statement and format dates
+    cursor.execute('''
+        SELECT ID, Username, email, Role, 
+               DATE_FORMAT(Enrolled_Date, "%Y-%m-%d") as Enrolled_Date, 
+               DATE_FORMAT(birthdate, "%Y-%m-%d") as birthdate 
+        FROM data
+    ''')
     users = cursor.fetchall()
+
     cursor.close()
     connection.close()
+
     return render_template('adminindex.html', users=users)
 
 @app.route('/user_activity')

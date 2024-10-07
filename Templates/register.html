@@ -21,12 +21,18 @@
             <h2 class="word">
                 <form action="{{ url_for('register') }}" method="post">
                     <div class="msg">{{ msg }}</div>
-                    <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/>
+                    <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox" required/>
                     <br><br>
-                    <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/>
+                    <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox" required/>
                     <br><br>
-                    <input id="email" name="email" type="text" placeholder="Enter Your Email address" class="textbox"/>
+                    <input id="email" name="email" type="text" placeholder="Enter Your Email address" class="textbox" required/>
                     <br><br>
+                    
+                    <!-- New Birthdate Field -->
+                    <label for="birthdate">Birthdate:</label>
+                    <input id="birthdate" name="birthdate" type="date" class="textbox" required/>
+                    <br><br>
+
                     <select name="role" class="textbox">
                         <option value="Student">Student</option>
                         <option value="Teacher">Teacher</option>

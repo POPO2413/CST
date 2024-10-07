@@ -57,6 +57,7 @@
                             <th>Email</th>
                             <th>Role</th>
                             <th>Enrolled Date</th>
+                            <th>Birthdate</th> <!-- New column added here -->
                         </tr>
                     </thead>
                     <tbody>
@@ -67,8 +68,7 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.Role }}</td>
                             <td>{{ user.Enrolled_Date }}</td>
-                            <td>
-                            </td>
+                            <td>{{ user.birthdate }}</td> <!-- Display birthdate here -->
                         </tr>
                         {% endfor %}
                     </tbody>
