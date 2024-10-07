@@ -11,7 +11,7 @@
             <h1>IB Economics</h1>
             <p>In the IB Economics page, you will be able to view all the topic files provided by the teacher.</p>
             <div class="search-container">
-                <form action="{{ url_for('subject_search_files', subject='Economics') }}" method="get">
+                <form action="{{ url_for('subject_search_files', folder='Economics') }}" method="get">
                     <input type="search" name="file_name" placeholder="Search files...">
                     <button type="submit">Search</button>
                 </form>

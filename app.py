@@ -678,15 +678,15 @@ def studentadv():
 
 
 
-@app.route('/subject_search_files/<subject>', methods=['GET'])
-def subject_search_files(subject):
+@app.route('/subject_search_files/<folder>', methods=['GET'])
+def subject_search_files(folder):
     file_name = request.args.get('file_name', '')
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = "SELECT file_name, folder FROM files WHERE folder = %s"
-    params = [subject]
+    query = "SELECT file_name FROM files WHERE folder = %s"
+    params = [folder]
 
     if file_name:
         query += " AND file_name LIKE %s"
@@ -694,11 +694,14 @@ def subject_search_files(subject):
 
     cursor.execute(query, params)
     files = cursor.fetchall()
+
+    files_semester1 = [file for file in files if file['Semester'] == 1]
+    files_semester2 = [file for file in files if file['Semester'] == 2]
+
     cursor.close()
     connection.close()
 
-    return render_template(f'{subject.lower()}.html', files=files)
-
+    return render_template(f'{folder.lower()}.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
