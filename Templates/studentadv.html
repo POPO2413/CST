@@ -39,13 +39,28 @@
         </div>
     </div>
 
-    <!-- Button to open upload popup -->
-    <div class="upload-container" style="margin-top: 40px;">
+    <!-- Submit Homework Button -->
+    <div class="upload-container" style="margin-top: 40px; text-align: center;">
         <button id="open-upload-popup" class="btn">Submit Homework</button>
     </div>
 
-    <!-- Upload Pop-up -->
-    <div class="popup" id="upload-popup" style="display: none;">
+    <!-- Marked Works button -->
+    <div class="marked-container" style="text-align: center; margin-top: 40px;">
+        <a href="{{ url_for('marked_files') }}" class="btn">Marked Works</a>
+    </div>
+
+    <!-- Messages button -->
+    <div class="talk-container" style="text-align: center; margin-top: 40px;">
+        <a href="{{ url_for('studentmessages') }}" class="btn">Messages</a>
+    </div>
+
+    <!-- Logout button -->
+    <div class="logout-container" style="margin-top: 20px; text-align: center;">
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+    </div>
+
+    <!-- Upload Homework Popup -->
+    <div class="popup" id="upload-popup">
         <div class="popup-content">
             <span class="close-popup" id="close-upload-popup">&times;</span>
             <h3>Submit Homework</h3>
@@ -70,19 +85,9 @@
                 <input type="file" name="file" id="file" accept=".pdf" required>
                 <br><br>
 
-                <button type="submit">Submit Homework</button>
+                <button type="submit" class="btn">Submit Homework</button>
             </form>
         </div>
-    </div>
-
-    <!-- Messages button -->
-    <div class="talk-container" style="text-align: center; margin-top: 40px;">
-        <a href="{{ url_for('studentmessages') }}" class="btn">Messages</a>
-    </div>
-
-    <!-- Logout button -->
-    <div class="logout-container" style="margin-top: 20px; text-align: center;">
-        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
 
     <script>
@@ -93,6 +98,29 @@
 
         document.getElementById('close-upload-popup').addEventListener('click', function() {
             document.getElementById('upload-popup').style.display = 'none';
+        });
+
+        // File Upload Logic
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('student_upload_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Homework submitted successfully!');
+                    document.getElementById('upload-popup').style.display = 'none';
+                } else {
+                    alert('Failed to submit homework: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit homework');
+            });
         });
     </script>
 

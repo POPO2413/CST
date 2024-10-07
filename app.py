@@ -510,70 +510,38 @@ def teacher_search_files():
 
     return render_template('teacherindex.html', files=files)
 
-@app.route('/upload_and_send_file', methods=['POST'])
-def upload_and_send_file():
+@app.route('/upload_marked_file', methods=['POST'])
+def upload_marked_file():
     if 'username' not in session or session['role'] != 'teacher':
         return redirect(url_for('login'))
 
-    file = request.files['file']
-    file_name = request.form['file_name']
     student_username = request.form['student_username']
-
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT Email FROM data WHERE Username = %s", (student_username,))
-    student = cursor.fetchone()
-
-    if not student or not student['Email']:
-        flash('Student not found or email is missing.', 'danger')
-        return redirect(url_for('teacherindex'))
+    subject = request.form['subject']
+    semester = request.form['semester']
+    file = request.files['file']
 
     if file and file.filename.endswith('.pdf'):
-        filename = secure_filename(file_name + ".pdf")
-        file_path = os.path.join('static', 'uploads', filename)
+        filename = secure_filename(file.filename)
+        file_path = os.path.join('static', 'marked', filename)
         file.save(file_path)
 
-        try:
-            send_marked_file_via_email(student['Email'], file_path)
-            flash('Marked file sent to student successfully!', 'success')
-        except Exception as e:
-            flash(f'Error sending file: {str(e)}', 'danger')
+        marked_time = datetime.now()
+        
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("""
+            INSERT INTO marked_files (username, file_name, subject, Semester, marked_time)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (student_username, filename, subject, semester, marked_time))
+        connection.commit()
 
+        cursor.close()
+        connection.close()
+
+        return jsonify({'success': True, 'message': 'Marked file shared successfully!'}), 200
     else:
-        flash('Invalid file. Only PDF files are allowed.', 'danger')
+        return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
-    cursor.close()
-    connection.close()
-    return redirect(url_for('teacherindex'))
-
-
-def send_marked_file_via_email(student_email, file_path):
-    try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login('your-email@gmail.com', 'your-email-password')  # Use your credentials
-
-        msg = MIMEMultipart()
-        msg['From'] = 'your-email@gmail.com'
-        msg['To'] = student_email
-        msg['Subject'] = 'Your submission has been marked'
-
-        body = 'Your work with comments has been attached to this email.'
-        msg.attach(MIMEText(body, 'plain'))
-
-        attachment = open(file_path, 'rb')
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload(attachment.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename= {os.path.basename(file_path)}')
-        msg.attach(part)
-
-        server.sendmail('your-email@gmail.com', student_email, msg.as_string())
-        server.quit()
-
-        print('Email sent successfully')
-
-    except Exception as e:
-        raise Exception(f"Error sending email: {str(e)}")
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
@@ -726,6 +694,26 @@ def upload_file():
         return jsonify({'success': True, 'file': {'file_name': file_name, 'folder': folder, 'semester': semester, 'course': course}})
     return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
+@app.route('/marked_files')
+def marked_files():
+    student_username = session['username']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT file_name, subject, Semester, marked_time 
+        FROM marked_files 
+        WHERE username = %s
+        ORDER BY marked_time DESC
+    """, (student_username,))
+    
+    marked_files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('marked_files.html', marked_files=marked_files)
+
+
 @app.route('/student_upload_file', methods=['POST'])
 def student_upload_file():
     # if 'username' not in session:
@@ -762,6 +750,28 @@ def student_upload_file():
             return jsonify({'success': False, 'error': str(e)}), 500
     else:
         return jsonify({'success': False, 'error': 'Invalid file type. Only PDF files are allowed.'}), 400
+
+@app.route('/marked_files')
+def marked_files():
+
+    student_username = session['username']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT file_name, subject, Semester, marked_time 
+        FROM marked_files 
+        WHERE username = %s
+        ORDER BY marked_time DESC
+    """, (student_username,))
+    
+    marked_files = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('marked_files.html', marked_files=marked_files)
+
 
 @app.route('/math')
 def math():

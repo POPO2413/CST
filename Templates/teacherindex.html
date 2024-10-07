@@ -26,9 +26,9 @@
             <button id="open-upload-popup" class="btn">Upload File</button>
         </div>
 
-        <!-- Upload and Send Button -->
-        <div class="upload-and-send-container">
-            <button id="open-upload-send-popup" class="btn">Upload and Send File</button>
+        <!-- Share Marked Files Button -->
+        <div class="upload-marked-container">
+            <button id="open-upload-marked-popup" class="btn">Share Marked Files</button>
         </div>
 
         <!-- Generate Submission Report Button -->
@@ -108,23 +108,44 @@
         </div>
     </div>
 
-    <!-- Upload and Send Pop-up -->
-    <div class="popup" id="upload-send-popup">
+    <!-- Upload Marked File Pop-up -->
+    <div class="popup" id="upload-marked-popup">
         <div class="popup-content">
-            <span class="close-popup" id="close-upload-send-popup">&times;</span>
-            <form id="upload-send-form" action="{{ url_for('upload_and_send_file') }}" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept="application/pdf" required>
-                <input type="text" name="file_name" placeholder="Enter file name" required class="textbox">
+            <span class="close-popup" id="close-upload-marked-popup">&times;</span>
+            <form id="upload-marked-form" action="{{ url_for('upload_marked_file') }}" method="post" enctype="multipart/form-data">
                 <label for="student_username">Select Student:</label>
                 <select name="student_username" id="student_username" required>
                     {% for student in students %}
                     <option value="{{ student.Username }}">{{ student.Username }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="btn">Upload and Send File</button>
+                <br><br>
+
+                <label for="subject">Select Subject:</label>
+                <select name="subject" id="subject" required>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Literature">Literature</option>
+                </select>
+                <br><br>
+
+                <label for="semester">Select Semester:</label>
+                <select name="semester" id="semester" required>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                </select>
+                <br><br>
+
+                <label for="file">Upload Marked PDF:</label>
+                <input type="file" name="file" id="file" accept=".pdf" required>
+                <br><br>
+
+                <button type="submit" class="btn">Upload Marked File</button>
             </form>
         </div>
     </div>
+
 
     <script>
         // Upload Popup Logic
@@ -136,13 +157,36 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        // Upload and Send Popup Logic
-        document.getElementById('open-upload-send-popup').addEventListener('click', function() {
-            document.getElementById('upload-send-popup').style.display = 'flex';
+        // Upload Marked File Popup Logic
+        document.getElementById('open-upload-marked-popup').addEventListener('click', function() {
+            document.getElementById('upload-marked-popup').style.display = 'flex';
         });
 
-        document.getElementById('close-upload-send-popup').addEventListener('click', function() {
-            document.getElementById('upload-send-popup').style.display = 'none';
+        document.getElementById('close-upload-marked-popup').addEventListener('click', function() {
+            document.getElementById('upload-marked-popup').style.display = 'none';
+        });
+
+        // Marked File Upload Logic
+        document.getElementById('upload-marked-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{{ url_for('upload_marked_file') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Marked file shared successfully!');
+                    document.getElementById('upload-marked-popup').style.display = 'none';
+                } else {
+                    alert('Failed to share marked file: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to share marked file');
+            });
         });
 
         // File Upload Logic
@@ -180,28 +224,6 @@
             });
         });
 
-        // Upload and Send File Logic
-        document.getElementById('upload-send-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch("{{ url_for('upload_and_send_file') }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('File uploaded and sent successfully!');
-                    document.getElementById('upload-send-popup').style.display = 'none';
-                } else {
-                    alert('Failed to send file: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to send file');
-            });
-        });
 
         // Generate Report Logic
         document.getElementById('generate-report-btn').addEventListener('click', function() {
