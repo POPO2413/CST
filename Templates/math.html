@@ -30,7 +30,10 @@
                         </a>
                     </div>
                     {% endfor %}
-                </div>
+                {% else %}
+                    <p>No files found for Semester 1</p>
+                {% endif %}
+            </div>
 
                 <!-- Semester 2 -->
                 <h2>Semester 2</h2>
@@ -43,6 +46,9 @@
                         </a>
                     </div>
                     {% endfor %}
+                {% else %}
+                    <p>No files found for Semester 2.</p>
+                {% endif %}
                 </div>
             </div>
         </main>

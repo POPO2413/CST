@@ -701,16 +701,20 @@ def subject_search_files(folder):
 
     connection = get_db_connection()
     cursor = connection.cursor()
-    query = "SELECT file_name, folder, semester, course FROM files WHERE LOWER(folder) = LOWER(%s)"
-    params = [folder]
+    query = "SELECT file_name, folder, semester, course FROM files WHERE 1=1"
+    params = []
+
+    if folder:
+        query += " AND LOWER(folder) = LOWER(%s)"
+        params.append(folder)
 
     if file_name:
         query += " AND LOWER(file_name) LIKE LOWER(%s)"
         params.append(f"%{file_name}%")
-
+    
     cursor.execute(query, params)
     files = cursor.fetchall()
-
+    
     files_semester1 = [file for file in files if file['semester'] == 1]
     files_semester2 = [file for file in files if file['semester'] == 2]
 
