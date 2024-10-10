@@ -40,23 +40,23 @@
     </div>
 
     <!-- Submit Homework Button -->
-    <div class="upload-container" style="margin-top: 40px; text-align: center;">
-        <button id="open-upload-popup" class="btn">Submit Homework</button>
+    <div class="upload-container" style="text-align: center;">
+        <button id="open-upload-popup" class="btn button-style">Submit Homework</button>
     </div>
 
     <!-- Marked Works button -->
-    <div class="marked-container" style="text-align: center; margin-top: 40px;">
-        <a href="{{ url_for('marked_files') }}" class="btn">Marked Works</a>
+    <div class="marked-container" style="text-align: center;">
+        <a href="{{ url_for('marked_files') }}" class="btn button-style">Marked Works</a>
     </div>
     
     <!-- Messages button -->
-    <div class="talk-container" style="text-align: center; margin-top: 40px;">
-        <a href="{{ url_for('studentmessages') }}" class="btn">Messages</a>
+    <div class="talk-container" style="text-align: center;">
+        <a href="{{ url_for('studentmessages') }}" class="btn button-style">Messages</a>
     </div>
 
     <!-- Logout button -->
-    <div class="logout-container" style="margin-top: 20px; text-align: center;">
-        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+    <div class="logout-container" style="text-align: center;">
+        <a href="{{ url_for('logout') }}" class="btn button-style">Logout</a>
     </div>
 
     <!-- Upload Homework Popup -->
@@ -85,7 +85,7 @@
                 <input type="file" name="file" id="file" accept=".pdf" required>
                 <br><br>
 
-                <button type="submit" class="btn">Submit Homework</button>
+                <button type="submit" class="btn button-style">Submit Homework</button>
             </form>
         </div>
     </div>
@@ -100,7 +100,7 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        // File Upload Logic
+        // File Upload Logic with form submission
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -113,6 +113,7 @@
                 if (data.success) {
                     alert('Homework submitted successfully!');
                     document.getElementById('upload-popup').style.display = 'none';
+                    this.reset();  // Reset form after submission
                 } else {
                     alert('Failed to submit homework: ' + (data.error || 'Unknown error'));
                 }
