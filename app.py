@@ -421,6 +421,21 @@ def generate_submission_report():
 
 
 
+# @app.route('/teacherindex')
+# def teacherindex():
+#     connection = get_db_connection()
+#     cursor = connection.cursor()
+
+#     cursor.execute('SELECT file_name, folder, semester, course FROM files')
+#     files = cursor.fetchall()
+    
+#     cursor.execute('SELECT Username FROM data WHERE Role = %s', ('student',))
+#     students = cursor.fetchall()
+
+#     cursor.close()
+#     connection.close()
+
+#     return render_template('teacherindex.html', files=files, students=students)
 @app.route('/teacherindex')
 def teacherindex():
     connection = get_db_connection()
@@ -436,6 +451,7 @@ def teacherindex():
     connection.close()
 
     return render_template('teacherindex.html', files=files, students=students)
+
 
 @app.route('/teacher_search_files', methods=['GET'])
 def teacher_search_files():
@@ -702,7 +718,6 @@ def subject_search_files(folder):
     connection.close()
 
     return render_template(f'{folder.lower()}.html', files_semester1=files_semester1, files_semester2=files_semester2)
-
 
 @app.route('/math')
 def math():
