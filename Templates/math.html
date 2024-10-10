@@ -23,6 +23,7 @@
                 <h2>Semester 1</h2>
                 <div class="grid-container">
                     {% for file in files_semester1 %}
+                        {{ file.file_name }} 
                     <div class="grid-item">
                         <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
                         <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
