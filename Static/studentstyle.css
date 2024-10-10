@@ -1,30 +1,35 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Papyrus', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
 }
 
+/* Header section */
 .header {
     background-color: #004080;
     color: white;
     padding: 20px;
     text-align: center;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .header h1 {
     margin: 0;
 }
 
+/* Search container */
 .search-container {
     text-align: center;
     margin-top: 20px;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .search-container input[type="search"] {
     padding: 10px;
     width: 300px;
     font-size: 16px;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .search-container button[type="submit"] {
@@ -34,17 +39,22 @@ body {
     color: white;
     border: none;
     cursor: pointer;
+    font-family: 'Papyrus', sans-serif;
+    transition: all 0.3s ease;
 }
 
 .search-container button[type="submit"]:hover {
-    background-color: #003060;
+    background-color: #004080;
+    filter: brightness(1.2);
 }
 
+/* Grid layout */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     padding: 20px;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .grid-item {
@@ -53,6 +63,7 @@ body {
     text-align: center;
     border: 1px solid #ddd;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Papyrus', sans-serif;
 }
 
 .grid-item img {
@@ -64,8 +75,10 @@ body {
 .grid-item h3 {
     margin: 10px 0 0;
     font-size: 18px;
+    font-family: 'Papyrus', sans-serif;
 }
 
+/* File table styling */
 .file-table-container {
     padding: 20px;
 }
@@ -74,6 +87,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .file-table th, .file-table td {
@@ -90,10 +104,10 @@ body {
     background-color: #f5f5f5;
 }
 
+/* Logout button styling */
 .logout-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .logout-container a {
@@ -103,39 +117,51 @@ body {
     text-decoration: none;
     border: none;
     cursor: pointer;
-    border-radius: 5px; /* Optional: for a rounded button look */
+    border-radius: 5px;
+    font-family: 'Papyrus', sans-serif;
+    transition: all 0.3s ease;
 }
 
 .logout-container a:hover {
-    background-color: #003060;
+    background-color: #004080;
+    filter: brightness(1.2);
 }
 
-/* New styles for upload functionality */
-.upload-container {
+/* Upload and Talk button containers */
+.upload-container,
+.talk-container,
+.marked-container {
     text-align: center;
     margin-top: 20px;
 }
 
-.talk-container {
-    text-align: center;
-    margin-top: 20px; /* Adjust this value to control the spacing between the buttons */
-}
-
 .upload-container .btn,
-.talk-container .btn {
+.talk-container .btn,
+.marked-container .btn,
+.logout-container a {
     padding: 10px 20px;
     background-color: #004080;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    width: 200px;
+    margin-bottom: 20px;
+    font-family: 'Papyrus', sans-serif;
+    transition: all 0.3s ease;
 }
 
 .upload-container .btn:hover,
-.talk-container .btn:hover {
-    background-color: #003060;
+.talk-container .btn:hover,
+.marked-container .btn:hover,
+.logout-container a:hover {
+    background-color: #004080;
+    filter: brightness(1.2);
 }
 
+/* Popup functionality */
 .popup {
     display: none;
     position: fixed;
@@ -155,6 +181,7 @@ body {
     width: 400px;
     max-width: 90%;
     text-align: center;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .close-popup {
@@ -177,6 +204,7 @@ body {
     padding: 10px;
     width: 100%;
     max-width: 90%;
+    font-family: 'Papyrus', sans-serif;
 }
 
 .popup-content button[type="submit"] {
@@ -186,12 +214,16 @@ body {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    font-family: 'Papyrus', sans-serif;
+    transition: all 0.3s ease;
 }
 
 .popup-content button[type="submit"]:hover {
-    background-color: #003060;
+    background-color: #004080;
+    filter: brightness(1.2); 
 }
 
+/* Notification styling
 .notification {
     background-color: red;
     color: white;
@@ -201,5 +233,5 @@ body {
     position: absolute;
     margin-left: 5px;
     margin-top: -10px;
-}
-
+    font-family: 'Papyrus', sans-serif;
+} */

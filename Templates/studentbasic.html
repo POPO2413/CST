@@ -40,7 +40,7 @@
     </div>
 
     <div class="upload-container" style="text-align: center;">
-        <a href="{{ url_for('student_upload_file') }}" class="btn button-style">Submit Homework</a>
+        <button id="open-upload-popup" class="btn button-style">Submit Homework</button>
     </div>
     
     <div class="marked-container" style="text-align: center;">
@@ -54,7 +54,6 @@
     <div class="logout-container" style="text-align: center;">
         <a href="{{ url_for('logout') }}" class="btn button-style">Logout</a>
     </div>
-    
 
     <!-- Upload Homework Popup -->
     <div class="popup" id="upload-popup">
@@ -110,7 +109,7 @@
                 if (data.success) {
                     alert('Homework submitted successfully!');
                     document.getElementById('upload-popup').style.display = 'none';
-                    this.reset();  // Reset form after submission
+                    this.reset();
                 } else {
                     alert('Failed to submit homework: ' + (data.error || 'Unknown error'));
                 }
