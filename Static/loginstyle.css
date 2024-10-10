@@ -1,117 +1,181 @@
-/* General body styling */
-body {
-    font-family: 'Papyrus', sans-serif;
+html, body {
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'papyrus', sans-serif;
+    overflow-y: auto;
 }
 
-/* Header styling */
-header {
-    text-align: center;
-    padding: 20px;
-}
-
-header h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-header p {
-    margin-bottom: 20px;
-}
-
-/* Search bar styling */
-.search-bar {
-    margin-bottom: 20px;
-}
-
-.search-bar input {
-    width: 300px;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-/* Filters section */
-.filters {
-    margin-bottom: 20px;
-}
-
-.filter-button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    background-color: #f0f0f0;
-    cursor: pointer;
-}
-
-.filter-button.active {
-    background-color: #0073e6;
-    color: white;
-}
-
-/* Sorting and toggling */
-.sort-and-toggle {
-    margin-bottom: 20px;
-}
-
-.sort-and-toggle select {
-    padding: 10px;
-    margin-right: 10px;
-}
-
-.sort-and-toggle label {
-    display: inline-flex;
+.container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-}
-
-/* Grid container */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    justify-content: flex-start;
+    min-height: 100vh;
     padding: 20px;
+    width: 100%;
 }
 
-.grid-item {
-    border: 1px solid #f0f0f0;
-    padding: 20px;
+.main-content {
+    display: flex;
+    justify-content: center; /* Center the login and notifications container */
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px; /* Max width to limit the content area */
+    margin-bottom: 30px;
+}
+
+.login-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 60px 40px 40px 40px;
+    width: 360px;
     text-align: center;
+    margin-right: 20px; /* Space between login card and notifications */
 }
 
-.grid-item img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.grid-item h3 {
-    margin-bottom: 5px;
-}
-
-.grid-item p {
-    color: #666;
-}
-
-/* Button styling for uniform buttons */
-.button-style {
-    background-color: #1a3a6d; 
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
+.textbox {
+    width: 100%;
+    padding: 10px;
     margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.textbox:focus {
+    border-color: #777;
+    outline: none;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    margin: 20px 0;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: #fff;
+    font-size: 16px;
     cursor: pointer;
-    width: 200px;
 }
 
-.button-style:hover {
-    background-color: #2a4f8d;
+.btn:hover {
+    background: linear-gradient(to right, #0072ff, #00c6ff);
 }
 
-a.button-style {
+.bottom-text {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.bottom-text a {
+    color: #0072ff;
     text-decoration: none;
+}
+
+.bottom-text a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.forgot-password a {
+    color: #1e87dc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* Scrollable notifications section */
+.notifications-container {
+    width: 300px;
+    max-height: 250px;
+    overflow-y: auto; /* Make the section scrollable */
+    border: 1px solid #ccc;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    position: relative;
+}
+
+.notifications-content {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.text-block {
+    margin-bottom: 15px;
+}
+
+.text-block h2 {
+    margin-top: 0;
+}
+
+.text-block p {
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.image-block {
+    margin-top: 10px; /* Add some space between text and image */
+}
+
+.image-block img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.description-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    max-width: 1200px;
+    width: 100%;
+}
+
+.description-section .text-block {
+    width: 60%; /* Adjust the width to allow more space for text */
+}
+
+.description-section .image-block {
+    width: 35%; /* Adjust the width to fit next to the text */
+    margin-left: 5%;
+}
+
+/* Adjusted logo size and positioning */
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.logo {
+    width: 100px;
+    height: auto; /* Maintain aspect ratio */
+}
+
+.login-card .header {
+    text-align: center;
+    margin-bottom: 30px;
 }
