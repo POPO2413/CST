@@ -460,7 +460,7 @@ def teacher_search_files():
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = "SELECT file_name, folder FROM files WHERE 1=1"
+    query = "SELECT file_name, folder, semester, course FROM files WHERE 1=1"
     params = []
     
     if file_name:
@@ -473,10 +473,16 @@ def teacher_search_files():
     
     cursor.execute(query, params)
     files = cursor.fetchall()
+
+    # Ensure the students list is also returned for the view
+    cursor.execute('SELECT Username FROM data WHERE Role = %s', ('student',))
+    students = cursor.fetchall()
+
     cursor.close()
     connection.close()
 
-    return render_template('teacherindex.html', files=files)
+    return render_template('teacherindex.html', files=files, students=students)
+
 
 @app.route('/upload_marked_file', methods=['POST'])
 def upload_marked_file():
