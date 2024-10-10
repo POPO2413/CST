@@ -22,40 +22,27 @@
                 <!-- Semester 1 -->
                 <h2>Semester 1</h2>
                 <div class="grid-container">
-                    {% if files_semester1 %}
-                        {% for file in files_semester1 %}
-                        <div class="grid-item">
-                            <p>{{ file.file_name }}</p> 
-
-                            <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
-                            <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
-                                <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
-                            </a>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>No files found for Semester 1.</p>
-                    {% endif %}
-                </div>
+                    {% for file in files_semester1 %}
+                    <div class="grid-item">
+                        <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
+                        <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
+                            <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        </a>
+                    </div>
+                    {% endfor %}
+            </div>
 
                 <!-- Semester 2 -->
                 <h2>Semester 2</h2>
                 <div class="grid-container">
-                    {% if files_semester2 %}
-                        {% for file in files_semester2 %}
-                        <div class="grid-item">
-
-                            <p>{{ file.file_name }}</p> 
-
-                            <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
-                            <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
-                                <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
-                            </a>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>No files found for Semester 2.</p>
-                    {% endif %}
+                    {% for file in files_semester2 %}
+                    <div class="grid-item">
+                        <h3>{{ file.file_name.split('.')[0].replace('_', ' ') }}</h3>
+                        <a href="{{ url_for('static', filename='pdfs/' + file.file_name) }}" download="{{ file.file_name }}">
+                            <img width="180px" height="100px" src="{{ url_for('static', filename='images/' + file.file_name.split('.')[0] + '.jpg') }}" alt="{{ file.file_name.split('.')[0] }}">
+                        </a>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </main>

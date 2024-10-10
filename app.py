@@ -713,9 +713,9 @@ def subject_search_files(folder):
     files = cursor.fetchall()
     print(files)
     
-    files_semester1 = [file for file in files if file['semester'] == 1]
-    files_semester2 = [file for file in files if file['semester'] == 2]
-
+    files_semester1 = [file for file in files if int(file['semester']) == 1]
+    files_semester2 = [file for file in files if int(file['semester']) == 2]
+    
     cursor.close()
     connection.close()
     print(query)
