@@ -698,20 +698,17 @@ def marked_files():
 @app.route('/subject_search_files/<folder>', methods=['GET'])
 def subject_search_files(folder):
     file_name = request.args.get('file_name', '')
-
+    
     connection = get_db_connection()
     cursor = connection.cursor()
-    query = "SELECT file_name, folder, semester, course FROM files WHERE 1=1"
-    params = []
-
-    if folder:
-        query += " AND LOWER(folder) = LOWER(%s)"
-        params.append(folder)
+    
+    query = "SELECT file_name, folder, semester, course FROM files WHERE LOWER(folder) = LOWER(%s)"
+    params = [folder]
 
     if file_name:
         query += " AND LOWER(file_name) LIKE LOWER(%s)"
         params.append(f"%{file_name}%")
-    
+        
     cursor.execute(query, params)
     files = cursor.fetchall()
     
