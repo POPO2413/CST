@@ -717,6 +717,8 @@ def subject_search_files(folder):
 
     cursor.close()
     connection.close()
+    print(query)
+    print(params)
 
     return render_template(f'{folder.lower()}.html', files_semester1=files_semester1, files_semester2=files_semester2)
 
