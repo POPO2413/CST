@@ -452,7 +452,6 @@ def teacherindex():
 
     return render_template('teacherindex.html', files=files, students=students)
 
-
 @app.route('/teacher_search_files', methods=['GET'])
 def teacher_search_files():
     file_name = request.args.get('file_name', '')
@@ -571,10 +570,6 @@ def messages():
 
     # Render the template, passing both students and messages to the front-end
     return render_template('messages.html', students=students, messages=messages, selected_username=selected_username)
-
-
-
-
 
 
 @app.route('/studentbasic')
@@ -700,8 +695,7 @@ def subject_search_files(folder):
 
     connection = get_db_connection()
     cursor = connection.cursor()
-
-    query = "SELECT file_name, folder, semester, course FROM files WHERE folder = %s"
+    query = "SELECT file_name, folder, semester, course FROM files WHERE LOWER(folder) = LOWER(%s)"
     params = [folder]
 
     if file_name:
