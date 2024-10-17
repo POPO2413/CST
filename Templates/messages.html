@@ -8,49 +8,45 @@
 </head>
 <body>
 
-<div class="chat-container">
-    <!-- Sidebar for student list -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <a href="{{ url_for('teacherindex') }}" class="back-button">Back to Dashboard</a>
-        </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search here...">
-        </div>
-        <ul class="student-list">
+<div class="container">
+    <!-- Back to Dashboard Button -->
+    <div class="back-button">
+        <a href="{{ url_for('teacherindex') }}">Back to Dashboard</a>
+    </div>
+
+    <!-- Student List -->
+    <div class="student-list">
+        <h3>Students</h3>
+        <ul>
             {% for student in students %}
             <li>
                 <a href="{{ url_for('messages', student=student.sender) }}">
-                    <div class="student">
-                        <img src="{{ url_for('static', filename='images/student-avatar.png') }}" alt="Avatar">
-                        <div class="student-info">
-                            <div class="student-name">{{ student.sender }}</div>
-                        </div>
-                    </div>
+                    {{ student.sender }}
                 </a>
             </li>
             {% endfor %}
         </ul>
     </div>
 
-    <!-- Chatbox area -->
-    <div class="chatbox">
-        <div class="chat-header">
-            <div class="student-chatting">{{ selected_student }}</div>
+    <!-- Chat Box -->
+    <div class="chat-box">
+        <h2>Messages with {{ selected_student }}</h2>
+
+        <!-- Display the received messages -->
+        {% for message in messages %}
+        <div class="message {% if message.sender == 'Jay' %}right{% else %}left{% endif %}">
+            <div class="sender">{{ message.sender }}:</div>
+            <div class="content">{{ message.content }}</div>
+            <div class="sent_at">{{ message.sent_at }}</div>
         </div>
-        <div class="chat-body">
-            {% for message in messages %}
-            <div class="message {% if message.sender == selected_student %}incoming{% else %}outgoing{% endif %}">
-                <p>{{ message.content }}</p>
-                <span>{{ message.sent_at }}</span>
-            </div>
-            {% endfor %}
-        </div>
+        {% endfor %}
+
+        <!-- Reply form -->
         <div class="message-input">
             <form action="{{ url_for('messages') }}" method="post">
                 <input type="hidden" name="recipient" value="{{ selected_student }}">
                 <textarea name="reply_content" placeholder="Write your reply..." required></textarea>
-                <button type="submit" class="send-button">Send Reply</button>
+                <button type="submit" class="btn-send">Send Reply</button>
             </form>
         </div>
     </div>
