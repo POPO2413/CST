@@ -486,8 +486,8 @@ def teacher_search_files():
 
 @app.route('/upload_marked_file', methods=['POST'])
 def upload_marked_file():
-    if 'username' not in session or session['role'] != 'teacher':
-        return redirect(url_for('login'))
+    # if 'username' not in session or session['role'] != 'teacher':
+    #     return redirect(url_for('login'))
 
     student_username = request.form['student_username']
     subject = request.form['subject']
@@ -495,24 +495,50 @@ def upload_marked_file():
     file = request.files['file']
 
     if file and file.filename.endswith('.pdf'):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join('static', 'marked', filename)
-        file.save(file_path)
+        # filename = secure_filename(file.filename)
+        # file_path = os.path.join('static', 'marked', filename)
+        # os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        # file.save(file_path)
 
-        marked_time = datetime.now()
+        # marked_time = datetime.now()
         
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("""
-            INSERT INTO marked_files (username, file_name, subject, Semester, marked_time)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (student_username, filename, subject, semester, marked_time))
-        connection.commit()
+        # connection = get_db_connection()
+        # cursor = connection.cursor()
+        
+        # cursor.execute("""
+        #     INSERT INTO marked_files (username, file_name, subject, Semester, marked_time)
+        #     VALUES (%s, %s, %s, %s, %s)
+        # """, (student_username, filename, subject, semester, marked_time))
+        # connection.commit()
 
-        cursor.close()
-        connection.close()
+        # cursor.close()
+        # connection.close()
 
-        return jsonify({'success': True, 'message': 'Marked file shared successfully!'}), 200
+        # return jsonify({'success': True, 'message': 'Marked file shared successfully!'}), 200
+        try:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('static', 'marked', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+
+            marked_time = datetime.now()
+            
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            cursor.execute("""
+                INSERT INTO marked_files (username, file_name, subject, Semester, marked_time)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (student_username, filename, subject, semester, marked_time))
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+            return jsonify({'success': True, 'message': 'Marked file shared successfully!'}), 200
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
     else:
         return jsonify({'success': False, 'error': 'Only PDF files are allowed.'}), 400
 
@@ -638,9 +664,6 @@ def upload_file():
 
 @app.route('/student_upload_file', methods=['POST'])
 def student_upload_file():
-    # if 'username' not in session:
-    #     return jsonify({'success': False, 'error': 'User not logged in.'}), 401
-    
     username = session['username']
     subject = request.form['subject']
     semester = request.form['semester']
