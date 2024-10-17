@@ -56,6 +56,16 @@ nav ul li.logout {
   width: 100%;
 }
 
+nav.active {
+  width: 0;
+}
+nav.active ul, nav.active .title {
+  display: none;
+}
+nav.active .close-btn {
+  display: block;
+}
+
 .content {
   margin-left: 250px;
   padding: 20px;
@@ -96,8 +106,24 @@ nav ul li.logout {
   z-index: 1000;
 }
 
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-btn {
+  display: none;
+}
+
 .menu-btn.active .fa-bars {
   display: none;
+}
+
+nav.active .close-btn {
+  display: block;
 }
 
 .menu-btn.active .fa-times {
