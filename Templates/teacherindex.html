@@ -17,28 +17,16 @@
             <form id="search-form" action="{{ url_for('teacher_search_files') }}" method="get">
                 <input type="search" id="search-file" name="file_name" placeholder="Search file" class="textbox">
                 <input type="search" id="search-folder" name="folder" placeholder="Search folder" class="textbox">
-                <button type="submit" class="btn">Search</button>
+                <button type="submit" class="btn btn-blue">Search</button>
             </form>
         </div>
 
-        <!-- Upload Button -->
-        <div class="upload-container">
-            <button id="open-upload-popup" class="btn">Upload File</button>
-        </div>
-
-        <!-- Share Marked Files Button -->
-        <div class="upload-marked-container">
-            <button id="open-upload-marked-popup" class="btn">Share Marked Files</button>
-        </div>
-
-        <!-- Generate Submission Report Button -->
-        <div class="generate-report-container">
-            <button id="generate-report-btn" class="btn">Generate Submission Report</button>
-        </div>
-
-        <!-- Messages Button -->
-        <div class="messages-container">
-            <a href="{{ url_for('view_messages') }}" class="btn">View Messages</a>
+        <!-- Action Buttons Container -->
+        <div class="action-buttons">
+            <button id="open-upload-popup" class="btn btn-green">Upload File</button>
+            <button id="open-upload-marked-popup" class="btn btn-green">Share Marked Files</button>
+            <button id="generate-report-btn" class="btn btn-green">Generate Submission Report</button>
+            <a href="{{ url_for('view_messages') }}" class="btn btn-green">View Messages</a>
         </div>
 
         <!-- Files Table -->
@@ -74,7 +62,7 @@
         <!-- Logout Button -->
         <div class="logout-container">
             <form action="{{ url_for('logout') }}">
-                <button type="submit" class="btn">Logout</button>
+                <button type="submit" class="btn btn-red">Logout</button>
             </form>
         </div>
     </div>
@@ -103,7 +91,7 @@
                     <option value="Basic">Basic</option>
                     <option value="Advanced">Advanced</option>
                 </select>
-                <button type="submit" class="btn">Upload File</button>
+                <button type="submit" class="btn btn-blue">Upload File</button>
             </form>
         </div>
     </div>
@@ -141,7 +129,7 @@
                 <input type="file" name="file" id="file" accept=".pdf" required>
                 <br><br>
 
-                <button type="submit" class="btn">Upload Marked File</button>
+                <button type="submit" class="btn btn-blue">Upload Marked File</button>
             </form>
         </div>
     </div>
@@ -163,69 +151,6 @@
 
         document.getElementById('close-upload-marked-popup').addEventListener('click', function() {
             document.getElementById('upload-marked-popup').style.display = 'none';
-        });
-
-        // Marked File Upload Logic
-        document.getElementById('upload-marked-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch("{{ url_for('upload_marked_file') }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Marked file shared successfully!');
-                    document.getElementById('upload-marked-popup').style.display = 'none';
-                } else {
-                    alert('Failed to share marked file: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to share marked file');
-            });
-        });
-
-        // File Upload Logic
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch("{{ url_for('upload_file') }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.file) {
-                    const tbody = document.getElementById('file-tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td>${data.file.file_name.replace('_', ' ')}</td>
-                        <td>${data.file.folder}</td>
-                        <td>${data.file.Semester}</td>
-                        <td>${data.file.course}</td>
-                        <td>
-                            <a href="{{ url_for('static', filename='pdfs/') }}${data.file.folder}/${data.file.Semester}/${data.file.course}/${data.file.file_name}" download>
-                                <i class="fa fa-download"></i> Download
-                            </a>
-                        </td>`;
-                    tbody.appendChild(newRow);
-                    document.getElementById('upload-popup').style.display = 'none';
-                } else {
-                    alert('File upload failed: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('File upload failed');
-            });
-        });
-
-        // Generate Report Logic
-        document.getElementById('generate-report-btn').addEventListener('click', function() {
-            window.location.href = "{{ url_for('generate_submission_report') }}";
         });
     </script>
 </body>

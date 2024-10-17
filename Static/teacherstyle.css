@@ -5,9 +5,9 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Change from center to flex-start */
+    align-items: flex-start;
     min-height: 100vh;
-    overflow-y: auto; /* Allow vertical scrolling if necessary */
+    overflow-y: auto;
 }
 
 .container {
@@ -17,7 +17,7 @@ body {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     width: 100%;
-    margin-top: 20px; /* Add some margin from the top */
+    margin-top: 20px;
 }
 
 .header {
@@ -32,15 +32,15 @@ body {
 
 .search-container {
     display: flex;
-    justify-content: center; /* Centralizes the content horizontally */
-    align-items: center; /* Aligns items vertically */
-    gap: 10px; /* Adds space between the search elements */
-    margin-bottom: 30px; /* Increased space below the search container */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
 }
 
 .search-container form {
     display: flex;
-    gap: 10px; /* Adds space between the inputs and the button */
+    gap: 10px;
 }
 
 .search-container input[type="search"] {
@@ -65,32 +65,45 @@ body {
     background-color: #0056b3;
 }
 
-.upload-container {
-    text-align: center;
-    margin-bottom: 30px; /* Adds more space below the "Upload File" button */
-    margin-top: 20px; /* Adds space above the "Upload File" button */
+/* Action Buttons Styling */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
-.upload-container button {
+.btn {
     padding: 10px 20px;
     font-size: 14px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.upload-container button:hover {
+.btn-green {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-green:hover {
+    background-color: #218838;
+}
+
+.btn-blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-blue:hover {
     background-color: #0056b3;
 }
 
 .file-table-container {
     overflow-x: auto;
-    max-height: 400px; /* Add a max height for the table container */
-    overflow-y: auto; /* Enable vertical scrolling if the table is too long */
-    margin-top: 30px; /* Adds space above the file table */
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 30px;
 }
 
 .file-table {
@@ -131,7 +144,7 @@ body {
 
 .logout-container {
     text-align: center;
-    margin-top: 30px; /* Adjusts the space above the logout button */
+    margin-top: 30px;
 }
 
 .logout-container button {
