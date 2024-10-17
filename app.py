@@ -486,8 +486,8 @@ def teacher_search_files():
 
 @app.route('/upload_marked_file', methods=['POST'])
 def upload_marked_file():
-    if 'username' not in session or session['role'] != 'teacher':
-        return redirect(url_for('login'))
+    # if 'username' not in session or session['role'] != 'teacher':
+    #     return redirect(url_for('login'))
 
     student_username = request.form['student_username']
     subject = request.form['subject']
