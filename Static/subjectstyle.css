@@ -1,21 +1,27 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #E0F7FA; /* Soft, light cyan */
+    color: #333;
 }
 
 header {
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px;
+    background-color: #0077B6; /* Gentle blue */
+    color: white;
 }
 
 header h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 header p {
-    margin-bottom: 20px;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
 }
 
 .search-bar {
@@ -26,6 +32,8 @@ header p {
     width: 300px;
     padding: 10px;
     font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .filters {
@@ -33,16 +41,23 @@ header p {
 }
 
 .filter-button {
-    padding: 10px 20px;
+    padding: 12px 25px;
     margin: 5px;
     border: none;
-    background-color: #f0f0f0;
+    background-color: #0077B6; /* Calmer blue */
+    color: white;
+    border-radius: 5px;
     cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+    background-color: #4AA1D3; /* Light blue on hover */
 }
 
 .filter-button.active {
-    background-color: #0073e6;
-    color: white;
+    background-color: #4AA1D3;
 }
 
 .sort-and-toggle {
@@ -52,6 +67,7 @@ header p {
 .sort-and-toggle select {
     padding: 10px;
     margin-right: 10px;
+    border-radius: 5px;
 }
 
 .sort-and-toggle label {
@@ -60,28 +76,85 @@ header p {
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 40px;
+    background-color: #F0F4F8; /* Soft neutral background for content */
 }
 
 .grid-item {
-    border: 1px solid #f0f0f0;
-    padding: 20px;
+    width: 220px;
     text-align: center;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 10px;
+}
+
+.grid-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .grid-item img {
     max-width: 100%;
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    border-radius: 50%;
 }
 
 .grid-item h3 {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    color: #0077B6;
 }
 
 .grid-item p {
     color: #666;
+}
+
+.grid-item a {
+    text-decoration: none;
+    color: #6a0dad;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.grid-item a:hover {
+    color: #d2691e;
+    text-decoration: underline;
+}
+
+button {
+    padding: 15px 30px;
+    border: none;
+    background-color: #0077B6; /* Gentle button color */
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px 0;
+}
+
+button:hover {
+    background-color: #4AA1D3;
+}
+
+.logout-container {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.semester-heading {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 30px 0;
+    color: #333;
 }
