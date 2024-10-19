@@ -190,3 +190,7 @@ body {
     float: right;
     cursor: pointer;
 }
+
+.close-popup:hover {
+    color: #ff0000;
+}

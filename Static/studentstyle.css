@@ -143,9 +143,14 @@ a.btn:hover {
 
 .close-popup {
     position: absolute;
-    top: 15px;
+    top: 10px;
     right: 15px;
     font-size: 1.5rem;
     cursor: pointer;
     color: #333;
+    transition: color 0.3s ease;
+}
+
+.close-popup:hover {
+    color: #ff0000;
 }
