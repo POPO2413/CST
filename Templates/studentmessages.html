@@ -2,150 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messages</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        /* Ensure the background for the whole page is white */
-        html, body {
-            background-color: white;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
-        /* Back to dashboard button at top-left */
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        .back-button a {
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-
-        .back-button a:hover {
-            background-color: #0056b3;
-        }
-
-        /* Center the rest of the content */
-        .page-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 100px; /* Padding to avoid the button overlapping with content */
-            min-height: 100vh; /* Ensure full-page centering */
-        }
-
-        /* Teacher List */
-        .teacher-list {
-            width: 250px;
-            padding: 20px;
-            background-color: #f1f1f1;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .teacher-list h3 {
-            margin-bottom: 10px;
-        }
-
-        .teacher-list ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .teacher-list li {
-            margin-bottom: 10px;
-        }
-
-        .teacher-list a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        .teacher-list a:hover {
-            text-decoration: underline;
-        }
-
-        /* Chatbox */
-        .chat-box {
-            flex-grow: 1;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 600px;
-        }
-
-        .chat-box h2 {
-            margin-bottom: 20px;
-        }
-
-        /* Message styling */
-        .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-
-        .sender {
-            font-weight: bold;
-        }
-
-        .sent_at {
-            font-size: 12px;
-            color: #888;
-        }
-
-        /* Reply form */
-        .message-input {
-            margin-top: 20px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .btn-send {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-send:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
 
-<!-- Back to Dashboard Button at the top-left -->
-<div class="back-button">
-    <a href="{{ url_for('studentbasic') }}">Back to Dashboard</a>
-</div>
+<div class="container">
+    <!-- Back to Dashboard Button -->
+    <div class="back-button">
+        <a href="{{ url_for('studentbasic') }}">Back to Dashboard</a>
+    </div>
 
-<!-- Centered content for the rest of the page -->
-<div class="page-container">
     <!-- Teacher List -->
     <div class="teacher-list">
         <h3>Teachers</h3>
         <ul>
             {% for teacher in teachers %}
-            <li><a href="{{ url_for('studentmessages', teacher=teacher.username) }}">{{ teacher.username }}</a></li>
+            <li>
+                <a href="{{ url_for('studentmessages', teacher=teacher.username) }}">
+                    {{ teacher.username }}
+                </a>
+            </li>
             {% endfor %}
         </ul>
     </div>
@@ -156,7 +34,7 @@
 
         <!-- Display the received messages -->
         {% for message in messages %}
-        <div class="message">
+        <div class="message {% if message.sender == selected_teacher %}left{% else %}right{% endif %}">
             <div class="sender">{{ message.sender }}:</div>
             <div class="content">{{ message.content }}</div>
             <div class="sent_at">{{ message.sent_at }}</div>
