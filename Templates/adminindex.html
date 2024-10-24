@@ -8,17 +8,17 @@
 </head>
 <body>
     <div class="wrapper">
-        <label for="btn" class="menu-btn">
+        <div class="menu-btn" id="menu-btn">
             <i class="fas fa-bars"></i>
-        </label>
+        </div>
 
         <!-- Sidebar Section -->
-        <input type="checkbox" id="btn" hidden>
         <nav id="sidebar">
             <div class="title">Admin Dashboard</div>
-            <label for="btn" class="close-btn">
+            <div class="close-btn" id="close-btn">
                 <i class="fas fa-times"></i>
-            </label>
+            </div>
+            
             <ul class="list-items">
                 <li><a href="{{ url_for('adminindex') }}"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
@@ -83,20 +83,26 @@
     </div>
 
     <script>
-        // Toggle Sidebar Menu
-        document.querySelector('.menu-btn').addEventListener('click', function() {
-            document.querySelector('#sidebar').classList.toggle('active');
-            document.querySelector('.content').classList.toggle('active');
+        // Toggle Sidebar Menu (Opening and Closing)
+        const menuBtn = document.getElementById('menu-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.querySelector('.content');
+
+        // Open sidebar
+        menuBtn.addEventListener('click', function () {
+            sidebar.classList.add('active');
+            content.classList.add('shifted');
+            menuBtn.style.display = 'none';
+            closeBtn.style.display = 'block';
         });
 
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            document.querySelector('#sidebar').classList.toggle('active');
-            document.querySelector('.content').classList.toggle('active');
-        });
-
-        // Generate Report Logic
-        document.getElementById('generate-report-btn').addEventListener('click', function() {
-            window.location.href = "{{ url_for('generate_submission_report') }}";
+        // Close sidebar
+        closeBtn.addEventListener('click', function () {
+            sidebar.classList.remove('active');
+            content.classList.remove('shifted');
+            closeBtn.style.display = 'none';
+            menuBtn.style.display = 'block';
         });
     </script>
 </body>
