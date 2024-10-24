@@ -16,13 +16,9 @@ nav {
   width: 250px;
   position: fixed;
   top: 0;
-  left: -250px;  /* Sidebar is initially hidden */
+  left: 0;
   transition: all 0.3s;
   overflow: hidden;
-}
-
-nav.active {
-  left: 0;  /* Show the sidebar when active */
 }
 
 nav .title {
@@ -60,15 +56,25 @@ nav ul li.logout {
   width: 100%;
 }
 
+nav.active {
+  width: 0;
+}
+nav.active ul, nav.active .title {
+  display: none;
+}
+nav.active .close-btn {
+  display: block;
+}
+
 .content {
-  margin-left: 0;
+  margin-left: 250px;
   padding: 20px;
-  width: 100%;
+  width: calc(100% - 250px);
   transition: all 0.3s;
 }
 
-.content.active {
-  margin-left: 250px;  /* Adjust content margin when sidebar is active */
+.content h1 {
+  font-size: 32px;
 }
 
 .file-table-container {
@@ -98,38 +104,109 @@ nav ul li.logout {
   font-size: 24px;
   cursor: pointer;
   z-index: 1000;
-  color: #000000;
 }
 
 .close-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  right: 20px;
   font-size: 24px;
   cursor: pointer;
-  color: #000000;
+}
+
+.close-btn {
   display: none;
 }
 
-.menu-btn .fa-bars,
-.close-btn .fa-times {
-  background-color: transparent;
-  border: none; 
-}
-
-.menu-btn .fa-bars:hover,
-.close-btn .fa-times:hover {
-  color: #474747;
-}
-
-nav.active ~ .menu-btn .fa-bars {
+.menu-btn.active .fa-bars {
   display: none;
 }
 
-nav.active ~ .menu-btn .fa-times {
+nav.active .close-btn {
   display: block;
 }
 
+.menu-btn.active .fa-times {
+  display: block;
+}
+
+.menu-btn .fa-times {
+  display: none;
+}
+
+nav.active {
+  width: 0;
+}
+
+nav.active .title, nav.active ul li {
+  display: none;
+}
+
+.content.active {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* Dropdown Button */
+.dropbtn {
+  background-color: #d3d3d3;
+  color: black; /* text color */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #ffffff;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #1e87dc;
+}
+
+/* Textbox style for search input */
+.textbox {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* New styles for form controls and table actions */
 .table-actions {
   display: flex;
   gap: 10px;
@@ -141,7 +218,7 @@ nav.active ~ .menu-btn .fa-times {
   font-weight: bold;
 }
 
-.table-actions select,
+.table-actions select, 
 .table-actions button,
 .table-actions input[type="search"] {
   padding: 8px 12px;
@@ -151,7 +228,7 @@ nav.active ~ .menu-btn .fa-times {
   transition: border-color 0.3s ease;
 }
 
-.table-actions select:focus,
+.table-actions select:focus, 
 .table-actions button:focus,
 .table-actions input[type="search"]:focus {
   border-color: #007bff;
