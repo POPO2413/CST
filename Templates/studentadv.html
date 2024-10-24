@@ -44,17 +44,17 @@
         <button id="open-upload-popup" class="btn">Submit Homework</button>
     </div>
 
-    <!-- Marked Works button -->
+    <!-- Marked Works Button -->
     <div class="marked-container" style="text-align: center; margin-top: 40px;">
         <a href="{{ url_for('marked_files') }}" class="btn">Marked Works</a>
     </div>
 
-    <!-- Messages button -->
+    <!-- Messages Button -->
     <div class="talk-container" style="text-align: center; margin-top: 40px;">
         <a href="{{ url_for('studentmessages') }}" class="btn">Messages</a>
     </div>
 
-    <!-- Logout button -->
+    <!-- Logout Button -->
     <div class="logout-container" style="margin-top: 20px; text-align: center;">
         <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
@@ -100,7 +100,7 @@
             document.getElementById('upload-popup').style.display = 'none';
         });
 
-        // File Upload Logic
+        // File Upload Logic with form submission
         document.getElementById('upload-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
