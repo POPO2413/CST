@@ -8,17 +8,17 @@
 </head>
 <body>
     <div class="wrapper">
-        <button id="menu-btn" class="menu-btn">
+        <label for="btn" class="menu-btn">
             <i class="fas fa-bars"></i>
-        </button>
+        </label>
 
         <!-- Sidebar Section -->
-        <nav id="sidebar" class="inactive">
-            <button id="close-btn" class="close-btn">
-                <i class="fas fa-times"></i>
-            </button>
-
+        <input type="checkbox" id="btn" hidden>
+        <nav id="sidebar">
             <div class="title">Admin Dashboard</div>
+            <label for="btn" class="close-btn">
+                <i class="fas fa-times"></i>
+            </label>
             <ul class="list-items">
                 <li><a href="{{ url_for('adminindex') }}"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{{ url_for('user_activity') }}"><i class="fas fa-tasks"></i> View User Activity</a></li>
@@ -83,19 +83,20 @@
     </div>
 
     <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const closeBtn = document.getElementById('close-btn');
-        const sidebar = document.getElementById('sidebar');
-        menuBtn.addEventListener('click', function() {
-            sidebar.classList.remove('inactive');
-            menuBtn.style.display = 'none';
-            closeBtn.style.display = 'block';
+        // Toggle Sidebar Menu
+        document.querySelector('.menu-btn').addEventListener('click', function() {
+            document.querySelector('#sidebar').classList.toggle('active');
+            document.querySelector('.content').classList.toggle('active');
         });
 
-        closeBtn.addEventListener('click', function() {
-            sidebar.classList.add('inactive');
-            menuBtn.style.display = 'block';
-            closeBtn.style.display = 'none';
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.querySelector('#sidebar').classList.toggle('active');
+            document.querySelector('.content').classList.toggle('active');
+        });
+
+        // Generate Report Logic
+        document.getElementById('generate-report-btn').addEventListener('click', function() {
+            window.location.href = "{{ url_for('generate_submission_report') }}";
         });
     </script>
 </body>

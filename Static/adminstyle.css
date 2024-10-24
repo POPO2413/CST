@@ -16,9 +16,13 @@ nav {
   width: 250px;
   position: fixed;
   top: 0;
-  left: 0;
+  left: -250px;  /* Sidebar is initially hidden */
   transition: all 0.3s;
   overflow: hidden;
+}
+
+nav.active {
+  left: 0;  /* Show the sidebar when active */
 }
 
 nav .title {
@@ -56,28 +60,15 @@ nav ul li.logout {
   width: 100%;
 }
 
-nav.active {
-  width: 0;
-}
-
-nav.active ul,
-nav.active .title {
-  display: none;
-}
-
-nav.active .close-btn {
-  display: block;
-}
-
 .content {
-  margin-left: 250px;
+  margin-left: 0;
   padding: 20px;
-  width: calc(100% - 250px);
+  width: 100%;
   transition: all 0.3s;
 }
 
-.content h1 {
-  font-size: 32px;
+.content.active {
+  margin-left: 250px;  /* Adjust content margin when sidebar is active */
 }
 
 .file-table-container {
@@ -90,8 +81,7 @@ nav.active .close-btn {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.file-table th,
-.file-table td {
+.file-table th, .file-table td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -108,46 +98,54 @@ nav.active .close-btn {
   font-size: 24px;
   cursor: pointer;
   z-index: 1000;
+  color: #140800;
 }
 
-.menu-btn.active .fa-bars {
-  display: none;
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #140800; 
 }
 
-.menu-btn.active .fa-times {
-  display: block;
+.menu-btn .fa-bars,
+.close-btn .fa-times {
+  background-color: transparent;
+  border: none; 
+}
+
+.menu-btn .fa-bars:hover,
+.close-btn .fa-times:hover {
+  color: #703308;
 }
 
 .menu-btn .fa-times {
   display: none;
 }
 
+/* Ensure the correct button shows */
+nav.active ~ .menu-btn .fa-bars {
+  display: none;
+}
+
+nav.active ~ .menu-btn .fa-times {
+  display: block;
+}
+
 nav.active {
   width: 0;
 }
 
-nav.active .title,
-nav.active ul li {
+nav.active .title, nav.active ul li {
   display: none;
 }
 
 .content.active {
   margin-left: 0;
   width: 100%;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  cursor: pointer;
-  color: white;
-  z-index: 1001;
-}
-
-.close-btn:hover {
-  color: #ff0000;
 }
 
 /* Dropdown Button */
@@ -172,7 +170,7 @@ nav.active ul li {
   position: absolute;
   background-color: #f1f1f1;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
