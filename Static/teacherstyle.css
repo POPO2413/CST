@@ -96,7 +96,7 @@ body {
 }
 
 .btn-blue:hover {
-    background-color: #4AA1D3;
+    background-color: #0056b3;
 }
 
 .file-table-container {
@@ -162,7 +162,6 @@ body {
     background-color: #c82333;
 }
 
-/* Popup styling */
 .popup {
     display: none;
     position: fixed;
